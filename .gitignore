@@ -1,0 +1,11 @@
+*.[ao]
+*.og
+*.so
+*.swp
+*~
+
+# test runner
+test-runner
+
+# GUI application
+cbmfm
