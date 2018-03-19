@@ -33,6 +33,7 @@
 
 #include "mem.h"
 
+
 /** \brief  Allocate \a n bytes of memory
  *
  * This function uses a succeed-or-die approach, since both GLib and Gtk+ use

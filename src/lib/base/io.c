@@ -135,3 +135,32 @@ intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
     }
     /* shouldn't get here */
 }
+
+
+/** \brief  Write \a size bytes of \a data to file \a path
+ *
+ * \param[in]   data    data to write
+ * \param[in]   size    number of bytes to write
+ * \param[in]   path    file to write to
+ *
+ * \return  bool
+ */
+bool cbmfm_write_file(const uint8_t *data, size_t size, const char *path)
+{
+    FILE *fp;
+
+    fp = fopen(path, "wb");
+    if (fp == NULL) {
+        cbmfm_errno = CBMFM_ERR_IO;
+        return false;
+    }
+
+    if (fwrite(data, 1U, size, fp) != size) {
+        cbmfm_errno = CBMFM_ERR_IO;
+        fclose(fp);
+        return false;
+    }
+
+    fclose(fp);
+    return true;
+}

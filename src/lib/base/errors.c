@@ -1,6 +1,6 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/lib/errors.c
+/** \file   src/lib/base/errors.c
  * \brief   Base library error handling
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
@@ -32,10 +32,11 @@
 #include <string.h>
 #include <limits.h>
 #include <errno.h>
-#include <ctype.h>
 
 #include "errors.h"
 
+/** \brief  Global error code for the library
+ */
 int cbmfm_errno;
 
 
@@ -86,4 +87,3 @@ void cbmfm_perror(const char *prefix)
         fprintf(stderr, "%d: %s\n", cbmfm_errno, cbmfm_strerror(cbmfm_errno));
     }
 }
- 
