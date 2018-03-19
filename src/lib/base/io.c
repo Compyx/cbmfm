@@ -40,9 +40,14 @@
 #include "io.h"
 
 
-/** \brief  Size of chunks to read in hvsc_read_file()
+/** \brief  Size of chunks to read in cbmfm_read_file()
+ *
+ * 64 KB should be enough for most CBM based files obviously things like disk
+ * images will use more memory, so perhaps add a function that can set the
+ * chunck size?
+ *
  */
-#define READFILE_BLOCK_SIZE  65536
+#define READFILE_BLOCK_SIZE  (1 << 16)
 
 
 /** @brief  Read data from \a path into \a dest, allocating memory
@@ -52,8 +57,11 @@
  * some reason (file not found, out of memory), -1 is returned and all memory
  * used by this function is freed.
  *
- * READFILE_BLOCK_SIZE bytes are read at a time, and whenever memory runs out,
+ * #READFILE_BLOCK_SIZE bytes are read at a time, and whenever memory runs out,
  * it is doubled in size.
+ *
+ * \todo    Implement a way to set the initial buffer size, reading a D64
+ *          while having 64KB or so allocated will cause unneccesary realloc's
  *
  * Example:
  * @code{.c}
@@ -77,7 +85,6 @@
 intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
 {
     uint8_t *data;
-    uint8_t *tmp;
     FILE *fd;
     size_t offset = 0;
     size_t size = READFILE_BLOCK_SIZE;
@@ -113,12 +120,7 @@ intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
             if (feof(fd)) {
                 /* OK: EOF */
                 /* try to realloc to minimum size required */
-                tmp = realloc(data, offset + result);
-                if (tmp != NULL) {
-                    /* OK, no worries if it fails, the C standard guarantees
-                     * the original data is still intact */
-                    data = tmp;
-                }
+                data = cbmfm_realloc_smaller(data, offset + result);
                 *dest = data;
                 fclose(fd);
                 return (long)(offset + result);

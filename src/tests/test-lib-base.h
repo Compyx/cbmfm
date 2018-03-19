@@ -30,6 +30,6 @@
 
 #include "testcase.h"
 
-test_module_t module_lib_base;
+extern test_module_t module_lib_base;
 
 #endif

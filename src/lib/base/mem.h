@@ -33,6 +33,7 @@
 void *  cbmfm_malloc(size_t size);
 void *  cbmfm_calloc(size_t nmemb, size_t size);
 void *  cbmfm_realloc(void *ptr, size_t size);
+void *  cbmfm_realloc_smaller(void *ptr, size_t size);
 void    cbmfm_free(void *ptr);
 
 #endif
