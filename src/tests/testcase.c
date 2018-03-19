@@ -34,6 +34,19 @@
 
 #include "testcase.h"
 
+/** \brief  Maximum number of modules that can be registerd
+ */
+#define MODULE_COUNT_MAX    64
+
+/** \brief  List of registered modules
+ */
+static test_module_t *mod_list[MODULE_COUNT_MAX];
+
+/** \brief  Number of registered modules
+ */
+static size_t mod_count = 0;
+
+
 
 /** \brief  Initialize \a test
  *
@@ -79,54 +92,126 @@ void test_module_exit(test_module_t *module)
 }
 
 
-/** \brief  List tests in \a module
+/** \brief  List tests in module \a name
  *
- * Lists tests in \a module on stdout: name\<tab\>description
+ * Lists tests in module \a name on stdout.
  *
- * \param[in]   module  test module
+ * \param[in]   name    test module name
  */
-void test_module_list_tests(const test_module_t *module)
+void test_module_list_tests(const char *name)
 {
-    const test_case_t *t;
+    const test_module_t *module;
+    const test_case_t *test;
+    size_t m;
 
-    for (t = module->tests; t != NULL; t++) {
-        printf("%s\t%s\n", t->name, t->desc);
+    for (m = 0; m < mod_count; m++) {
+        if (name == NULL || strcmp(mod_list[m]->name, name) == 0) {
+            module = mod_list[m];
+            printf("%s\t%s\n", module->name, module->desc);
+            for (test = module->tests; test->name != NULL; test++) {
+                printf("    %s\t%s\n", test->name, test->desc);
+            }
+        }
     }
 }
 
 
 /** \brief  Run tests in \a module
  *
- * Run one or more tests in \a module. Use the \a name argument to specify a
+ * Run one or more tests in module \a name. Use the \a name argument to specify a
  * single test, or pass either `NULL` or 'all' to run all tests.
  * Returns false on unexpected failures in the framework running the tests, not
  * if a test case fails.
  *
- * \param[in,out]   module  test module
- * \param[in]       name    test name (optional)
+ * \param[in]   mod_name    test module (optional)
+ * \param[in]   test_name   test name (optional)
  *
  * \return  bool
  */
-bool test_module_run_tests(test_module_t *module, const char *name)
+bool test_module_run_tests(const char *mod_name, const char *test_name)
 {
+    test_module_t *module;
     test_case_t *test;
+    size_t m;
 
-    test_module_init(module);
+    int total = 0;
+    int failed = 0;
 
-    for (test = module->tests; test != NULL; test++) {
-        if (name == NULL || strcmp(name, test->name) == 0) {
-            /* run test */
-            test_case_init(test);
-            if (!(test->func())) {
-                /* unexpected failure */
-                return false;
+    for (m = 0; m < mod_count; m++) {
+        if (mod_name == NULL || strcmp(mod_name, mod_list[m]->name) == 0) {
+            module = mod_list[m];
+            printf(". Running module '%s' (%s)\n",
+                    module->name, module->desc);
+            test_module_init(module);
+
+            for (test = module->tests; test->name != NULL; test++) {
+                if (test_name == NULL || strcmp(test_name, test->name) == 0) {
+                    /* run test */
+                    printf("... Running test '%s' (%s)\n",
+                            test->name, test->desc);
+                    test_case_init(test);
+                    if (!(test->func(test))) {
+                        /* unexpected failure */
+                        test_module_exit(module);
+                        return false;
+                    }
+                    module->total += test->total;
+                    module->failed += test->failed;
+                }
             }
-            module->total += test->total;
-            module->failed += test->failed;
+            /* display results */
+            if (module->failed == 0) {
+                printf(". OK: %d tests, no failures -> 100.00%%\n", module->total);
+            } else {
+                printf(". OK: %d tests, %d failures -> %.2f",
+                        module->total, module->failed,
+                        (float)(module->total - module->failed) / (float)(module->total));
+            }
+            total += module->total;
+            failed += module->failed;
+            test_module_exit(module);
         }
     }
 
-    test_module_exit(module);
+    putchar('\n');
+    if (failed == 0) {
+        printf("Final result: %d tests, no failures -> 100.00%%\n", total);
+    } else {
+        printf("Final result: %d tests, %d failures -> %.2f",
+                total, failed,
+                (float)(total - failed) / (float)(total));
+    }
     return true;
 }
 
+
+/** \brief  Register \a module
+ *
+ * This function calls exit() if #MODULE_COUNT_MAX is reached. In that case,
+ * simple increase #MODULE_COUNT_MAX and recompile.
+ *
+ * \param[in]   module  test module
+ */
+void test_module_register(test_module_t *module)
+{
+    if (mod_count == MODULE_COUNT_MAX) {
+        fprintf(stderr, "%s:%d:%s(): maximum number of modules reached.",
+                __FILE__, __LINE__, __func__);
+        exit(1);
+    }
+    mod_list[mod_count++] = module;
+}
+
+
+/** \brief  List registered modules
+ */
+void test_module_list_modules(void)
+{
+    size_t m;
+
+    for (m = 0; m < mod_count; m++) {
+        const test_module_t *module = mod_list[m];
+
+        printf("%s\t%s\n", module->name, module->desc);
+    }
+}

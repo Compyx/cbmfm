@@ -34,12 +34,12 @@
 #include "mem.h"
 
 
-/** \brief  Allocate \a n bytes of memory
+/** \brief  Allocate \a size bytes of memory
  *
  * This function uses a succeed-or-die approach, since both GLib and Gtk+ use
  * that as well.
  *
- * \param[in]   n   number of bytes to allocate
+ * \param[in]   size    number of bytes to allocate
  *
  * \return  pointer to allocated memory
  */

@@ -38,7 +38,7 @@
 typedef struct test_case_s {
     const char *name;   /**< test name, used on the command line */
     const char *desc;   /**< test description */
-    bool (*func)(void);  /**< function to run the test */
+    bool (*func)(struct test_case_s *test);  /**< function to run the test */
     int total;          /**< total number of subtests */
     int failed;         /**< number of failed subtests */
 } test_case_t;
@@ -64,9 +64,11 @@ typedef struct test_module_s {
 } test_module_t;
 
 
+void test_module_register(test_module_t *module);
 void test_module_init(test_module_t *module);
 void test_module_exit(test_module_t *module);
-void test_module_list_tests(const test_module_t *module);
-bool test_module_run_tests(test_module_t *module, const char *name);
+void test_module_list_tests(const char *name);
+void test_module_list_modules(void);
+bool test_module_run_tests(const char *mod_name, const char *test_name);
 
 #endif

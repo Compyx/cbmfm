@@ -2,6 +2,7 @@
 *.og
 *.so
 *.swp
+.exrc
 *~
 
 # test runner

@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/gui/main.c
- * \brief   Application driver
+/** \file   src/tests/test-lib-base.c
+ * \brief   Unit test for src/lib/base
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,45 +25,47 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#include <gtk/gtk.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
 
-#include "lib.h"
+#include "base.h"
+
+#include "testcase.h"
+
+static bool test_lib_base_io(struct test_case_s *test);
 
 
-/** \brief  Handler for the 'activate' event of the GtkApplication
- *
- * \param[in]   app     application
- * \param[in]   data    (unused)
+/** \brief  List of tests for the base library functions
  */
-static void on_activate(GApplication *app, gpointer data)
-{
-    GtkWidget *widget;
+static test_case_t tests_lib_base[] = {
+    { "io", "I/O handling", test_lib_base_io, 0, 0 },
+    { NULL, NULL, NULL, 0, 0 }
+};
 
-    widget = gtk_application_window_new(GTK_APPLICATION(app));
-    gtk_window_set_title(GTK_WINDOW(widget), "CBM-FM 0.1");
-    gtk_widget_show(widget);
+
+/** \brief  Test module for the base library functions
+ */
+test_module_t module_lib_base = {
+    "base",
+    "base library functions",
+    tests_lib_base,
+    NULL,
+    NULL,
+    0, 0
+};
+
+
+/** \brief  Test src/lib/base/io.c behaviour
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_base_io(struct test_case_s *test)
+{
+    puts("\nTesting lib/io/base\n");
+    test->total = 1;
+    return true;
 }
 
-
-/** \brief  Application driver
- *
- * \param[in]   argc    argument count
- * \param[in]   argv    argument vector
- *
- * \return  0 on success
- */
-int main(int argc, char **argv)
-{
-    GtkApplication *app;
-    int status;
-
-    /* clear library error code */
-    cbmfm_errno = 0;
-
-    app = gtk_application_new("nl.compyx.cbmfm", G_APPLICATION_FLAGS_NONE);
-    g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
-    status = g_application_run(G_APPLICATION(app), argc, argv);
-    g_object_unref(app);
-
-    return status;
-}

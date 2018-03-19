@@ -1,3 +1,5 @@
+/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen : */
+
 /** \file   src/test-runner.c
  * \brief   Test driver for cbmfm
  *
@@ -5,7 +7,7 @@
  */
 
 /*
- *  CbmFM - a file manager for CBM 8-bit files
+ *  CbmFM - a file manager for CBM 8-bit emulation files
  *  Copyright (C) 2018  Bas Wassink <b.wassink@ziggo.nl>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -29,9 +31,66 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+#include "testcase.h"
 
-int main(void)
+/*
+ * Test modules
+ */
+#include "test-lib-base.h"
+
+
+/** \brief  Print usage/help message on stdout
+ */
+static void usage(void)
 {
-    puts("CbmFM test runner\n");
+    printf("Usage: test-runner <module> [<tests>]\n");
+    printf("\n");
+    printf("Options:\n");
+    printf("  --help                    display help\n");
+    printf("  --list-modules            list available modules\n");
+    printf("  --list-tests <module>     list tests in <module>\n");
+}
+
+
+/** \brief  Register test modules
+ */
+static void register_modules(void)
+{
+    test_module_register(&module_lib_base);
+}
+
+
+/** \brief  Driver
+ *
+ * \param[in]   argc    argument count
+ * \param[in]   argv    argument vector
+ *
+ * \return  EXIT_SUCCESS or EXIT_FAILURE
+ */
+int main(int argc, char **argv)
+{
+
+    register_modules();
+
+    /* display usage message? */
+    if (argc >= 2 && strcmp(argv[1], "--help") == 0) {
+        usage();
+        return EXIT_SUCCESS;
+    }
+
+    if (argc >= 2 && strcmp(argv[1], "--list-modules") == 0) {
+        test_module_list_modules();
+        return EXIT_SUCCESS;
+    }
+
+    if (argc >= 2 && strcmp(argv[1], "--list-tests") == 0) {
+        test_module_list_tests(argc < 3 ? NULL : argv[2]);
+        EXIT_SUCCESS;
+    }
+
+    /* now we can run tests */
+    test_module_run_tests(argc < 2 ? NULL : argv[1],
+            argc < 3 ? NULL : argv[2]);
+
     return EXIT_SUCCESS;
 }

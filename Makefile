@@ -18,14 +18,14 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99 -Wshadow -Wpointer-arith \
 
 LIB_SRCS = src/lib/base/io.c src/lib/base/errors.c src/lib/base/mem.c
 GUI_SRCS = src/gui/main.c
-TEST_SRCS = src/tests/testcase.c
+TEST_SRCS = src/tests/testcase.c src/tests/test-lib-base.c
 
 HEADERS = src/lib.h src/lib/base.h
 
 STATIC_LIB = libcbmfm.a
 
 TESTER = test-runner
-TESTER_OBJS = test-runner.o testcase.o
+TESTER_OBJS = test-runner.o testcase.o test-lib-base.o
 GUI = cbmfm
 
 LIB_OBJS = $(LIB_SRCS:.c=.o)
