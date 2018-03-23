@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
 
 #include "errors.h"
 
@@ -150,3 +151,49 @@ void cbmfm_free(void *ptr)
 {
     free(ptr);
 }
+
+
+/** \brief  Create a heap-allocated copy of at most \a n bytes of \a s
+ *
+ * \param[in]   s   string to copy
+ * \param[in]   n   maximum number of bytes to copy
+ *
+ * \return  heap-allocated, nul-terminated string
+ */
+char *cbmfm_strndup(const char *s, size_t n)
+{
+    const char *orig;
+    char *t;
+
+    orig = s;
+    t = cbmfm_malloc(n + 1);
+
+    while (*s != '\0' && ((size_t)(s - orig) < n)) {
+        *t = *s;
+        t++;
+        s++;
+    }
+    *t = '\0';
+
+    return t;
+}
+
+
+/** \brief  Create a heap-allocated copy of \a s
+ *
+ * \param[in]   s   string to copy
+ *
+ * \return  heap-allocated copy of \a s
+ */
+char *cbmfm_strdup(const char *s)
+{
+    char *t;
+    size_t n;
+
+    n = strlen(s);
+    t = cbmfm_malloc(n + 1);
+    memcpy(t, s, n + 1);    /* also copy nul-character */
+    return t;
+}
+
+

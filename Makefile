@@ -16,11 +16,12 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99 -Wshadow -Wpointer-arith \
 	 -Wredundant-decls -Wnested-externs -Wunreachable-code \
 	 -O3 -g -Isrc -Isrc/lib -Isrc/lib/base -Isrc/gui -Isrc/tests
 
-LIB_SRCS = src/lib/base/io.c src/lib/base/errors.c src/lib/base/mem.c
+LIB_SRCS = src/lib/base/io.c src/lib/base/errors.c src/lib/base/mem.c \
+	   src/lib/base/image.c
 GUI_SRCS = src/gui/main.c
 TEST_SRCS = src/tests/testcase.c src/tests/test-lib-base.c
 
-HEADERS = src/lib.h src/lib/base.h
+HEADERS = src/lib.h src/lib/base.h src/lib/cbmfm_types.h
 
 STATIC_LIB = libcbmfm.a
 
@@ -64,7 +65,7 @@ mem.o: errors.o
 
 .PHONY: clean
 clean:
-	rm -f *.o
+	rm -f *.o src/*.o src/lib/*.o src/lib/base/*.o src/lib/gui/*.og
 	rm -f $(TESTER) $(STATIC_LIB) $(GUI)
 	rm -f *.sid
 	rm -f *.prg

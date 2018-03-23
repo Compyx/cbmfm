@@ -42,10 +42,9 @@
 
 /** \brief  Size of chunks to read in cbmfm_read_file()
  *
- * 64 KB should be enough for most CBM based files obviously things like disk
- * images will use more memory, so perhaps add a function that can set the
- * chunck size?
- *
+ * 64 KB should be enough for most CBM based files, but obviously things like
+ * disk images will use more memory, so perhaps add a function that can set the
+ * initial buffer size
  */
 #define READFILE_BLOCK_SIZE  (1 << 16)
 

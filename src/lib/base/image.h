@@ -1,7 +1,7 @@
-/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
+/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen : */
 
-/** \file   src/lib/base/mem.h
- * \brief   Base library memory allocation handling - header
+/** \file   src/lib/base/image.h
+ * \brief   Base image functions - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,18 +25,32 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_MEM_H
-#define CBMFM_LIB_BASE_MEM_H
+#ifndef CBMFM_LIB_BASE_IMAGE_H
+#define CBMFM_LIB_BASE_IMAGE_H
 
-#include <stdlib.h>
+#include "cbmfm_types.h"
 
-void *  cbmfm_malloc(size_t size);
-void *  cbmfm_calloc(size_t nmemb, size_t size);
-void *  cbmfm_realloc(void *ptr, size_t size);
-void *  cbmfm_realloc_smaller(void *ptr, size_t size);
-void    cbmfm_free(void *ptr);
 
-char *  cbmfm_strdup(const char *s);
-char *  cbmfm_strndup(const char *s, size_t n);
+const char *    cbmfm_image_type_get_ext(cbmfm_image_type_t type);
+const char *    cbmfm_image_type_get_desc(cbmfm_image_type_t type);
 
+/*
+ * Image creation/destruction functions
+ */
+
+void            cbmfm_image_init(cbmfm_image_t *image);
+cbmfm_image_t * cbmfm_image_alloc(void);
+void            cbmfm_image_cleanup(cbmfm_image_t *image);
+void            cbmfm_image_free(cbmfm_image_t *image);
+
+bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path);
+
+/*
+ * Image state functions
+ */
+
+bool            cbmfm_image_is_readonly(const cbmfm_image_t *image);
+bool            cbmfm_image_is_dirty(const cbmfm_image_t *image);
 #endif
+
+
