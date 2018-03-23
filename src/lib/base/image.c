@@ -171,10 +171,14 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path)
     }
     image->size = (size_t)size;
     image->path = cbmfm_strdup(path);
+    cbmfm_image_set_dirty(image, false);
     return true;
 }
 
 
+/*
+ * Image flag handling
+ */
 
 
 /** \brief  Check if \a image is marked read only
@@ -183,9 +187,23 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path)
  *
  * \return  bool
  */
-bool cbmfm_image_is_readonly(const cbmfm_image_t *image)
+bool cbmfm_image_get_readonly(const cbmfm_image_t *image)
 {
     return (bool)(image->flags & CBMFM_IMAGE_FLAGS_READONLY);
+}
+
+
+/** \brief  Set \a readonly flag on \a image
+ *
+ * \param[in,out]   image       image handle
+ * \param[in]       readonly    read only state
+ */
+void cbmfm_image_set_readonly(cbmfm_image_t *image, bool readonly)
+{
+    image->flags &= ~CBMFM_IMAGE_FLAGS_READONLY;
+    if (readonly) {
+        image->flags |= CBMFM_IMAGE_FLAGS_READONLY;
+    }
 }
 
 
@@ -198,7 +216,21 @@ bool cbmfm_image_is_readonly(const cbmfm_image_t *image)
  *
  * \return  bool
  */
-bool cbmfm_image_is_dirty(const cbmfm_image_t *image)
+bool cbmfm_image_get_dirty(const cbmfm_image_t *image)
 {
     return (bool)(image->flags & CBMFM_IMAGE_FLAGS_DIRTY);
+}
+
+
+/** \brief  Set dirty flag on \a image
+ *
+ * \param[in,out]   image   image handle
+ * \param[in]       dirty   image has unsaved changes
+ */
+void cbmfm_image_set_dirty(cbmfm_image_t *image, bool dirty)
+{
+    image->flags &= ~CBMFM_IMAGE_FLAGS_DIRTY;
+    if (dirty) {
+        image->flags |= CBMFM_IMAGE_FLAGS_DIRTY;
+    }
 }

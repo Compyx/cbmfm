@@ -177,7 +177,7 @@ bool test_module_run_tests(const char *mod_name, const char *test_name)
     if (failed == 0) {
         printf("Final result: %d tests, no failures -> 100.00%%\n", total);
     } else {
-        printf("Final result: %d tests, %d failures -> %.2f",
+        printf("Final result: %d tests, %d failures -> %.2f\n",
                 total, failed,
                 (float)(total - failed) / (float)(total));
     }

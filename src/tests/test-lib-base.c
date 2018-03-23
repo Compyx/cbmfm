@@ -29,17 +29,24 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "base.h"
+#include "lib.h"
 
 #include "testcase.h"
 
+
+#define ARK_TPZTOOLS_FILE   "data/images/ark/Tpztools.ark"
+#define ARK_TPZTOOLS_SIZE   40744
+
+
 static bool test_lib_base_io(struct test_case_s *test);
+static bool test_lib_base_image(struct test_case_s *test);
 
 
 /** \brief  List of tests for the base library functions
  */
 static test_case_t tests_lib_base[] = {
     { "io", "I/O handling", test_lib_base_io, 0, 0 },
+    { "image", "Basic image handling", test_lib_base_image, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -64,8 +71,63 @@ test_module_t module_lib_base = {
  */
 static bool test_lib_base_io(struct test_case_s *test)
 {
-    puts("\nTesting lib/io/base\n");
     test->total = 1;
+    printf("..... TODO: actually implement tests here\n");
     return true;
 }
 
+
+static bool test_lib_base_image(struct test_case_s *test)
+{
+    cbmfm_image_t image;
+    bool result;
+
+    test->total = 3;
+
+    cbmfm_image_init(&image);
+    printf("..... calling cbmfm_image_read_data(\"%s\" ... ", ARK_TPZTOOLS_FILE);
+    result = cbmfm_image_read_data(&image, ARK_TPZTOOLS_FILE);
+    if (!result) {
+        /* fatal error*/
+        printf("failed: fatal\n");
+        return false;
+    }
+
+    /* check size */
+    printf("OK\n");
+    printf("..... expected size: %zu, got size %zu ... ",
+            (size_t)ARK_TPZTOOLS_SIZE, (size_t)(image.size));
+    if (image.size != ARK_TPZTOOLS_SIZE) {
+        printf("fail\n");
+        test->failed++;
+    } else {
+        printf("OK\n");
+    }
+
+    /* check readonly */
+    result = cbmfm_image_get_readonly(&image);
+    printf("..... checking readonly flag: expected false, got %s ... ",
+            result ? "true" : "false");
+    if (!result) {
+        printf("OK\n");
+    } else {
+        printf("Failed\n");
+        test->failed++;
+    }
+
+    /* check dirty */
+    result = cbmfm_image_get_dirty(&image);
+    printf("..... checking dirty flags: expected false, got %s ... ",
+            result ? "true" : "false");
+    if (!result) {
+        printf("OK\n");
+    } else {
+        printf("Failed\n");
+        test->failed++;
+    }
+
+
+    printf("... calling cbmfm_image_cleanup()\n");
+    cbmfm_image_cleanup(&image);
+    return true;
+}

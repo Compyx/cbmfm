@@ -43,14 +43,14 @@
  * When set, the image is assumed to be read only and cannot be written back
  * to its original file.
  */
-#define CBMFM_IMAGE_FLAGS_READONLY  0x01
+#define CBMFM_IMAGE_FLAGS_READONLY  0x01U
 
 
 /** \brief  Image flag: dirty bit
  *
  * When set, the image data has been altered since it was opened.
  */
-#define CBMFM_IMAGE_FLAGS_DIRTY     0x02
+#define CBMFM_IMAGE_FLAGS_DIRTY     0x02U
 
 
 /** \brief  Image type enumerators

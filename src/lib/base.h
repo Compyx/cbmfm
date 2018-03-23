@@ -31,5 +31,6 @@
 #include "base/errors.h"
 #include "base/io.h"
 #include "base/mem.h"
+#include "base/image.h"
 
 #endif

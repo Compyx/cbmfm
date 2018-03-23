@@ -39,7 +39,7 @@ $(STATIC_LIB): $(LIB_OBJS)
 	ar cr ${STATIC_LIB} $^
 	ranlib ${STATIC_LIB}
 
-$(TESTER): $(TESTER_OBJS)
+$(TESTER): $(TESTER_OBJS) $(HEADERS) $(STATIC_LIB)
 	$(LD) -o $(TESTER) $^
 
 $(GUI): $(GUI_OBJS) $(STATIC_LIB)

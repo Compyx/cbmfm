@@ -28,7 +28,7 @@
 #ifndef CBMFM_LIB_BASE_IMAGE_H
 #define CBMFM_LIB_BASE_IMAGE_H
 
-#include "cbmfm_types.h"
+#include "../cbmfm_types.h"
 
 
 const char *    cbmfm_image_type_get_ext(cbmfm_image_type_t type);
@@ -49,8 +49,11 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path);
  * Image state functions
  */
 
-bool            cbmfm_image_is_readonly(const cbmfm_image_t *image);
-bool            cbmfm_image_is_dirty(const cbmfm_image_t *image);
+bool            cbmfm_image_get_readonly(const cbmfm_image_t *image);
+void            cbmfm_image_set_readonly(cbmfm_image_t *image, bool readonly);
+bool            cbmfm_image_get_dirty(const cbmfm_image_t *image);
+void            cbmfm_image_set_dirty(cbmfm_image_t *image, bool dirty);
+
 #endif
 
 
