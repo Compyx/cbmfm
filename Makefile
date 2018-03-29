@@ -17,7 +17,7 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99 -Wshadow -Wpointer-arith \
 	 -O3 -g -Isrc -Isrc/lib -Isrc/lib/base -Isrc/gui -Isrc/tests
 
 LIB_SRCS = src/lib/base/io.c src/lib/base/errors.c src/lib/base/mem.c \
-	   src/lib/base/image.c
+	   src/lib/base/image.c src/lib/log.c
 GUI_SRCS = src/gui/main.c
 TEST_SRCS = src/tests/testcase.c src/tests/test-lib-base.c
 
