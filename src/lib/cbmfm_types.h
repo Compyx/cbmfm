@@ -33,9 +33,13 @@
 #include <stdbool.h>
 
 
+#define CBMFM_SECTOR_SIZE_RAW       0x100
+#define CBMFM_SECTOR_SIZE_DATA      0xfe
+
+
 /** \brief  Length of a CBMDOS filename
  */
-#define CBMFM_CBMDOS_FILENAME_LEN   16
+#define CBMFM_CBMDOS_FILENAME_LEN   0x10
 
 
 /** \brief  Image flag: read-only bit
@@ -73,12 +77,13 @@ typedef enum {
 
 
 
-/** \brief  track,sector link
+/** \brief  Block object
  */
-typedef struct cbmfm_link_s {
-    int track;  /**< track number */
-    int sector; /**< sector number */
-} cbmfm_link_t;
+typedef struct cbmfm_block_s {
+    int         track;  /**< track number */
+    int         sector; /**< sector number */
+    uint8_t *   data;   /**< block data (optional) */
+} cbmfm_block_t;
 
 
 typedef struct cbmfm_dirent_s {
@@ -87,8 +92,13 @@ typedef struct cbmfm_dirent_s {
     size_t      filesize;   /**< raw file size (optonal) */
     uint8_t     filetype;   /**< CBMDOS file type and flags */
 
-} cbmfm_dirent_t;
+    cbmfm_block_t first_block;      /**< first block */
 
+    uint16_t    size_blocks;     /**< file size in blocks */
+
+
+
+} cbmfm_dirent_t;
 
 
 typedef struct cbmfm_image_s {
@@ -98,6 +108,7 @@ typedef struct cbmfm_image_s {
     cbmfm_image_type_t type;    /**< image type */
     uint32_t    flags;  /**< image flags */
 } cbmfm_image_t;
+
 
 
 

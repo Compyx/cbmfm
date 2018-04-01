@@ -4,7 +4,7 @@
 #
 #
 
-VPATH = src:src/lib:src/lib/base:src/gui:src/tests
+VPATH = src:src/lib:src/lib/base:src/lib/image:src/gui:src/tests
 CC = gcc
 LD = gcc
 
@@ -14,25 +14,28 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99 -Wshadow -Wpointer-arith \
 	 -Wcast-qual -Wcast-align -Wstrict-prototypes -Wmissing-prototypes \
 	 -Wswitch -Wswitch-default -Wuninitialized -Wconversion \
 	 -Wredundant-decls -Wnested-externs -Wunreachable-code \
-	 -O3 -g -Isrc -Isrc/lib -Isrc/lib/base -Isrc/gui -Isrc/tests
+	 -O3 -g -Isrc -Isrc/lib -Isrc/lib/base -Isrc/lib/iamge -Isrc/gui \
+	 -Isrc/tests
 
 LIB_SRCS = src/lib/base/io.c src/lib/base/errors.c src/lib/base/mem.c \
-	   src/lib/base/image.c src/lib/log.c
+	   src/lib/base/image.c src/lib/log.c src/lib/image/ark.c \
+	   src/lib/base/dir.c
 GUI_SRCS = src/gui/main.c
-TEST_SRCS = src/tests/testcase.c src/tests/test-lib-base.c
+TEST_SRCS = src/tests/testcase.c src/tests/test-lib-base.c \
+	    src/tests/test-lib-image-ark.c
 
 HEADERS = src/lib.h src/lib/base.h src/lib/cbmfm_types.h
 
 STATIC_LIB = libcbmfm.a
 
 TESTER = test-runner
-TESTER_OBJS = test-runner.o testcase.o test-lib-base.o
+TESTER_OBJS = test-runner.o testcase.o test-lib-base.o test-lib-image-ark.o
 GUI = cbmfm
 
 LIB_OBJS = $(LIB_SRCS:.c=.o)
 GUI_OBJS = $(GUI_SRCS:.c=.og)
 
-all: test-runner $(STATIC_LIB) $(GUI)
+all: test-runner $(STATIC_LIB) $(GUI) $(TESTER)
 
 
 $(STATIC_LIB): $(LIB_OBJS)

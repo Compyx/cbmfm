@@ -37,6 +37,7 @@
  * Test modules
  */
 #include "test-lib-base.h"
+#include "test-lib-image-ark.h"
 
 
 /** \brief  Print usage/help message on stdout
@@ -57,6 +58,7 @@ static void usage(void)
 static void register_modules(void)
 {
     test_module_register(&module_lib_base);
+    test_module_register(&module_lib_image_ark);
 }
 
 
