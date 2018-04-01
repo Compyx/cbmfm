@@ -41,4 +41,10 @@ void            cbmfm_dirent_init(cbmfm_dirent_t *dirent);
 void            cbmfm_dirent_cleanup(cbmfm_dirent_t *dirent);
 void            cbmfm_dirent_free(cbmfm_dirent_t *dirent);
 
+cbmfm_dir_t *   cbmfm_dir_alloc(void);
+void            cbmfm_dir_init(cbmfm_dir_t *dir);
+cbmfm_dir_t *   cbmfm_dir_new(void);
+void            cbmfm_dir_cleanup(cbmfm_dir_t *dir);
+void            cbmfm_dir_free(cbmfm_dir_t *dir);
+
 #endif

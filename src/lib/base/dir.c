@@ -37,6 +37,11 @@
 #include "dir.h"
 
 
+/** \brief  Initial size of array of dirent pointers
+ */
+#define DIR_ENTRY_COUNT_INIT    512
+
+
 void cbmfm_block_init(cbmfm_block_t *block)
 {
     block->track = -1;
@@ -46,12 +51,23 @@ void cbmfm_block_init(cbmfm_block_t *block)
 
 
 
+/** \brief  Allocate a dirent object
+ *
+ * \return  dirent object
+ */
 cbmfm_dirent_t *cbmfm_dirent_alloc(void)
 {
     return cbmfm_malloc(sizeof(cbmfm_dirent_t));
 }
 
 
+/** \brief  Initialize \a dirent to usable state
+ *
+ * Sets all members of \a dirent to 0/NULL, zero out CBMDOS filename
+ *
+ *
+ * \param[in,out]   dirent  dirent object
+ */
 void cbmfm_dirent_init(cbmfm_dirent_t *dirent)
 {
     memset(dirent->filename, 0, CBMFM_CBMDOS_FILENAME_LEN);
@@ -62,6 +78,13 @@ void cbmfm_dirent_init(cbmfm_dirent_t *dirent)
     dirent->size_blocks = 0;
 }
 
+
+/** \brief  Clean up data used by members of \a dirent
+ *
+ * Cleans up \a dirent and resets it for reuse
+ *
+ * \param[in,out]   dirent
+ */
 void cbmfm_dirent_cleanup(cbmfm_dirent_t *dirent)
 {
     if (dirent->filedata != NULL) {
@@ -71,9 +94,60 @@ void cbmfm_dirent_cleanup(cbmfm_dirent_t *dirent)
 }
 
 
+/** \brief  Free \a dirent and its members
+ *
+ * \param[in,out]   dirent
+ */
 void cbmfm_dirent_free(cbmfm_dirent_t *dirent)
 {
     cbmfm_dirent_cleanup(dirent);
     cbmfm_free(dirent);
 }
 
+
+/*
+ * cbmfm_dir_t methods
+ */
+
+/** \brief  Initialize \a dir to a usable state
+ *
+ * Allocates an array of #DIR_ENTRY_COUNT #cbmfm_dirent_t pointers
+ */
+void cbmfm_dir_init(cbmfm_dir_t *dir)
+{
+    dir->entries = cbmfm_malloc(DIR_ENTRY_COUNT_INIT * sizeof *(dir->entries));
+    dir->entry_max = DIR_ENTRY_COUNT_INIT;
+    dir->entry_used = 0;
+}
+
+
+cbmfm_dir_t *cbmfm_dir_alloc(void)
+{
+    return cbmfm_malloc(sizeof(cbmfm_dir_t));
+}
+
+
+cbmfm_dir_t *cbmfm_dir_new(void)
+{
+    cbmfm_dir_t *dir = cbmfm_dir_alloc();
+    cbmfm_dir_init(dir);
+    return dir;
+}
+
+
+void cbmfm_dir_cleanup(cbmfm_dir_t *dir)
+{
+    size_t i;
+
+    for (i = 0; i < dir->entry_used; i++) {
+        cbmfm_dirent_free(dir->entries[i]);
+    }
+    cbmfm_free(dir->entries);
+}
+
+
+void cbmfm_dir_free(cbmfm_dir_t *dir)
+{
+    cbmfm_dir_cleanup(dir);
+    cbmfm_free(dir);
+}

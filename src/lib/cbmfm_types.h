@@ -101,6 +101,13 @@ typedef struct cbmfm_dirent_s {
 } cbmfm_dirent_t;
 
 
+typedef struct cbmfm_dir_s {
+    cbmfm_dirent_t **entries;
+    size_t entry_max;
+    size_t entry_used;
+} cbmfm_dir_t;
+
+
 typedef struct cbmfm_image_s {
     uint8_t *   data;   /**< raw image data */
     size_t      size;   /**< size of raw image data */
