@@ -46,7 +46,7 @@
  */
 #define CBMFM_ARK_DIRENT_FILETYPE       0x00
 
-/** \brief  Number of bytes used in the final sector (BYTE)
+/** \brief  Number of bytes used - 1 in the final sector (BYTE)
  */
 #define CBMFM_ARK_DIRENT_LAST_SEC_USED  0x01
 
@@ -83,5 +83,7 @@ void cbmfm_ark_cleanup(cbmfm_image_t *image);
 
 void cbmfm_ark_dump_stats(const cbmfm_image_t *image);
 
+
+cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image);
 
 #endif

@@ -31,6 +31,7 @@
 
 #include "lib.h"
 #include "image/ark.h"
+#include "base/dir.h"
 
 #include "testcase.h"
 
@@ -71,6 +72,7 @@ test_module_t module_lib_image_ark = {
 static bool test_lib_image_ark_open(struct test_case_s *test)
 {
     cbmfm_image_t image;
+    cbmfm_dir_t *dir;
     bool result;
 
     test->total = 3;
@@ -120,6 +122,15 @@ static bool test_lib_image_ark_open(struct test_case_s *test)
 
     printf("..... dumping stat via cbmfm_ark_dump_stats():\n");
     cbmfm_ark_dump_stats(&image);
+
+    printf("..... dumping directory:\n");
+    dir = cbmfm_ark_read_dir(&image);
+    if (dir == NULL) {
+        fprintf(stderr, "failed!\n");
+        return false;
+    }
+    cbmfm_dir_dump(dir);
+    cbmfm_dir_free(dir);
 
 
     printf("... calling cbmfm_ark_cleanup()\n");

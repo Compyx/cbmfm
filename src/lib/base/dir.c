@@ -42,6 +42,11 @@
 #define DIR_ENTRY_COUNT_INIT    512
 
 
+static const char *filetype_str[] = {
+    "del", "seq", "prg", "usr", "rel", "???", "???", "???"
+};
+
+
 void cbmfm_block_init(cbmfm_block_t *block)
 {
     block->track = -1;
@@ -79,6 +84,45 @@ void cbmfm_dirent_init(cbmfm_dirent_t *dirent)
 }
 
 
+/** \brief  Allocate and initialize a dirent object
+ *
+ * \return  dirent object
+ */
+cbmfm_dirent_t *cbmfm_dirent_new(void)
+{
+    cbmfm_dirent_t *dirent = cbmfm_dirent_alloc();
+    cbmfm_dirent_init(dirent);
+    return dirent;
+}
+
+
+/** \brief  Create a deep copy of \a dirent
+ *
+ * \param[in]   dirent  dirent object
+ *
+ * \return  deep copy of \a dirent
+ */
+cbmfm_dirent_t *cbmfm_dirent_dup(const cbmfm_dirent_t *dirent)
+{
+    cbmfm_dirent_t *dupl = cbmfm_dirent_new();
+
+    /* copy file name */
+    memcpy(dupl->filename, dirent->filename, CBMFM_CBMDOS_FILENAME_LEN);
+    if (dirent->filedata != NULL) {
+        /* copy file data */
+        memcpy(dupl->filedata, dirent->filedata, dirent->filesize);
+    } else {
+        dupl->filedata = NULL;
+    }
+    dupl->filesize = dirent->filesize;
+    dupl->filetype = dirent->filetype;
+    dupl->first_block = dirent->first_block;
+    dupl->size_blocks = dirent->size_blocks;
+
+    return dupl;
+}
+
+
 /** \brief  Clean up data used by members of \a dirent
  *
  * Cleans up \a dirent and resets it for reuse
@@ -105,6 +149,20 @@ void cbmfm_dirent_free(cbmfm_dirent_t *dirent)
 }
 
 
+int cbmfm_dirent_dump(const cbmfm_dirent_t *dirent)
+{
+    char name[CBMFM_CBMDOS_FILENAME_LEN + 1];
+
+    memcpy(name, dirent->filename, CBMFM_CBMDOS_FILENAME_LEN);
+    name[CBMFM_CBMDOS_FILENAME_LEN] = '\0';
+
+    return printf("%-5u \"%s\" %c%s%c\n",
+            dirent->size_blocks, name,
+            dirent->filetype & 0x80 ? ' ' : '*',
+            filetype_str[dirent->filetype & 0x07],
+            dirent->filetype & 0x40 ? '<' : ' ');
+}
+
 /*
  * cbmfm_dir_t methods
  */
@@ -121,12 +179,20 @@ void cbmfm_dir_init(cbmfm_dir_t *dir)
 }
 
 
+/** \brief  Allocate a dir object
+ *
+ * \return  dir object
+ */
 cbmfm_dir_t *cbmfm_dir_alloc(void)
 {
     return cbmfm_malloc(sizeof(cbmfm_dir_t));
 }
 
 
+/** \brief  Allocate and initialize a new dir object
+ *
+ * \return  dir object
+ */
 cbmfm_dir_t *cbmfm_dir_new(void)
 {
     cbmfm_dir_t *dir = cbmfm_dir_alloc();
@@ -135,6 +201,10 @@ cbmfm_dir_t *cbmfm_dir_new(void)
 }
 
 
+/** \brief  Clean members of \a dir but not \a dir itself
+ *
+ * \param[in,out]   dir dir object
+ */
 void cbmfm_dir_cleanup(cbmfm_dir_t *dir)
 {
     size_t i;
@@ -146,8 +216,44 @@ void cbmfm_dir_cleanup(cbmfm_dir_t *dir)
 }
 
 
+/** \brief  Free \a dir and its members
+ *
+ * \param[in,out]   dir dir object
+ */
 void cbmfm_dir_free(cbmfm_dir_t *dir)
 {
     cbmfm_dir_cleanup(dir);
     cbmfm_free(dir);
 }
+
+
+/** \brief  Append a deep copy of \a dirent to \a dir
+ *
+ * Creates a deep copy of \a dirent and appends it to \a dir.
+ *
+ * \param[in,out]   dir     dir object
+ * \param[in]       dirent  dirent object
+ */
+void cbmfm_dir_append_dirent(cbmfm_dir_t *dir, const cbmfm_dirent_t *dirent)
+{
+    /* resize array? */
+    if (dir->entry_max == dir->entry_used) {
+        dir->entries = cbmfm_realloc(dir->entries,
+                dir->entry_max * 2 * sizeof *(dir->entries));
+        dir->entry_max *= 2;
+    }
+
+    dir->entries[dir->entry_used++] = cbmfm_dirent_dup(dirent);
+}
+
+
+void cbmfm_dir_dump(const cbmfm_dir_t *dir)
+{
+    size_t index;
+
+    for (index = 0; index < dir->entry_used; index++) {
+        cbmfm_dirent_dump(dir->entries[index]);
+    }
+}
+
+

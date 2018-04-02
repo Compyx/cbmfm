@@ -38,13 +38,20 @@ void cbmfm_block_init(cbmfm_block_t *block);
 
 cbmfm_dirent_t *cbmfm_dirent_alloc(void);
 void            cbmfm_dirent_init(cbmfm_dirent_t *dirent);
+cbmfm_dirent_t *cbmfm_dirent_new(void);
+cbmfm_dirent_t *cbmfm_dirent_dup(const cbmfm_dirent_t *dirent);
 void            cbmfm_dirent_cleanup(cbmfm_dirent_t *dirent);
 void            cbmfm_dirent_free(cbmfm_dirent_t *dirent);
+int             cbmfm_dirent_dump(const cbmfm_dirent_t *dirent);
+
 
 cbmfm_dir_t *   cbmfm_dir_alloc(void);
 void            cbmfm_dir_init(cbmfm_dir_t *dir);
 cbmfm_dir_t *   cbmfm_dir_new(void);
 void            cbmfm_dir_cleanup(cbmfm_dir_t *dir);
 void            cbmfm_dir_free(cbmfm_dir_t *dir);
+void            cbmfm_dir_append_dirent(cbmfm_dir_t *dir,
+                                        const cbmfm_dirent_t *dirent);
 
+void            cbmfm_dir_dump(const cbmfm_dir_t *dir);
 #endif

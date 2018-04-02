@@ -89,7 +89,7 @@ typedef struct cbmfm_block_s {
 typedef struct cbmfm_dirent_s {
     uint8_t     filename[CBMFM_CBMDOS_FILENAME_LEN];    /**< CBMDOS filename */
     uint8_t *   filedata;   /**< raw file data (optional) */
-    size_t      filesize;   /**< raw file size (optonal) */
+    size_t      filesize;   /**< raw file size (optional) */
     uint8_t     filetype;   /**< CBMDOS file type and flags */
 
     cbmfm_block_t first_block;      /**< first block */
