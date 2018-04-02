@@ -110,7 +110,7 @@ cbmfm_dirent_t *cbmfm_dirent_dup(const cbmfm_dirent_t *dirent)
     memcpy(dupl->filename, dirent->filename, CBMFM_CBMDOS_FILENAME_LEN);
     if (dirent->filedata != NULL) {
         /* copy file data */
-        memcpy(dupl->filedata, dirent->filedata, dirent->filesize);
+        dupl->filedata = cbmfm_memdup(dirent->filedata, dirent->filesize);
     } else {
         dupl->filedata = NULL;
     }

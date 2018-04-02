@@ -38,5 +38,6 @@ void    cbmfm_free(void *ptr);
 
 char *  cbmfm_strdup(const char *s);
 char *  cbmfm_strndup(const char *s, size_t n);
+void *  cbmfm_memdup(const void *data, size_t size);
 
 #endif

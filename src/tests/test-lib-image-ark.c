@@ -124,7 +124,7 @@ static bool test_lib_image_ark_open(struct test_case_s *test)
     cbmfm_ark_dump_stats(&image);
 
     printf("..... dumping directory:\n");
-    dir = cbmfm_ark_read_dir(&image);
+    dir = cbmfm_ark_read_dir(&image, true);
     if (dir == NULL) {
         fprintf(stderr, "failed!\n");
         return false;

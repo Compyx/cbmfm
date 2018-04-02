@@ -156,7 +156,7 @@ static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
         return NULL;
     }
 
-    while (ent_idx < ent_cnt) {
+    while (ent_idx < index) {
         size_t blocks;
         uint8_t *entry;
 
@@ -164,7 +164,9 @@ static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
         blocks = (size_t)(entry[CBMFM_ARK_DIRENT_FILESIZE]
                 + entry[CBMFM_ARK_DIRENT_FILESIZE + 1]);
 
-        data += blocks * CBMFM_SECTOR_SIZE_DATA;
+        data += (blocks * CBMFM_SECTOR_SIZE_DATA);
+
+        ent_idx++;
     }
     return data;
 }
@@ -219,16 +221,27 @@ static bool ark_parse_dirent(
  *
  * \todo    add support for reading each file's data into its dirent
  */
-cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image)
+cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
 {
     cbmfm_dir_t *dir;
     cbmfm_dirent_t dirent;
     int index = 0;
 
     dir = cbmfm_dir_new();
+
     for (index = 0; index < ark_dirent_count(image); index++) {
         ark_parse_dirent(image, &dirent, index);
+        /* read file data into dirent */
+        if (read_file_data) {
+            uint8_t *data = ark_file_data_ptr(image, index);
+            printf("file data offset = %ld\n", (long)(data - image->data));
+            printf("file data size = %zu\n", dirent.filesize);
+            if (data != NULL) {
+                dirent.filedata = cbmfm_memdup(data, dirent.filesize);
+            }
+        }
         cbmfm_dir_append_dirent(dir, &dirent);
+        cbmfm_dirent_cleanup(&dirent);
     }
     return dir;
 }

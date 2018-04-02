@@ -129,6 +129,9 @@ void *cbmfm_realloc(void *ptr, size_t size)
  *          to the resized memory is returned.
  *
  * \return  pointer to reallocated memory
+ *
+ * \fixme   There currently is no way to detect if reducing \a ptr to \a size
+ *          works. So, best not use this function in its current state.
  */
 
 void *cbmfm_realloc_smaller(void *ptr, size_t size)
@@ -197,3 +200,16 @@ char *cbmfm_strdup(const char *s)
 }
 
 
+/** \brief  Create heap-allocated copy of \a size bytes of \a data
+ *
+ * \param[in]   data    data to copy
+ * \param[in]   size    number of bytes to copy of \a data
+ *
+ * \return  copy of \a size bytes of \a data
+ */
+void *cbmfm_memdup(const void *data, size_t size)
+{
+    void *dest = cbmfm_malloc(size);
+    memcpy(dest, data, size);
+    return dest;
+}

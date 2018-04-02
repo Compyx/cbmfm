@@ -118,9 +118,13 @@ intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
         if (result < READFILE_BLOCK_SIZE) {
             if (feof(fd)) {
                 /* OK: EOF */
-                /* try to realloc to minimum size required */
-                data = cbmfm_realloc_smaller(data, offset + result);
+                /* TODO: try to realloc to minimum size required */
+#if 0
+                size_t new_size;
+                data = cbmfm_realloc_smaller(data, offset + result, &new_size);
+#endif
                 *dest = data;
+
                 fclose(fd);
                 return (long)(offset + result);
             } else {

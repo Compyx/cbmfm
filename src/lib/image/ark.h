@@ -84,6 +84,6 @@ void cbmfm_ark_cleanup(cbmfm_image_t *image);
 void cbmfm_ark_dump_stats(const cbmfm_image_t *image);
 
 
-cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image);
+cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data);
 
 #endif
