@@ -15,11 +15,11 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99 -Wshadow -Wpointer-arith \
 	 -Wswitch -Wswitch-default -Wuninitialized -Wconversion \
 	 -Wredundant-decls -Wnested-externs -Wunreachable-code \
 	 -O3 -g -Isrc -Isrc/lib -Isrc/lib/base -Isrc/lib/iamge -Isrc/gui \
-	 -Isrc/tests
+	 -Isrc/tests -DCBMFM_HOST_UNIX
 
 LIB_SRCS = src/lib/base/io.c src/lib/base/errors.c src/lib/base/mem.c \
 	   src/lib/base/image.c src/lib/log.c src/lib/image/ark.c \
-	   src/lib/base/dir.c
+	   src/lib/base/dir.c src/lib/base/petasc.c
 GUI_SRCS = src/gui/main.c
 TEST_SRCS = src/tests/testcase.c src/tests/test-lib-base.c \
 	    src/tests/test-lib-image-ark.c

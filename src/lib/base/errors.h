@@ -34,14 +34,15 @@ extern int cbmfm_errno;
 /** \brief  Error codes
  */
 typedef enum cbmfm_err_e {
-    CBMFM_ERR_OK = 0,            /**< no error */
-    CBMFM_ERR_OOM,               /**< out of memory error */
-    CBMFM_ERR_IO,                /**< I/O error */
-    CBMFM_ERR_FILE_TOO_LARGE,    /**< file too large (> 2GB) */
-    CBMFM_ERR_NOT_FOUND,         /**< entry/tune not found */
-    CBMFM_ERR_INVALID,           /**< invalid data or operation detected */
+    CBMFM_ERR_OK = 0,           /**< no error */
+    CBMFM_ERR_OOM,              /**< out of memory error */
+    CBMFM_ERR_IO,               /**< I/O error */
+    CBMFM_ERR_FILE_TOO_LARGE,   /**< file too large (> 2GB) */
+    CBMFM_ERR_NOT_FOUND,        /**< entry/tune not found */
+    CBMFM_ERR_INVALID,          /**< invalid data or operation detected */
+    CBMFM_ERR_INDEX,            /**< index error */
 
-    CBMFM_ERR_CODE_COUNT         /**< number of error messages */
+    CBMFM_ERR_CODE_COUNT        /**< number of error messages */
 
 } cbmfm_err_t;
 

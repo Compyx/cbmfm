@@ -127,10 +127,13 @@ static int ark_dirent_count(const cbmfm_image_t *image)
  * \param[in]   index   index in 'directory' of \a image
  *
  * \return  pointer to dirent data or `NULL` on index error
+ *
+ * \throw   #CBMFM_ERR_INDEX
  */
 static uint8_t *ark_dirent_ptr(cbmfm_image_t *image, int index)
 {
     if (index < 0 || index >= ark_dirent_count(image)) {
+        cbmfm_errno = CBMFM_ERR_INDEX;
         return NULL;
     }
 
@@ -144,6 +147,8 @@ static uint8_t *ark_dirent_ptr(cbmfm_image_t *image, int index)
  * \param[in]   index   file index in the 'directory' of \a image
  *
  * \return  pointer to file data or `NULL` on index error
+ *
+ * \throw   #CBMFM_ERR_INDEX
  */
 static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
 {
@@ -153,6 +158,7 @@ static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
 
 
     if (index < 0 || index >= ent_cnt) {
+        cbmfm_errno = CBMFM_ERR_INDEX;
         return NULL;
     }
 
@@ -179,6 +185,8 @@ static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
  * \param[in]       index   index in the 'directory' of \a image
  *
  * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INDEX
  */
 static bool ark_parse_dirent(
         cbmfm_image_t *image,
@@ -188,7 +196,7 @@ static bool ark_parse_dirent(
     size_t blocks;
     uint8_t *data = ark_dirent_ptr(image, index);
 
-    /* index error */
+    /* index error, already set */
     if (data == NULL) {
         return false;
     }
@@ -234,8 +242,10 @@ cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
         /* read file data into dirent */
         if (read_file_data) {
             uint8_t *data = ark_file_data_ptr(image, index);
+#if 0
             printf("file data offset = %ld\n", (long)(data - image->data));
             printf("file data size = %zu\n", dirent.filesize);
+#endif
             if (data != NULL) {
                 dirent.filedata = cbmfm_memdup(data, dirent.filesize);
             }
@@ -245,6 +255,4 @@ cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
     }
     return dir;
 }
-
-
 

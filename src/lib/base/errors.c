@@ -49,6 +49,7 @@ static const char *cbmfm_err_messages[CBMFM_ERR_CODE_COUNT] = {
     "file too large error",
     "object not found",
     "invalid data or operation",
+    "index error"
 };
 
 

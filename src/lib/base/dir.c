@@ -149,18 +149,23 @@ void cbmfm_dirent_free(cbmfm_dirent_t *dirent)
 }
 
 
+/** \brief  Dump \a dirent on stdout as a directory listing line
+ *
+ * \param[in]   dirent  dirent object
+ *
+ * \return  number of chars dumped on stdout
+ */
 int cbmfm_dirent_dump(const cbmfm_dirent_t *dirent)
 {
     char name[CBMFM_CBMDOS_FILENAME_LEN + 1];
 
-    memcpy(name, dirent->filename, CBMFM_CBMDOS_FILENAME_LEN);
-    name[CBMFM_CBMDOS_FILENAME_LEN] = '\0';
+    cbmfm_pet_to_asc_str(name, dirent->filename, CBMFM_CBMDOS_FILENAME_LEN);
 
     return printf("%-5u \"%s\" %c%s%c\n",
             dirent->size_blocks, name,
-            dirent->filetype & 0x80 ? ' ' : '*',
+            dirent->filetype & CBMFM_CBMDOS_FILE_CLOSED_BIT ? ' ' : '*',
             filetype_str[dirent->filetype & 0x07],
-            dirent->filetype & 0x40 ? '<' : ' ');
+            dirent->filetype & CBMFM_CBMDOS_FILE_LOCKED_BIT ? '<' : ' ');
 }
 
 /*

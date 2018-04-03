@@ -33,13 +33,31 @@
 #include <stdbool.h>
 
 
+/** \brief  Size of a raw sector
+ *
+ * Size of a sector/block, including the (track,sector) pointer
+ */
 #define CBMFM_SECTOR_SIZE_RAW       0x100
+
+/** \brief  Size of the data section of a sector
+ *
+ * Size of a sector/block without the (track,sector) pointer
+ */
 #define CBMFM_SECTOR_SIZE_DATA      0xfe
 
 
 /** \brief  Length of a CBMDOS filename
  */
 #define CBMFM_CBMDOS_FILENAME_LEN   0x10
+
+
+/** \brief  Bitmask for the "closed" bit in a CBMDOS filetype byte
+ */
+#define CBMFM_CBMDOS_FILE_CLOSED_BIT    0x80U
+
+/** \brief  Bitmask for the "locked" bit in a CBMDOS filetype byte
+ */
+#define CBMFM_CBMDOS_FILE_LOCKED_BIT    0x40U
 
 
 /** \brief  Image flag: read-only bit

@@ -1,9 +1,8 @@
-/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
+/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen : */
 
-/** \file   src/lib/base.h
- * \brief   Base library functions and types
+/** \file   petasc.h
+ * \brief   PETSCII to ASCII conversion and vice versa - header
  *
- * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
 
 /*
@@ -25,13 +24,20 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_H
-#define CBMFM_LIB_BASE_H
+#ifndef CBFMFM_LIB_BASE_PETASC_H
+#define CBFMFM_LIB_BASE_PETASC_H
 
-#include "base/errors.h"
-#include "base/io.h"
-#include "base/mem.h"
-#include "base/image.h"
-#include "base/petasc.h"
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+
+uint8_t cbmfm_pet_to_asc(uint8_t pet);
+uint8_t cbmfm_asc_to_pet(uint8_t asc);
+bool cbmfm_is_host_allowed_char(int ch);
+void cbmfm_pet_to_asc_str(char *asc, const uint8_t *pet, size_t n);
+void cbmfm_pet_filename_to_host(char *asc, const uint8_t *pet, const char *ext);
+int cbmfm_write_petscii_digits(uint8_t *pet, int value, size_t len);
+char *cbmfm_basename(char *path);
 
 #endif
