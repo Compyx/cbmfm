@@ -104,6 +104,10 @@ typedef struct cbmfm_block_s {
 } cbmfm_block_t;
 
 
+/** \brief  Directory entry object
+ *
+ * Contains information on a directory entry.
+ */
 typedef struct cbmfm_dirent_s {
     uint8_t     filename[CBMFM_CBMDOS_FILENAME_LEN];    /**< CBMDOS filename */
     uint8_t *   filedata;   /**< raw file data (optional) */
@@ -111,21 +115,30 @@ typedef struct cbmfm_dirent_s {
     uint8_t     filetype;   /**< CBMDOS file type and flags */
 
     cbmfm_block_t first_block;      /**< first block */
+    uint16_t    size_blocks;        /**< file size in blocks */
 
-    uint16_t    size_blocks;     /**< file size in blocks */
-
+    struct cbmfm_dir_s *dir;        /**< parent directory reference */
+    struct cbmfm_image_s *image;    /**< parent image reference */
 
 
 } cbmfm_dirent_t;
 
 
+/** \brief  Directory object
+ *
+ */
 typedef struct cbmfm_dir_s {
-    cbmfm_dirent_t **entries;
-    size_t entry_max;
-    size_t entry_used;
+    cbmfm_dirent_t **entries;       /**< array of dirent pointers */
+    size_t entry_max;               /**< size of entries array */
+    size_t entry_used;              /**< number of used entries */
+
+    struct cbmfm_image_s *image;    /**< parent image reference */
+
 } cbmfm_dir_t;
 
 
+/** \brief  Image object
+ */
 typedef struct cbmfm_image_s {
     uint8_t *   data;   /**< raw image data */
     size_t      size;   /**< size of raw image data */

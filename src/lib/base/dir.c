@@ -81,6 +81,9 @@ void cbmfm_dirent_init(cbmfm_dirent_t *dirent)
     dirent->filetype = 0;
     cbmfm_block_init(&(dirent->first_block));
     dirent->size_blocks = 0;
+
+    dirent->dir = NULL;
+    dirent->image = NULL;
 }
 
 
@@ -119,6 +122,9 @@ cbmfm_dirent_t *cbmfm_dirent_dup(const cbmfm_dirent_t *dirent)
     dupl->first_block = dirent->first_block;
     dupl->size_blocks = dirent->size_blocks;
 
+    dupl->dir = dirent->dir;
+    dupl->image = dirent->image;
+
     return dupl;
 }
 
@@ -134,6 +140,9 @@ void cbmfm_dirent_cleanup(cbmfm_dirent_t *dirent)
     if (dirent->filedata != NULL) {
         cbmfm_free(dirent->filedata);
     }
+
+    /* the dir and image members are references, we don't free those */
+
     cbmfm_dirent_init(dirent);
 }
 
@@ -181,6 +190,7 @@ void cbmfm_dir_init(cbmfm_dir_t *dir)
     dir->entries = cbmfm_malloc(DIR_ENTRY_COUNT_INIT * sizeof *(dir->entries));
     dir->entry_max = DIR_ENTRY_COUNT_INIT;
     dir->entry_used = 0;
+    dir->image = NULL;
 }
 
 
@@ -241,6 +251,8 @@ void cbmfm_dir_free(cbmfm_dir_t *dir)
  */
 void cbmfm_dir_append_dirent(cbmfm_dir_t *dir, const cbmfm_dirent_t *dirent)
 {
+    cbmfm_dirent_t *dupl;
+
     /* resize array? */
     if (dir->entry_max == dir->entry_used) {
         dir->entries = cbmfm_realloc(dir->entries,
@@ -248,10 +260,20 @@ void cbmfm_dir_append_dirent(cbmfm_dir_t *dir, const cbmfm_dirent_t *dirent)
         dir->entry_max *= 2;
     }
 
-    dir->entries[dir->entry_used++] = cbmfm_dirent_dup(dirent);
+    /* duplicate dirent */
+    dupl = cbmfm_dirent_dup(dirent);
+    /* store reference to parent dir */
+    dupl->dir = dir;
+
+    /* add to listing */
+    dir->entries[dir->entry_used++] = dupl;
 }
 
 
+/** \brief  Dump \a dir on stdout like a 1541 directory listing
+ *
+ * \param[in]   dir     directory object
+ */
 void cbmfm_dir_dump(const cbmfm_dir_t *dir)
 {
     size_t index;
@@ -260,5 +282,3 @@ void cbmfm_dir_dump(const cbmfm_dir_t *dir)
         cbmfm_dirent_dump(dir->entries[index]);
     }
 }
-
-

@@ -38,7 +38,7 @@ GUI_OBJS = $(GUI_SRCS:.c=.og)
 all: test-runner $(STATIC_LIB) $(GUI) $(TESTER)
 
 
-$(STATIC_LIB): $(LIB_OBJS)
+$(STATIC_LIB): $(LIB_OBJS) $(HEADERS)
 	ar cr ${STATIC_LIB} $^
 	ranlib ${STATIC_LIB}
 

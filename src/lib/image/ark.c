@@ -217,6 +217,9 @@ static bool ark_parse_dirent(
 
     /* set CBMDOS file type */
     dirent->filetype = data[CBMFM_ARK_DIRENT_FILETYPE];
+
+    /* store reference to parent image */
+    dirent->image = image;
     return true;
 }
 
@@ -253,6 +256,8 @@ cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
         cbmfm_dir_append_dirent(dir, &dirent);
         cbmfm_dirent_cleanup(&dirent);
     }
+
+    /* store reference to parent image */
+    dir->image = image;
     return dir;
 }
-
