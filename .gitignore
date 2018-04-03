@@ -1,9 +1,22 @@
+# compiler/edit files
 *.[ao]
 *.og
 *.so
 *.swp
 .exrc
 *~
+
+# output files from the lib
+*.del
+*.seq
+*.prg
+*.usr
+*.rel
+*.d64
+*.d71
+*.d80
+*.d81
+*.d82
 
 # test runner
 test-runner

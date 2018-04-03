@@ -42,6 +42,7 @@
 
 static bool test_lib_image_ark_open(test_case_t *test);
 static bool test_lib_image_ark_dir(test_case_t *test);
+static bool test_lib_image_ark_file(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
@@ -51,6 +52,8 @@ static test_case_t tests_lib_image_ark[] = {
         test_lib_image_ark_open, 0, 0 },
     { "dir", "Directory handling of Ark archives",
         test_lib_image_ark_dir, 0, 0 },
+    { "file", "File handling of Ark archives",
+        test_lib_image_ark_file, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -166,10 +169,72 @@ static bool test_lib_image_ark_dir(struct test_case_s *test)
     if (dir == NULL) {
         fprintf(stderr, "failed!\n");
         test->failed++;
+    } else {
+        cbmfm_dir_dump(dir);
+        cbmfm_dir_free(dir);
+    }
+
+    printf("..... calling cbmfm_ark_cleanup()\n");
+    cbmfm_image_cleanup(&image);
+    return true;
+}
+
+
+/** \brief  Test file handling of Ark archives
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_ark_file(struct test_case_s *test)
+{
+    cbmfm_image_t image;
+    cbmfm_dir_t *dir;
+    bool result;
+
+    test->total = 2;
+
+    cbmfm_image_init(&image);
+
+    printf("..... calling cbmfm_ark_open(\"%s\" ... ", ARK_TPZTOOLS_FILE);
+    result = cbmfm_ark_open(&image, ARK_TPZTOOLS_FILE);
+    if (!result) {
+        /* fatal error*/
+        printf("failed: fatal\n");
+        return false;
+    }
+
+    printf("..... dumping stat via cbmfm_ark_dump_stats():\n");
+    cbmfm_ark_dump_stats(&image);
+
+    /* this isn't supposed to fail */
+    printf("..... dumping directory:\n");
+    dir = cbmfm_ark_read_dir(&image, true);
+    if (dir == NULL) {
+        fprintf(stderr, "failed!\n");
         return false;
     }
     cbmfm_dir_dump(dir);
     cbmfm_dir_free(dir);
+
+    /* extract file with original PETSCII name */
+    printf("..... calling cbmfm_ark_extract_file(image, NULL, 0) .. ");
+    if (!cbmfm_ark_extract_file(&image, NULL, 0)) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK\n");
+    }
+
+    /* extract file with custom name */
+    printf("..... calling cbmfm_ark_extract_file(image, \"dlw-2.4.prg\", 0) .. ");
+    if (!cbmfm_ark_extract_file(&image, "dlw-2.4.prg", 0)) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK\n");
+    }
+
 
     printf("..... calling cbmfm_ark_cleanup()\n");
     cbmfm_image_cleanup(&image);

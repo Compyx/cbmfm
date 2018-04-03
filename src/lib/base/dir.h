@@ -35,6 +35,7 @@
 
 void cbmfm_block_init(cbmfm_block_t *block);
 
+const char *    cbmfm_cbmdos_filetype(uint8_t filetype);
 
 cbmfm_dirent_t *cbmfm_dirent_alloc(void);
 void            cbmfm_dirent_init(cbmfm_dirent_t *dirent);

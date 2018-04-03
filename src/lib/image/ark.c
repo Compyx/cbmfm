@@ -39,6 +39,7 @@
 #include "ark.h"
 
 
+
 /** \brief  Determine offset in ARK data of the first file's data
  *
  * \param[in]   image   image handle
@@ -121,6 +122,26 @@ static int ark_dirent_count(const cbmfm_image_t *image)
 }
 
 
+/** \brief  Check if file \a index is valid for \a image
+ *
+ * \param[in]   image   Ark image
+ * \param[in]   index   file index
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INDEX
+ */
+static bool ark_file_index_check(const cbmfm_image_t *image, int index)
+{
+    if (index < 0 || index >= ark_dirent_count(image)) {
+        cbmfm_errno = CBMFM_ERR_INDEX;
+        return false;
+    }
+    return true;
+}
+
+
+
 /** \brief  Get pointer to dirent data at \a index in \a image
  *
  * \param[in]   image   ARK image
@@ -132,11 +153,10 @@ static int ark_dirent_count(const cbmfm_image_t *image)
  */
 static uint8_t *ark_dirent_ptr(cbmfm_image_t *image, int index)
 {
-    if (index < 0 || index >= ark_dirent_count(image)) {
-        cbmfm_errno = CBMFM_ERR_INDEX;
+    if (!ark_file_index_check(image, index)) {
+        /* error code already set */
         return NULL;
     }
-
     return image->data + CBMFM_ARK_DIR_OFFSET + index * CBMFM_ARK_DIRENT_SIZE;
 }
 
@@ -153,12 +173,9 @@ static uint8_t *ark_dirent_ptr(cbmfm_image_t *image, int index)
 static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
 {
     int ent_idx = 0;
-    int ent_cnt = ark_dirent_count(image);
     uint8_t *data = image->data + ark_file_data_offset(image);
 
-
-    if (index < 0 || index >= ent_cnt) {
-        cbmfm_errno = CBMFM_ERR_INDEX;
+    if (!ark_file_index_check(image, index)) {
         return NULL;
     }
 
@@ -176,6 +193,21 @@ static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
     }
     return data;
 }
+
+
+#if 0
+static size_t ark_file_data_size(cbmfm_image_t *image, int index)
+{
+    uint8_t *dirent = ark_dirent_ptr(image, index);
+    size_t blocks;
+
+    blocks = (size_t)(dirent[CBMFM_ARK_DIRENT_FILESIZE]
+            + dirent[CBMFM_ARK_DIRENT_FILESIZE + 1] * 256);
+
+    return (blocks - 1) * CBMFM_SECTOR_SIZE_DATA
+        + dirent[CBMFM_ARK_DIRENT_LAST_SEC_USED] - 1;
+}
+#endif
 
 
 /** \brief  Parse the 'directory entry at \a index on \a image into \a dirent
@@ -264,4 +296,41 @@ cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
     /* store reference to parent image */
     dir->image = image;
     return dir;
+}
+
+
+/** \brief  Extract file at \a index from \a image
+ *
+ * \param[in]   image   Ark image
+ * \param[in]   name    file name (optional, use `NULL` to use the CBMDOS name)
+ * \param[in]   index   index of file in \a image
+ *
+ * \return  bool
+ */
+bool cbmfm_ark_extract_file(cbmfm_image_t *image, const char *name, int index)
+{
+    cbmfm_dirent_t dirent;
+    /* +4 for '.ext', +1 for '\0' */
+    char host_fname[CBMFM_CBMDOS_FILENAME_LEN + 4 + 1];
+    uint8_t *data;
+
+    if (!ark_file_index_check(image, index)) {
+        return false;
+    }
+
+    /* grab the dirent */
+    cbmfm_dirent_init(&dirent);
+    ark_parse_dirent(image, &dirent, index);
+
+    /* do we use the CBMDOS filename? */
+    if (name == NULL || *name == '\0') {
+        const char *ext = cbmfm_cbmdos_filetype(dirent.filetype);
+        cbmfm_pet_filename_to_host(host_fname, dirent.filename, ext);
+        printf("\"%s\"\n", host_fname);
+        name = host_fname;
+    }
+
+    /* write to host */
+    data = ark_file_data_ptr(image, index);
+    return cbmfm_write_file(data, dirent.filesize, name);
 }

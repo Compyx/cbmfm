@@ -55,6 +55,18 @@ void cbmfm_block_init(cbmfm_block_t *block)
 }
 
 
+/** \brief  Get CBMDOS filetype string
+ *
+ * \param[in]   filetype    CBMDOS filetype byte
+ *
+ * \return  0-terminated file type in ASCII
+ */
+const char *cbmfm_cbmdos_filetype(uint8_t filetype)
+{
+    return filetype_str[filetype & 0x07];
+}
+
+
 
 /** \brief  Allocate a dirent object
  *
@@ -173,7 +185,7 @@ int cbmfm_dirent_dump(const cbmfm_dirent_t *dirent)
     return printf("%-5u \"%s\" %c%s%c\n",
             dirent->size_blocks, name,
             dirent->filetype & CBMFM_CBMDOS_FILE_CLOSED_BIT ? ' ' : '*',
-            filetype_str[dirent->filetype & 0x07],
+            cbmfm_cbmdos_filetype(dirent->filetype),
             dirent->filetype & CBMFM_CBMDOS_FILE_LOCKED_BIT ? '<' : ' ');
 }
 
