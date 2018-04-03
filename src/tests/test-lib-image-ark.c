@@ -185,6 +185,8 @@ static bool test_lib_image_ark_dir(struct test_case_s *test)
  * \param[in,out]   test    test object
  *
  * \return  bool
+ *
+ * \todo    allow a prefix for the files, perhaps based on the image name?
  */
 static bool test_lib_image_ark_file(struct test_case_s *test)
 {
@@ -192,7 +194,7 @@ static bool test_lib_image_ark_file(struct test_case_s *test)
     cbmfm_dir_t *dir;
     bool result;
 
-    test->total = 2;
+    test->total = 3;
 
     cbmfm_image_init(&image);
 
@@ -229,6 +231,15 @@ static bool test_lib_image_ark_file(struct test_case_s *test)
     /* extract file with custom name */
     printf("..... calling cbmfm_ark_extract_file(image, \"dlw-2.4.prg\", 0) .. ");
     if (!cbmfm_ark_extract_file(&image, "dlw-2.4.prg", 0)) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK\n");
+    }
+
+    /* extract all files */
+    printf("..... calling cbmfm_ark_extract_all() .. ");
+    if (!cbmfm_ark_extract_all(&image)) {
         printf("failed\n");
         test->failed++;
     } else {

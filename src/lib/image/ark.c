@@ -334,3 +334,25 @@ bool cbmfm_ark_extract_file(cbmfm_image_t *image, const char *name, int index)
     data = ark_file_data_ptr(image, index);
     return cbmfm_write_file(data, dirent.filesize, name);
 }
+
+
+/** \brief  Extract all files in \a image
+ *
+ * Extracts all files in \a image and writes them using their PETSCII file
+ * names converted to the host file system encoding (ASCII).
+ *
+ * \param[in]   image   Ark image
+ *
+ * \return  bool
+ */
+bool cbmfm_ark_extract_all(cbmfm_image_t *image)
+{
+    int index;
+
+    for (index = 0; index < ark_dirent_count(image); index++) {
+        if (!cbmfm_ark_extract_file(image, NULL, index)) {
+            return false;
+        }
+    }
+    return true;
+}
