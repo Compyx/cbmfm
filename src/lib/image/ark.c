@@ -211,8 +211,12 @@ static bool ark_parse_dirent(
     /* calculate file size */
     blocks = (size_t)(data[CBMFM_ARK_DIRENT_FILESIZE]
             + data[CBMFM_ARK_DIRENT_FILESIZE + 1] * 256);
+
+    /* the LAST_SEC_USED byte indicates the number of bytes in the final
+     * sector + 1, for some reason */
     dirent->filesize = (blocks - 1) * CBMFM_SECTOR_SIZE_DATA
-        + data[CBMFM_ARK_DIRENT_LAST_SEC_USED];
+        + data[CBMFM_ARK_DIRENT_LAST_SEC_USED] - 1;
+
     dirent->size_blocks = (uint16_t)blocks;
 
     /* set CBMDOS file type */

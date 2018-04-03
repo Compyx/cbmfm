@@ -29,11 +29,13 @@
 #define CBMFM_LIB_BASE_MEM_H
 
 #include <stdlib.h>
+#include <stdbool.h>
+
 
 void *  cbmfm_malloc(size_t size);
 void *  cbmfm_calloc(size_t nmemb, size_t size);
 void *  cbmfm_realloc(void *ptr, size_t size);
-void *  cbmfm_realloc_smaller(void *ptr, size_t size);
+void *  cbmfm_realloc_smaller(void *ptr, size_t size, bool *success);
 void    cbmfm_free(void *ptr);
 
 char *  cbmfm_strdup(const char *s);

@@ -118,15 +118,22 @@ intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
         if (result < READFILE_BLOCK_SIZE) {
             if (feof(fd)) {
                 /* OK: EOF */
-                /* TODO: try to realloc to minimum size required */
-#if 0
-                size_t new_size;
-                data = cbmfm_realloc_smaller(data, offset + result, &new_size);
-#endif
-                *dest = data;
 
+                /* try to realloc to minimum size required */
+                bool success;
+                size_t final_size;
+
+                data = cbmfm_realloc_smaller(data, offset + result, &success);
+                *dest = data;
+                if (success) {
+                    /* realloc succeeded */
+                    final_size = offset + result;
+                } else {
+                    /* realloc failed, return original size */
+                    final_size = size;
+                }
                 fclose(fd);
-                return (long)(offset + result);
+                return (intmax_t)final_size;
             } else {
                 /* IO error */
                 cbmfm_errno = CBMFM_ERR_IO;

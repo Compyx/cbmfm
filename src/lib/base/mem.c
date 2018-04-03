@@ -118,7 +118,9 @@ void *cbmfm_realloc(void *ptr, size_t size)
  * function is needed to try to reallocate a chunk of memory to a smaller size.
  * The C Standard guarantees the original \a ptr is intact when realloc(3)
  * fails, this function cannot fail. (Just don't pass `NULL` as its first
- * argument, just use cbmfm_malloc() for that).
+ * argument, just use cbmfm_malloc() for that). The \a success argument can
+ * be used to see if realloc(3) succeeded or failed, `NULL` can be used to
+ * indicate the caller isn't interested.
  *
  * \param[in,out]   ptr     memory to reallocate
  * \param[in]       size    new size of memory at \a ptr
@@ -129,19 +131,21 @@ void *cbmfm_realloc(void *ptr, size_t size)
  *          to the resized memory is returned.
  *
  * \return  pointer to reallocated memory
- *
- * \fixme   There currently is no way to detect if reducing \a ptr to \a size
- *          works. So, best not use this function in its current state.
  */
-
-void *cbmfm_realloc_smaller(void *ptr, size_t size)
+void *cbmfm_realloc_smaller(void *ptr, size_t size, bool *success)
 {
     void *tmp = realloc(ptr, size);
     if (tmp == NULL) {
         /* failed to get smaller slot, return original */
+        if (success != NULL) {
+            *success = false;
+        }
         return ptr;
     }
     /* got smaller slot */
+    if (success != NULL) {
+        *success = true;
+    }
     return tmp;
 }
 
