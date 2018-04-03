@@ -41,12 +41,16 @@
 
 
 static bool test_lib_image_ark_open(test_case_t *test);
+static bool test_lib_image_ark_dir(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
  */
 static test_case_t tests_lib_image_ark[] = {
-    { "open", "Opening Ark archives", test_lib_image_ark_open, 0, 0 },
+    { "open", "Opening Ark archives",
+        test_lib_image_ark_open, 0, 0 },
+    { "dir", "Directory handling of Ark archives",
+        test_lib_image_ark_dir, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -63,7 +67,7 @@ test_module_t module_lib_image_ark = {
 };
 
 
-/** \brief  Test src/lib/base/image/ark.c behaviour
+/** \brief  Test opening of Ark archives
  *
  * \param[in,out]   test    test object
  *
@@ -72,7 +76,6 @@ test_module_t module_lib_image_ark = {
 static bool test_lib_image_ark_open(struct test_case_s *test)
 {
     cbmfm_image_t image;
-    cbmfm_dir_t *dir;
     bool result;
 
     test->total = 3;
@@ -123,17 +126,52 @@ static bool test_lib_image_ark_open(struct test_case_s *test)
     printf("..... dumping stat via cbmfm_ark_dump_stats():\n");
     cbmfm_ark_dump_stats(&image);
 
+
+    printf("..... calling cbmfm_ark_cleanup()\n");
+    cbmfm_image_cleanup(&image);
+    return true;
+}
+
+
+
+/** \brief  Test directory handling of Ark archives
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_ark_dir(struct test_case_s *test)
+{
+    cbmfm_image_t image;
+    cbmfm_dir_t *dir;
+    bool result;
+
+    test->total = 1;
+
+    cbmfm_image_init(&image);
+
+    printf("..... calling cbmfm_ark_open(\"%s\" ... ", ARK_TPZTOOLS_FILE);
+    result = cbmfm_ark_open(&image, ARK_TPZTOOLS_FILE);
+    if (!result) {
+        /* fatal error*/
+        printf("failed: fatal\n");
+        return false;
+    }
+
+    printf("..... dumping stat via cbmfm_ark_dump_stats():\n");
+    cbmfm_ark_dump_stats(&image);
+
     printf("..... dumping directory:\n");
     dir = cbmfm_ark_read_dir(&image, true);
     if (dir == NULL) {
         fprintf(stderr, "failed!\n");
+        test->failed++;
         return false;
     }
     cbmfm_dir_dump(dir);
     cbmfm_dir_free(dir);
 
-
-    printf("... calling cbmfm_ark_cleanup()\n");
+    printf("..... calling cbmfm_ark_cleanup()\n");
     cbmfm_image_cleanup(&image);
     return true;
 }

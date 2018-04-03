@@ -140,14 +140,14 @@ bool test_module_run_tests(const char *mod_name, const char *test_name)
     for (m = 0; m < mod_count; m++) {
         if (mod_name == NULL || strcmp(mod_name, mod_list[m]->name) == 0) {
             module = mod_list[m];
-            printf(". Running module '%s' (%s)\n",
+            printf("\n\n. Running module '%s' (%s)\n",
                     module->name, module->desc);
             test_module_init(module);
 
             for (test = module->tests; test->name != NULL; test++) {
                 if (test_name == NULL || strcmp(test_name, test->name) == 0) {
                     /* run test */
-                    printf("... Running test '%s' (%s)\n",
+                    printf("\n\n... Running test '%s' (%s)\n",
                             test->name, test->desc);
                     test_case_init(test);
                     if (!(test->func(test))) {
@@ -160,6 +160,7 @@ bool test_module_run_tests(const char *mod_name, const char *test_name)
                 }
             }
             /* display results */
+            printf("\n\n");
             if (module->failed == 0) {
                 printf(". OK: %d tests, no failures -> 100.00%%\n", module->total);
             } else {
