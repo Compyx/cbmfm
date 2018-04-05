@@ -33,6 +33,7 @@
 #include <stdbool.h>
 
 intmax_t cbmfm_read_file(uint8_t **dest, const char *path);
+intmax_t cbmfm_read_file_sizereq(uint8_t **dest, const char *path, size_t sizereq);
 bool     cbmfm_write_file(const uint8_t *data, size_t size, const char *path);
 
 #endif

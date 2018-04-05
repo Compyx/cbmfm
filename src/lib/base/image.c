@@ -165,7 +165,8 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path)
 {
     intmax_t size;
 
-    size = cbmfm_read_file(&(image->data), path);
+    /* read data, start with a buffer of 1MB */
+    size = cbmfm_read_file_sizereq(&(image->data), path, (1U << 20));
     if (size < 0) {
         return false;
     }

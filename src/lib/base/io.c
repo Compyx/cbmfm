@@ -57,10 +57,7 @@
  * used by this function is freed.
  *
  * #READFILE_BLOCK_SIZE bytes are read at a time, and whenever memory runs out,
- * it is doubled in size.
- *
- * \todo    Implement a way to set the initial buffer size, reading a D64
- *          while having 64KB or so allocated will cause unneccesary realloc's
+ * it is doubled in size. The initial buffer size is set with \a sizereq.
  *
  * Example:
  * @code{.c}
@@ -68,7 +65,7 @@
  *  uint8_t *data;
  *  intmax_t result;
  *
- *  if ((result = cbmfm_read_file(&data, "Commando.sid")) < 0) {
+ *  if ((result = cbmfm_read_file(&data, "Commando.sid", 4096)) < 0) {
  *      fprintf(stderr, "oeps!\n");
  *  } else {
  *      printf("OK, read %j bytes\n", result);
@@ -78,15 +75,16 @@
  *
  * @param   dest    destination of data
  * @param   path    path to file
+ * \param   sizereq initial size of buffer
  *
  * @return  number of bytes read, or -1 on failure
  */
-intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
+intmax_t cbmfm_read_file_sizereq(uint8_t **dest, const char *path, size_t sizereq)
 {
     uint8_t *data;
     FILE *fd;
     size_t offset = 0;
-    size_t size = READFILE_BLOCK_SIZE;
+    size_t size = sizereq;
     size_t result;
 
     fd = fopen(path, "rb");
@@ -95,7 +93,7 @@ intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
         return -1;
     }
 
-    data = cbmfm_malloc(READFILE_BLOCK_SIZE);
+    data = cbmfm_malloc(size);
 
     /* keep reading chunks until EOF */
     while (true) {
@@ -146,6 +144,43 @@ intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
         offset += READFILE_BLOCK_SIZE;
     }
     /* shouldn't get here */
+}
+
+
+/** @brief  Read data from \a path into \a dest, allocating memory
+ *
+ * This function reads data from \a path, (re)allocating memory as required.
+ * The pointer to the result is stored in \a dest. If this function fails for
+ * some reason (file not found, out of memory), -1 is returned and all memory
+ * used by this function is freed.
+ *
+ * #READFILE_BLOCK_SIZE bytes are read at a time, and whenever memory runs out,
+ * it is doubled in size. The read buffer starts out with a size of
+ * #READFILE_BLOCK_SIZE bytes.
+ *
+ * Example:
+ * @code{.c}
+ *
+ *  uint8_t *data;
+ *  intmax_t result;
+ *
+ *  if ((result = cbmfm_read_file(&data, "Commando.sid", 4096)) < 0) {
+ *      fprintf(stderr, "oeps!\n");
+ *  } else {
+ *      printf("OK, read %j bytes\n", result);
+ *      free(data);
+ *  }
+ * @endcode
+ *
+ * @param   dest    destination of data
+ * @param   path    path to file
+ *
+ * @return  number of bytes read, or -1 on failure
+ */
+
+intmax_t cbmfm_read_file(uint8_t **dest, const char *path)
+{
+    return cbmfm_read_file_sizereq(dest, path, READFILE_BLOCK_SIZE);
 }
 
 
