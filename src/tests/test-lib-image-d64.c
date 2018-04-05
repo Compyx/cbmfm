@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-image-ark.c
- * \brief   Unit test for src/lib/image/ark.c
+/** \file   src/tests/test-lib-image-d64.c
+ * \brief   Unit test for src/lib/image/d64.c
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -30,67 +30,71 @@
 #include <inttypes.h>
 
 #include "lib.h"
-#include "image/ark.h"
+#include "image/d64.h"
 #include "base/dir.h"
 
 #include "testcase.h"
 
+
 /** \brief  Test image: 'Topaz tools'
  */
-#define ARK_TPZTOOLS_FILE   "data/images/ark/Tpztools.ark"
+#define D64_ARMALYTE_FILE   "data/images/d64/armalyte+7dh101%-2004-remember.d64"
 
 /** \brief  Size of test image 'Topaz tools'
  */
-#define ARK_TPZTOOLS_SIZE   40744
+#define D64_ARMALYTE_SIZE   174848
 
 
-static bool test_lib_image_ark_open(test_case_t *test);
+static bool test_lib_image_d64_open(test_case_t *test);
+#if 0
 static bool test_lib_image_ark_dir(test_case_t *test);
 static bool test_lib_image_ark_file(test_case_t *test);
-
+#endif
 
 /** \brief  List of tests for the base library functions
  */
-static test_case_t tests_lib_image_ark[] = {
-    { "open", "Opening Ark archives",
-        test_lib_image_ark_open, 0, 0 },
+static test_case_t tests_lib_image_d64[] = {
+    { "open", "Opening d64 images",
+        test_lib_image_d64_open, 0, 0 },
+#if 0
     { "dir", "Directory handling of Ark archives",
         test_lib_image_ark_dir, 0, 0 },
     { "file", "File handling of Ark archives",
         test_lib_image_ark_file, 0, 0 },
+#endif
     { NULL, NULL, NULL, 0, 0 }
 };
 
 
 /** \brief  Test module for the base library functions
  */
-test_module_t module_lib_image_ark = {
-    "ark",
-    "Ark library functions",
-    tests_lib_image_ark,
+test_module_t module_lib_image_d64 = {
+    "d64",
+    "D64 library functions",
+    tests_lib_image_d64,
     NULL,
     NULL,
     0, 0
 };
 
 
-/** \brief  Test opening of Ark archives
+/** \brief  Test opening of D64 images
  *
  * \param[in,out]   test    test object
  *
  * \return  bool
  */
-static bool test_lib_image_ark_open(struct test_case_s *test)
+static bool test_lib_image_d64_open(struct test_case_s *test)
 {
-    cbmfm_image_t image;
+    cbmfm_d64_t image;
     bool result;
 
-    test->total = 3;
+    test->total = 2;
 
-    cbmfm_image_init(&image);
+    cbmfm_d64_init(&image);
 
-    printf("..... calling cbmfm_ark_open(\"%s\" ... ", ARK_TPZTOOLS_FILE);
-    result = cbmfm_ark_open(&image, ARK_TPZTOOLS_FILE);
+    printf("..... calling cbmfm_d64_open(\"%s\" ... ", D64_ARMALYTE_FILE);
+    result = cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
     if (!result) {
         /* fatal error*/
         printf("failed: fatal\n");
@@ -100,8 +104,8 @@ static bool test_lib_image_ark_open(struct test_case_s *test)
     /* check size */
     printf("OK\n");
     printf("..... expected size: %zu, got size %zu ... ",
-            (size_t)ARK_TPZTOOLS_SIZE, (size_t)(image.size));
-    if (image.size != ARK_TPZTOOLS_SIZE) {
+            (size_t)D64_ARMALYTE_SIZE, (size_t)(image.size));
+    if (image.size != D64_ARMALYTE_SIZE) {
         printf("fail\n");
         test->failed++;
     } else {
@@ -109,19 +113,8 @@ static bool test_lib_image_ark_open(struct test_case_s *test)
     }
 
     /* check readonly */
-    result = cbmfm_image_get_readonly(&image);
-    printf("..... checking readonly flag: expected true, got %s ... ",
-            result ? "true" : "false");
-    if (result) {
-        printf("OK\n");
-    } else {
-        printf("Failed\n");
-        test->failed++;
-    }
-
-    /* check dirty */
-    result = cbmfm_image_get_dirty(&image);
-    printf("..... checking dirty flag: expected false, got %s ... ",
+    result = cbmfm_image_get_readonly((cbmfm_image_t *)&image);
+    printf("..... checking readonly flag: expected false, got %s ... ",
             result ? "true" : "false");
     if (!result) {
         printf("OK\n");
@@ -130,17 +123,28 @@ static bool test_lib_image_ark_open(struct test_case_s *test)
         test->failed++;
     }
 
+    /* check dirty */
+    result = cbmfm_image_get_dirty((cbmfm_image_t *)&image);
+    printf("..... checking dirty flag: expected false, got %s ... ",
+            result ? "true" : "false");
+    if (!result) {
+        printf("OK\n");
+    } else {
+        printf("Failed\n");
+        test->failed++;
+    }
+#if 0
     printf("..... dumping stat via cbmfm_ark_dump_stats():\n");
     cbmfm_ark_dump_stats(&image);
+#endif
 
-
-    printf("..... calling cbmfm_ark_cleanup()\n");
-    cbmfm_image_cleanup(&image);
+    printf("..... calling cbmfm_d64_cleanup()\n");
+    cbmfm_d64_cleanup(&image);
     return true;
 }
 
 
-
+#if 0
 /** \brief  Test directory handling of Ark archives
  *
  * \param[in,out]   test    test object
@@ -255,3 +259,4 @@ static bool test_lib_image_ark_file(struct test_case_s *test)
     cbmfm_image_cleanup(&image);
     return true;
 }
+#endif

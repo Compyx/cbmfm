@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/lib/base/errors.h
- * \brief   Base library error handling - header
+/** \file   src/tests/test-lib-image-d64.h
+ * \brief   Unit test for src/lib/image/d64.c - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,31 +25,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_ERRORS_H
-#define CBMFM_LIB_BASE_ERRORS_H
 
-extern int cbmfm_errno;
+#ifndef CMBFM_TEST_IMAGE_D64_H
+#define CMBFM_TEST_IMAGE_D64_H
 
+#include "testcase.h"
 
-/** \brief  Error codes
- */
-typedef enum cbmfm_err_e {
-    CBMFM_ERR_OK = 0,           /**< no error */
-    CBMFM_ERR_OOM,              /**< out of memory error */
-    CBMFM_ERR_IO,               /**< I/O error */
-    CBMFM_ERR_FILE_TOO_LARGE,   /**< file too large (> 2GB) */
-    CBMFM_ERR_NOT_FOUND,        /**< entry/tune not found */
-    CBMFM_ERR_INVALID,          /**< invalid data or operation detected */
-    CBMFM_ERR_INDEX,            /**< index error */
-    CBMFM_ERR_SIZE_MISMATCH,    /**< size mismatch */
-    CBMFM_ERR_ILLEGAL_TRACK,    /**< illegal track number */
-    CBMFM_ERR_ILLEGAL_SECTOR,   /**< illegal sector number */
-
-    CBMFM_ERR_CODE_COUNT        /**< number of error messages */
-
-} cbmfm_err_t;
-
-const char *cbmfm_strerror(int code);
-void        cbmfm_perror(const char *prefix);
+extern test_module_t module_lib_image_d64;
 
 #endif

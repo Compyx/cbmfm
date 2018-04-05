@@ -84,4 +84,16 @@
 #define CBMFM_D64_SIZE_MAX      (196608 + 768)
 
 
+typedef struct cbmfm_dxx_speedzone_s {
+    int trk_lo; /**< lowest track number for zone */
+    int trk_hi; /**< highest track number for zone */
+    int blocks; /**< number of blocks/sectors per track for zone */
+} cbmfm_dxx_speedzone_t;
+
+
+int         cbmfm_dxx_block_number(const cbmfm_dxx_speedzone_t *zones,
+                                   int track, int sector);
+intmax_t    cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,
+                                   int track, int sector);
+
 #endif

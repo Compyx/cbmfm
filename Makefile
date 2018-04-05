@@ -32,14 +32,21 @@ GUI_SRCS = src/gui/main.c
 
 TEST_SRCS = src/tests/testcase.c \
 	    src/tests/test-lib-base.c \
-	    src/tests/test-lib-image-ark.c
+	    src/tests/test-lib-dxx.c \
+	    src/tests/test-lib-image-ark.c \
+	    src/tests/test-lib-image-d64.c
 
 HEADERS = src/lib.h src/lib/base.h src/lib/cbmfm_types.h
 
 STATIC_LIB = libcbmfm.a
 
 TESTER = test-runner
-TESTER_OBJS = test-runner.o testcase.o test-lib-base.o test-lib-image-ark.o
+TESTER_OBJS = test-runner.o \
+	      testcase.o \
+	      test-lib-base.o \
+	      test-lib-base-dxx.o \
+	      test-lib-image-ark.o \
+	      test-lib-image-d64.o
 GUI = cbmfm
 
 LIB_OBJS = $(LIB_SRCS:.c=.o)

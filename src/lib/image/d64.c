@@ -38,6 +38,17 @@
 #include "d64.h"
 
 
+/** \brief  Speed zones for D64 images
+ */
+static const cbmfm_dxx_speedzone_t zones_d64[] = {
+    {  1, 17, 21 },
+    { 18, 24, 19 },
+    { 25, 30, 18 },
+    { 31, 40, 17 },
+    { -1, -1, -1 }
+};
+
+
 /** \brief  Allocate a d64 image object
  *
  * \return  heap-allocated d64 image object, uninitialized

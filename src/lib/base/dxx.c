@@ -32,6 +32,69 @@
 #include <string.h>
 
 #include "cbmfm_types.h"
+#include "base/errors.h"
 
 #include "dxx.h"
+
+
+/** \brief  Get block number of block (\a track, \a sector)
+ *
+ * \param[in]   zones   speed zone table
+ * \param[in]   track   track number
+ * \param[in]   sector  sector number
+ *
+ * \return  block number (starting at 0) or -1 on error
+ *
+ * \throw   #CBMFM_ERR_ILLEGAL_TRACK
+ * \throw   #CBMFM_ERR_ILLEGAL_SECTOR
+ */
+int cbmfm_dxx_block_number(const cbmfm_dxx_speedzone_t *zones,
+                           int track, int sector)
+{
+    int blocks = 0;
+    int z = 0;
+
+    if (track < 1) {
+        cbmfm_errno = CBMFM_ERR_ILLEGAL_TRACK;
+        return -1;
+    }
+    if (sector < 0) {
+        cbmfm_errno = CBMFM_ERR_ILLEGAL_SECTOR;
+        return -1;
+    }
+
+    while (zones[z].trk_lo >= 1) {
+        if (sector >= zones[z].blocks) {
+            /* sector# too high */
+            cbmfm_errno = CBMFM_ERR_ILLEGAL_SECTOR;
+            return -1;
+        }
+
+        if (track >= zones[z].trk_lo && track <= zones[z].trk_hi) {
+            /* in the zone :) */
+            return blocks + (track - zones[z].trk_lo) * zones[z].blocks + sector;
+        } else {
+            /* add size of zone */
+            blocks += ((zones[z].trk_hi - zones[z].trk_lo + 1)
+                    * zones[z].blocks);
+        }
+
+        z++;
+    }
+
+    /* ran out of zones -> track# too high */
+    cbmfm_errno = CBMFM_ERR_ILLEGAL_TRACK;
+    return -1;
+}
+
+
+intmax_t cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,
+                                int track, int sector)
+{
+    int blocks = cbmfm_dxx_block_number(zones, track, sector);
+    if (blocks < 0) {
+        return -1;
+    }
+    return blocks * CBMFM_BLOCK_SIZE_RAW;
+}
 
