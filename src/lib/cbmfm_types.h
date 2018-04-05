@@ -101,6 +101,7 @@ typedef struct cbmfm_block_s {
     int         track;  /**< track number */
     int         sector; /**< sector number */
     uint8_t *   data;   /**< block data (optional) */
+    struct cbmfm_block_s *next; /**< next block (optional) */
 } cbmfm_block_t;
 
 
@@ -153,10 +154,32 @@ typedef struct cbmfm_image_s {
 } cbmfm_image_t;
 
 
+/** \brief  Speed zone entry
+ */
+typedef struct cbmfm_dxx_speedzone_s {
+    int trk_lo; /**< lowest track number for zone */
+    int trk_hi; /**< highest track number for zone */
+    int blocks; /**< number of blocks/sectors per track for zone */
+} cbmfm_dxx_speedzone_t;
+
+
+#define CBMFM_DXX_IMAGE_SHARED_MEMBERS \
+    const cbmfm_dxx_speedzone_t *zones;
+
+
+/** \brief  Dxx image
+ */
+typedef struct cbmfm_dxx_image_s {
+    CBMFM_IMAGE_SHARED_MEMBERS
+    CBMFM_DXX_IMAGE_SHARED_MEMBERS
+} cbmfm_dxx_image_t;
+
+
 /** \brief  D64 image
  */
 typedef struct cbmfm_d64_s {
     CBMFM_IMAGE_SHARED_MEMBERS
+    CBMFM_DXX_IMAGE_SHARED_MEMBERS
 } cbmfm_d64_t;
 
 

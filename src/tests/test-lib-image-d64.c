@@ -36,11 +36,11 @@
 #include "testcase.h"
 
 
-/** \brief  Test image: 'Topaz tools'
+/** \brief  Test image: 'Armalyte +7dh 101%/remember'
  */
 #define D64_ARMALYTE_FILE   "data/images/d64/armalyte+7dh101%-2004-remember.d64"
 
-/** \brief  Size of test image 'Topaz tools'
+/** \brief  Size of test image 'Armalyte'
  */
 #define D64_ARMALYTE_SIZE   174848
 
@@ -84,7 +84,7 @@ test_module_t module_lib_image_d64 = {
  *
  * \return  bool
  */
-static bool test_lib_image_d64_open(struct test_case_s *test)
+static bool test_lib_image_d64_open(test_case_t *test)
 {
     cbmfm_d64_t image;
     bool result;

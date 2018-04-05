@@ -80,7 +80,7 @@ test_module_t module_lib_image_ark = {
  *
  * \return  bool
  */
-static bool test_lib_image_ark_open(struct test_case_s *test)
+static bool test_lib_image_ark_open(test_case_t *test)
 {
     cbmfm_image_t image;
     bool result;
@@ -147,7 +147,7 @@ static bool test_lib_image_ark_open(struct test_case_s *test)
  *
  * \return  bool
  */
-static bool test_lib_image_ark_dir(struct test_case_s *test)
+static bool test_lib_image_ark_dir(test_case_t *test)
 {
     cbmfm_image_t image;
     cbmfm_dir_t *dir;
@@ -192,7 +192,7 @@ static bool test_lib_image_ark_dir(struct test_case_s *test)
  *
  * \todo    allow a prefix for the files, perhaps based on the image name?
  */
-static bool test_lib_image_ark_file(struct test_case_s *test)
+static bool test_lib_image_ark_file(test_case_t *test)
 {
     cbmfm_image_t image;
     cbmfm_dir_t *dir;

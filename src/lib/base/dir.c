@@ -67,6 +67,7 @@ void cbmfm_block_init(cbmfm_block_t *block)
     block->track = -1;
     block->sector = -1;
     block->data = NULL;
+    block->next = NULL;
 }
 
 

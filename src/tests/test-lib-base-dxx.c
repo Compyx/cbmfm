@@ -36,17 +36,41 @@
 #include "testcase.h"
 
 
+/** \brief  Test image: 'Armalyte +7dh 101%/remember'
+ */
+#define D64_ARMALYTE_FILE   "data/images/d64/armalyte+7dh101%-2004-remember.d64"
+
+
+static cbmfm_d64_t image;
+
+
 static bool test_lib_base_dxx_geometry(test_case_t *test);
-#if 0
-static bool test_lib_image_ark_dir(test_case_t *test);
-static bool test_lib_image_ark_file(test_case_t *test);
-#endif
+static bool test_lib_base_dxx_block(test_case_t *test);
+
+
+static void test_lib_base_dxx_setup(void)
+{
+    cbmfm_d64_init(&image);
+    cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
+}
+
+
+static void test_lib_base_dxx_teardown(void)
+{
+    cbmfm_d64_cleanup(&image);
+}
+
+
+
+
 
 /** \brief  List of tests for the dxx functions
  */
 static test_case_t tests_lib_base_dxx[] = {
-    { "geometry", "Opening d64 images",
+    { "geometry", "Dxx image geometry handling",
         test_lib_base_dxx_geometry, 0, 0 },
+    { "block", "Dxx image block handling",
+        test_lib_base_dxx_block, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -57,8 +81,8 @@ test_module_t module_lib_base_dxx = {
     "dxx",
     "Dxx library functions",
     tests_lib_base_dxx,
-    NULL,
-    NULL,
+    test_lib_base_dxx_setup,
+    test_lib_base_dxx_teardown,
     0, 0
 };
 
@@ -108,7 +132,7 @@ static const zone_test_t zone_tests[] = {
  *
  * \return  bool
  */
-static bool test_lib_base_dxx_geometry(struct test_case_s *test)
+static bool test_lib_base_dxx_geometry(test_case_t *test)
 {
     int z;
 
@@ -145,3 +169,30 @@ static bool test_lib_base_dxx_geometry(struct test_case_s *test)
     return true;
 }
 
+
+/** \brief  Test block handling of dxx.c
+ *
+ * \param[in,out]   test    test case
+ *
+ * \return  false on failure inside the test code, not on test failure(s)
+ */
+static bool test_lib_base_dxx_block(test_case_t *test)
+{
+    cbmfm_block_t block;
+
+    printf("..... Testing block reading (cbmfm_dxx_block_read()):\n");
+    test->total = 1;
+
+    cbmfm_block_init(&block);
+    printf("....... Reading block (18,0) from test image .. ");
+    if (!(cbmfm_dxx_block_read(&block, (cbmfm_dxx_image_t *)(&image), 18, 0))) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK, dumping block data:\n");
+        cbmfm_dxx_block_dump(&block);
+        cbmfm_dxx_block_cleanup(&block);
+    }
+
+    return true;
+}

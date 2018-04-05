@@ -30,8 +30,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "cbmfm_types.h"
+#include "base/mem.h"
 #include "base/errors.h"
 
 #include "dxx.h"
@@ -88,6 +90,17 @@ int cbmfm_dxx_block_number(const cbmfm_dxx_speedzone_t *zones,
 }
 
 
+/** \brief  Get offset of block (\a track, \a sector) in bytes
+ *
+ * \param[in]   zones   speed zone table
+ * \param[in]   track   track number
+ * \param[in]   sector  sector number
+ *
+ * \return  offset in an image for (\a track, \a sector) or -1 on error
+ *
+ * \throw   #CBMFM_ERR_ILLEGAL_TRACK
+ * \throw   #CBMFM_ERR_ILLEGAL_SECTOR
+ */
 intmax_t cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,
                                 int track, int sector)
 {
@@ -98,3 +111,67 @@ intmax_t cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,
     return blocks * CBMFM_BLOCK_SIZE_RAW;
 }
 
+
+/** \brief  Read and allocate 256 bytes of  (\a track,\a sector) into \a block
+ *
+ * \param[in,out]   block   block object
+ * \param[in]       image   dxx image
+ * \param[in]       track   track number
+ * \param[in]       sector  sector number
+ *
+ * \return  true on success
+ *
+ * \throw   #CBMFM_ERR_ILLEGAL_TRACK
+ * \throw   #CBMFM_ERR_ILLEGAL_SECTOR
+ */
+bool cbmfm_dxx_block_read(cbmfm_block_t *block,
+                          cbmfm_dxx_image_t *image,
+                          int track, int sector)
+{
+    intmax_t offset;
+    const cbmfm_dxx_speedzone_t *zones = image->zones;
+
+    offset = cbmfm_dxx_block_offset(zones, track, sector);
+    if (offset < 0) {
+        return false;
+    }
+
+    block->track = track;
+    block->sector = sector;
+    block->data = cbmfm_memdup(image->data + offset, CBMFM_BLOCK_SIZE_RAW);
+    return true;
+}
+
+
+/** \brief  Free block data inside \a block
+ *
+ * Frees the 256 bytes inside \a block
+ *
+ * \param[in,out]   block   block object
+ *
+ * \todo    move to more generic file
+ */
+void cbmfm_dxx_block_cleanup(cbmfm_block_t *block)
+{
+    cbmfm_free(block->data);
+    block->data = NULL;
+}
+
+
+void cbmfm_dxx_block_dump(const cbmfm_block_t *block)
+{
+    int row;
+    int col;
+
+    for (row = 0; row < 16; row++) {
+        printf("%02d:%02d:%02x: ", block->track, block->sector, row * 16);
+        for (col = 0; col < 16; col++) {
+            printf("%02x ", block->data[row * 16 + col]);
+        }
+        for (col = 0; col < 16; col++) {
+            int ch = block->data[row * 16 + col];
+            putchar(isprint(ch) ? ch : '.');
+        }
+        putchar('\n');
+    }
+}

@@ -67,6 +67,7 @@ void cbmfm_d64_init(cbmfm_d64_t *image)
 {
     cbmfm_image_init((cbmfm_image_t *)image);
     image->type = CBMFM_IMAGE_TYPE_D64;
+    image->zones = zones_d64;
 }
 
 
