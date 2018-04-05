@@ -1,4 +1,4 @@
-# compiler/edit files
+# compiler/editor files
 *.[ao]
 *.og
 *.so
@@ -7,16 +7,20 @@
 *~
 
 # output files from the lib
-*.del
-*.seq
-*.prg
-*.usr
-*.rel
-*.d64
-*.d71
-*.d80
-*.d81
-*.d82
+/*.del
+/*.seq
+/*.prg
+/*.usr
+/*.rel
+/*.d64
+/*.d71
+/*.d80
+/*.d81
+/*.d82
+
+# temp files
+/data/images/ark/*.html
+/data/images/d64/*.html
 
 # test runner
 test-runner
