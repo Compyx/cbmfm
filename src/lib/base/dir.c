@@ -42,11 +42,26 @@
 #define DIR_ENTRY_COUNT_INIT    512
 
 
-static const char *filetype_str[] = {
-    "del", "seq", "prg", "usr", "rel", "???", "???", "???"
+/** \brief  CBMDOS file type strings
+ */
+static const char *filetype_str[8] = {
+    "del",  /* deleted */
+    "seq",  /* sequential */
+    "prg",  /* program */
+    "usr",  /* user defined */
+    "rel",  /* relative */
+    "dir",  /* directory/partition (d81) */
+    "???",
+    "???"
 };
 
 
+/** \brief  Initialize \a block
+ *
+ * Sets track and sector numbers to -1, marking it invalid
+ *
+ * \param[in,out]   block   block object
+ */
 void cbmfm_block_init(cbmfm_block_t *block)
 {
     block->track = -1;
@@ -81,7 +96,6 @@ cbmfm_dirent_t *cbmfm_dirent_alloc(void)
 /** \brief  Initialize \a dirent to usable state
  *
  * Sets all members of \a dirent to 0/NULL, zero out CBMDOS filename
- *
  *
  * \param[in,out]   dirent  dirent object
  */
@@ -195,7 +209,9 @@ int cbmfm_dirent_dump(const cbmfm_dirent_t *dirent)
 
 /** \brief  Initialize \a dir to a usable state
  *
- * Allocates an array of #DIR_ENTRY_COUNT #cbmfm_dirent_t pointers
+ * Allocates an array of #DIR_ENTRY_COUNT_INIT #cbmfm_dirent_t pointers
+ *
+ * \param[in,out]   dir directory object
  */
 void cbmfm_dir_init(cbmfm_dir_t *dir)
 {

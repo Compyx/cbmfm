@@ -124,6 +124,7 @@ void *cbmfm_realloc(void *ptr, size_t size)
  *
  * \param[in,out]   ptr     memory to reallocate
  * \param[in]       size    new size of memory at \a ptr
+ * \param[out]      success object to store success state (optional)
  *
  * \note    This function is only meant to be used when requesting a smaller
  *          size for \a ptr. If realloc(3) fails, the original \a ptr is

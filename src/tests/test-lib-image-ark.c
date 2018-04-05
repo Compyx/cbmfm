@@ -35,8 +35,12 @@
 
 #include "testcase.h"
 
-
+/** \brief  Test image: 'Topaz tools'
+ */
 #define ARK_TPZTOOLS_FILE   "data/images/ark/Tpztools.ark"
+
+/** \brief  Size of test image 'Topaz tools'
+ */
 #define ARK_TPZTOOLS_SIZE   40744
 
 

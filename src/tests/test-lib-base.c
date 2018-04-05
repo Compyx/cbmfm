@@ -34,7 +34,12 @@
 #include "testcase.h"
 
 
+/** \brief  Test image 'Topaz tools'
+ */
 #define ARK_TPZTOOLS_FILE   "data/images/ark/Tpztools.ark"
+
+/** \brief  Size of test image 'Topaz tools'
+ */
 #define ARK_TPZTOOLS_SIZE   40744
 
 
@@ -77,6 +82,12 @@ static bool test_lib_base_io(struct test_case_s *test)
 }
 
 
+/** \brief  Test src/lib/base/image.c behaviour
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
 static bool test_lib_base_image(struct test_case_s *test)
 {
     cbmfm_image_t image;

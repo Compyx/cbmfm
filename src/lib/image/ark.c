@@ -76,6 +76,8 @@ static size_t ark_file_data_offset(const cbmfm_image_t *image)
 
 /** \brief  Get number of 'directory' entries in \a image
  *
+ * \param[in]   image   Ark image
+ *
  * \return  number of entries
  */
 static int ark_dirent_count(const cbmfm_image_t *image)
@@ -269,11 +271,13 @@ void cbmfm_ark_dump_stats(const cbmfm_image_t *image)
 
 /** \brief  Read directory of \a image and return a new dir object
  *
- * \param[in]   image   ARK image
+ * Read directory of \a image, optionally reading each entry's file data into
+ * its dirent.
+ *
+ * \param[in]   image           ARK image
+ * \param[in]   read_file_data  read data of each file into its dirent
  *
  * \return  new dir object
- *
- * \todo    add support for reading each file's data into its dirent
  */
 cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
 {

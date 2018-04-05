@@ -33,12 +33,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
+/** \brief  Log level enumeration
+ */
 typedef enum cbmfm_log_level_e {
-    CBMFM_LOG_LEVEL_NONE,
-    CBMFM_LOG_LEVEL_ERROR,
-    CBMFM_LOG_LEVEL_WARNING,
-    CBMFM_LOG_LEVEL_INFO,
-    CBMFM_LOG_LEVEL_DEBUG
+    CBMFM_LOG_LEVEL_NONE,       /**< don't log anything */
+    CBMFM_LOG_LEVEL_ERROR,      /**< errors */
+    CBMFM_LOG_LEVEL_WARNING,    /**< warning and errors */
+    CBMFM_LOG_LEVEL_INFO,       /**< info, warning and errors */
+    CBMFM_LOG_LEVEL_DEBUG       /**< debug, info warning and errors */
 } cbmfm_log_level_t;
 
 
@@ -47,4 +50,5 @@ bool cbmfm_log_set_file(const char *path);
 void cbmfm_log_close(void);
 
 void cbmfm_log_message(cbmfm_log_level_t level, const char *fmt, ...);
+
 #endif

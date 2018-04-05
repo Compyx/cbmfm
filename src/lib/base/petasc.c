@@ -332,7 +332,6 @@ int cbmfm_write_petscii_digits(uint8_t *pet, int value, size_t len)
 }
 
 
-#if defined(CBMFM_HOST_UNIX)
 /** \brief  Get the basename of \a path
  *
  * \param[in]   path    path
@@ -348,27 +347,11 @@ char *cbmfm_basename(char *path)
     }
 
     p = path + strlen(path) - 1;
-    while (p >= path && *p != '/') {
-        p--;
-    }
-    if (p < path) {
-        return path;
-    } else {
-        return p + 1;
-    }
-
-}
-#elif defined(CBMFM_HOST_WINDOWS)
-char *cbmfm_basename(char *path)
-{
-    char *p;
-
-    if (path == NULL || *path == '\0') {
-        return path;
-    }
-
-    p = path + strlen(path) - 1;
+#ifdef CBMFM_HOST_WINDOWS
     while (p >= path && *p != '/' && *p != '\\') {
+#else
+    while (p >= path && *p != '/') {
+#endif
         p--;
     }
     if (p < path) {
@@ -376,6 +359,5 @@ char *cbmfm_basename(char *path)
     } else {
         return p + 1;
     }
-}
 
-#endif
+}

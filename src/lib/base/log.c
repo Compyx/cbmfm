@@ -37,16 +37,33 @@
 #include "log.h"
 
 
-
+/** \brief  Log file pointer
+ */
 static FILE *log_file = NULL;
+
+/** \brief  Log level
+ */
 static cbmfm_log_level_t log_level = CBMFM_LOG_LEVEL_NONE;
 
 
+/** \brief  Set log level
+ *
+ * \param[in]   level   log level
+ */
 void cbmfm_log_set_level(cbmfm_log_level_t level)
 {
     log_level = level;
 }
 
+
+/** \brief  Set log file to \a path
+ *
+ * \param[in]   path    log file path
+ *
+ * \return  true on success, false on I/O error
+ *
+ * \throw   #CBMFM_ERR_IO
+ */
 bool cbmfm_log_set_file(const char *path)
 {
     log_file = fopen(path, "rb");
@@ -56,6 +73,9 @@ bool cbmfm_log_set_file(const char *path)
     return true;
 }
 
+
+/** \brief  Close log file
+ */
 void cbmfm_log_close(void)
 {
     if (log_file != NULL) {
@@ -64,6 +84,13 @@ void cbmfm_log_close(void)
 }
 
 
+/** \brief  Send a message to the log
+ *
+ * Send a message to the log, using variable arguments.
+ *
+ * \param[in]   level   log level
+ * \param[in]   fmt     printf format string
+ */
 void cbmfm_log_message(cbmfm_log_level_t level, const char *fmt, ...)
 {
     FILE *fp;
@@ -76,4 +103,3 @@ void cbmfm_log_message(cbmfm_log_level_t level, const char *fmt, ...)
         vfprintf(fp, fmt, args);
     }
 }
-

@@ -39,6 +39,8 @@
 
 
 /** \brief  Allocate a d64 image object
+ *
+ * \return  heap-allocated d64 image object, uninitialized
  */
 cbmfm_d64_t *cbmfm_d64_alloc(void)
 {

@@ -33,7 +33,12 @@
 #include <stdbool.h>
 
 
+/** \brief  Offset in Ark image data of the directory entry count
+ */
 #define CBMFM_ARK_DIRENT_COUNT          0x00
+
+/** \brief  Offset in Ark image data of the directory listing
+ */
 #define CBMFM_ARK_DIR_OFFSET            0x01
 
 
