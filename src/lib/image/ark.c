@@ -39,6 +39,9 @@
 #include "ark.h"
 
 
+/*
+ * ARK: private methods
+ */
 
 /** \brief  Determine offset in ARK data of the first file's data
  *
@@ -62,53 +65,12 @@ static size_t ark_file_data_offset(const cbmfm_image_t *image)
      * number of sectors used for the directory:
      * adjust to nearest sector-size boundary (ARK uses 254 byte 'sectors')
      */
-    sectors = required / CBMFM_SECTOR_SIZE_DATA;
-    if (required % CBMFM_SECTOR_SIZE_DATA != 0) {
+    sectors = required / CBMFM_BLOCK_SIZE_DATA;
+    if (required % CBMFM_BLOCK_SIZE_DATA != 0) {
         sectors++;
     }
 
-    return sectors * CBMFM_SECTOR_SIZE_DATA;
-}
-
-
-/** \brief  Open ark archive \a path
- *
- * \param[in,out]   image   image handle
- * \param[in]       path    path to ARK file
- *
- * \return  bool
- */
-bool cbmfm_ark_open(cbmfm_image_t *image, const char *path)
-{
-    cbmfm_image_init(image);
-    image->type = CBMFM_IMAGE_TYPE_ARK;
-    cbmfm_image_set_readonly(image, true);
-    return cbmfm_image_read_data(image, path);
-}
-
-
-/** \brief  Free memory used by the members of \a image, but not \a image itself
- *
- * \param[in,out]   image   image handle
- */
-void cbmfm_ark_cleanup(cbmfm_image_t *image)
-{
-    cbmfm_image_cleanup(image);
-}
-
-
-/** \brief  Dump same stats on ARK \a image
- *
- * Debugging function: dump some data about \a image on stdout.
- *
- * \param[in]   image   ARK image
- */
-void cbmfm_ark_dump_stats(const cbmfm_image_t *image)
-{
-    printf("filename        : '%s'\n", image->path);
-    printf("filesize        : $%04lx\n", (unsigned long)(image->size));
-    printf("dir entries     : %u\n", image->data[0]);    /* FIXME */
-    printf("file data offset: $%04lx\n", (unsigned long)ark_file_data_offset(image));
+    return sectors * CBMFM_BLOCK_SIZE_DATA;
 }
 
 
@@ -187,7 +149,7 @@ static uint8_t *ark_file_data_ptr(cbmfm_image_t *image, int index)
         blocks = (size_t)(entry[CBMFM_ARK_DIRENT_FILESIZE]
                 + entry[CBMFM_ARK_DIRENT_FILESIZE + 1]);
 
-        data += (blocks * CBMFM_SECTOR_SIZE_DATA);
+        data += (blocks * CBMFM_BLOCK_SIZE_DATA);
 
         ent_idx++;
     }
@@ -246,7 +208,7 @@ static bool ark_parse_dirent(
 
     /* the LAST_SEC_USED byte indicates the number of bytes in the final
      * sector + 1, for some reason */
-    dirent->filesize = (blocks - 1) * CBMFM_SECTOR_SIZE_DATA
+    dirent->filesize = (blocks - 1) * CBMFM_BLOCK_SIZE_DATA
         + data[CBMFM_ARK_DIRENT_LAST_SEC_USED] - 1;
 
     dirent->size_blocks = (uint16_t)blocks;
@@ -257,6 +219,51 @@ static bool ark_parse_dirent(
     /* store reference to parent image */
     dirent->image = image;
     return true;
+}
+
+
+/*
+ * ARK: public methods
+ */
+
+/** \brief  Open ark archive \a path
+ *
+ * \param[in,out]   image   image handle
+ * \param[in]       path    path to ARK file
+ *
+ * \return  bool
+ */
+bool cbmfm_ark_open(cbmfm_image_t *image, const char *path)
+{
+    cbmfm_image_init(image);
+    image->type = CBMFM_IMAGE_TYPE_ARK;
+    cbmfm_image_set_readonly(image, true);
+    return cbmfm_image_read_data(image, path);
+}
+
+
+/** \brief  Free memory used by the members of \a image, but not \a image itself
+ *
+ * \param[in,out]   image   image handle
+ */
+void cbmfm_ark_cleanup(cbmfm_image_t *image)
+{
+    cbmfm_image_cleanup(image);
+}
+
+
+/** \brief  Dump same stats on ARK \a image
+ *
+ * Debugging function: dump some data about \a image on stdout.
+ *
+ * \param[in]   image   ARK image
+ */
+void cbmfm_ark_dump_stats(const cbmfm_image_t *image)
+{
+    printf("filename        : '%s'\n", image->path);
+    printf("filesize        : $%04zx\n", image->size);
+    printf("dir entries     : %d\n", ark_dirent_count(image));
+    printf("file data offset: $%04zx\n", ark_file_data_offset(image));
 }
 
 

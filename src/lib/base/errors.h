@@ -41,6 +41,7 @@ typedef enum cbmfm_err_e {
     CBMFM_ERR_NOT_FOUND,        /**< entry/tune not found */
     CBMFM_ERR_INVALID,          /**< invalid data or operation detected */
     CBMFM_ERR_INDEX,            /**< index error */
+    CBMFM_ERR_SIZE_MISMATCH,    /**< size mismatch */
 
     CBMFM_ERR_CODE_COUNT        /**< number of error messages */
 

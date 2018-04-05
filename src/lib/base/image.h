@@ -43,7 +43,7 @@ cbmfm_image_t * cbmfm_image_alloc(void);
 void            cbmfm_image_cleanup(cbmfm_image_t *image);
 void            cbmfm_image_free(cbmfm_image_t *image);
 
-bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path);
+bool            cbmfm_image_read_data(cbmfm_image_t *image, const char *path);
 
 /*
  * Image state functions

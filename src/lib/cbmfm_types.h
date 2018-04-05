@@ -33,17 +33,17 @@
 #include <stdbool.h>
 
 
-/** \brief  Size of a raw sector
+/** \brief  Size of a raw sector/block
  *
  * Size of a sector/block, including the (track,sector) pointer
  */
-#define CBMFM_SECTOR_SIZE_RAW       0x100
+#define CBMFM_BLOCK_SIZE_RAW       0x100
 
 /** \brief  Size of the data section of a sector
  *
  * Size of a sector/block without the (track,sector) pointer
  */
-#define CBMFM_SECTOR_SIZE_DATA      0xfe
+#define CBMFM_BLOCK_SIZE_DATA      0xfe
 
 
 /** \brief  Length of a CBMDOS filename
@@ -137,17 +137,27 @@ typedef struct cbmfm_dir_s {
 } cbmfm_dir_t;
 
 
+
+#define CBMFM_IMAGE_SHARED_MEMBERS \
+    uint8_t *   data;   /**< raw image data */ \
+    size_t      size;   /**< size of raw image data */ \
+    char *      path;   /**< path to image file */ \
+    cbmfm_image_type_t type;    /**< image type */ \
+    uint32_t    flags;  /**< image flags */
+
+
 /** \brief  Image object
  */
 typedef struct cbmfm_image_s {
-    uint8_t *   data;   /**< raw image data */
-    size_t      size;   /**< size of raw image data */
-    char *      path;   /**< path to image file */
-    cbmfm_image_type_t type;    /**< image type */
-    uint32_t    flags;  /**< image flags */
+    CBMFM_IMAGE_SHARED_MEMBERS
 } cbmfm_image_t;
 
 
+/** \brief  D64 image
+ */
+typedef struct cbmfm_d64_s {
+    CBMFM_IMAGE_SHARED_MEMBERS
+} cbmfm_d64_t;
 
 
 

@@ -1,7 +1,7 @@
-/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
+/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen : */
 
-/** \file   src/lib/base.h
- * \brief   Base library functions and types
+/** \file   src/lib/image/d64.h
+ * \brief   D64 disk image handling - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,14 +25,23 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_H
-#define CBMFM_LIB_BASE_H
 
-#include "base/errors.h"
-#include "base/io.h"
-#include "base/log.h"
-#include "base/mem.h"
-#include "base/image.h"
-#include "base/petasc.h"
+#ifndef CBMFM_LIB_IMAGE_D64_H
+#define CBMFM_LIB_IMAGE_D64_H
+
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "cbmfm_types.h"
+#include "base/dxx.h"
+
+
+cbmfm_d64_t *   cbmfm_d64_alloc(void);
+void            cbmfm_d64_init(cbmfm_d64_t *image);
+cbmfm_d64_t *   cbmfm_d64_new(void);
+void            cbmfm_d64_cleanup(cbmfm_d64_t *image);
+void            cbmfm_d64_free(cbmfm_d64_t *image);
+
+bool            cbmfm_d64_open(cbmfm_d64_t *image, const char *name);
 
 #endif

@@ -1,7 +1,7 @@
-/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
+/* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen : */
 
-/** \file   src/lib/base.h
- * \brief   Base library functions and types
+/** \file   src/lib/base/dxx.c
+ * \brief   Generic disk image functions
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,14 +25,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_H
-#define CBMFM_LIB_BASE_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
 
-#include "base/errors.h"
-#include "base/io.h"
-#include "base/log.h"
-#include "base/mem.h"
-#include "base/image.h"
-#include "base/petasc.h"
+#include "cbmfm_types.h"
 
-#endif
+#include "dxx.h"
+

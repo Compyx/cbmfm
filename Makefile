@@ -17,11 +17,21 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99 -Wshadow -Wpointer-arith \
 	 -O3 -g -Isrc -Isrc/lib -Isrc/lib/base -Isrc/lib/iamge -Isrc/gui \
 	 -Isrc/tests -DCBMFM_HOST_UNIX
 
-LIB_SRCS = src/lib/base/io.c src/lib/base/errors.c src/lib/base/mem.c \
-	   src/lib/base/image.c src/lib/log.c src/lib/image/ark.c \
-	   src/lib/base/dir.c src/lib/base/petasc.c
+LIB_SRCS = src/lib/base/io.c \
+	   src/lib/base/errors.c \
+	   src/lib/base/mem.c \
+	   src/lib/base/image.c \
+	   src/lib/base/log.c \
+	   src/lib/image/ark.c \
+	   src/lib/base/dir.c \
+	   src/lib/base/petasc.c \
+	   src/lib/base/dxx.c \
+	   src/lib/image/d64.c
+
 GUI_SRCS = src/gui/main.c
-TEST_SRCS = src/tests/testcase.c src/tests/test-lib-base.c \
+
+TEST_SRCS = src/tests/testcase.c \
+	    src/tests/test-lib-base.c \
 	    src/tests/test-lib-image-ark.c
 
 HEADERS = src/lib.h src/lib/base.h src/lib/cbmfm_types.h
