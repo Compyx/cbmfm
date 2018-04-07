@@ -50,6 +50,9 @@
  */
 #define CBMFM_CBMDOS_FILENAME_LEN   0x10
 
+#define CBMFM_CBMDOS_DISK_ID_LEN        0x02
+#define CBMFM_CBMDOS_DISK_ID_LEN_EXT    0x05
+
 
 /** \brief  Bitmask for the "closed" bit in a CBMDOS filetype byte
  */
@@ -96,12 +99,17 @@ typedef enum {
 
 
 /** \brief  Block object
+ *
+ * Represents a single block on disk. Contains a track and sector number, with
+ * optional fields for block data and linked list pointers for iterating a
+ * chain of blocks.
  */
 typedef struct cbmfm_block_s {
-    int         track;  /**< track number */
-    int         sector; /**< sector number */
-    uint8_t *   data;   /**< block data (optional) */
+    int         track;          /**< track number */
+    int         sector;         /**< sector number */
+    uint8_t *   data;           /**< block data (optional) */
     struct cbmfm_block_s *next; /**< next block (optional) */
+    struct cbmfm_block_s *prev; /**< previous block (optional) */
 } cbmfm_block_t;
 
 

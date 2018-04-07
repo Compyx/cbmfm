@@ -42,48 +42,6 @@
 #define DIR_ENTRY_COUNT_INIT    512
 
 
-/** \brief  CBMDOS file type strings
- */
-static const char *filetype_str[8] = {
-    "del",  /* deleted */
-    "seq",  /* sequential */
-    "prg",  /* program */
-    "usr",  /* user defined */
-    "rel",  /* relative */
-    "dir",  /* directory/partition (d81) */
-    "???",
-    "???"
-};
-
-
-/** \brief  Initialize \a block
- *
- * Sets track and sector numbers to -1, marking it invalid
- *
- * \param[in,out]   block   block object
- */
-void cbmfm_block_init(cbmfm_block_t *block)
-{
-    block->track = -1;
-    block->sector = -1;
-    block->data = NULL;
-    block->next = NULL;
-}
-
-
-/** \brief  Get CBMDOS filetype string
- *
- * \param[in]   filetype    CBMDOS filetype byte
- *
- * \return  0-terminated file type in ASCII
- */
-const char *cbmfm_cbmdos_filetype(uint8_t filetype)
-{
-    return filetype_str[filetype & 0x07];
-}
-
-
-
 /** \brief  Allocate a dirent object
  *
  * \return  dirent object

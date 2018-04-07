@@ -35,6 +35,7 @@
 #include "cbmfm_types.h"
 #include "base/mem.h"
 #include "base/errors.h"
+#include "base/image.h"
 
 #include "dxx.h"
 
@@ -140,38 +141,4 @@ bool cbmfm_dxx_block_read(cbmfm_block_t *block,
     block->sector = sector;
     block->data = cbmfm_memdup(image->data + offset, CBMFM_BLOCK_SIZE_RAW);
     return true;
-}
-
-
-/** \brief  Free block data inside \a block
- *
- * Frees the 256 bytes inside \a block
- *
- * \param[in,out]   block   block object
- *
- * \todo    move to more generic file
- */
-void cbmfm_dxx_block_cleanup(cbmfm_block_t *block)
-{
-    cbmfm_free(block->data);
-    block->data = NULL;
-}
-
-
-void cbmfm_dxx_block_dump(const cbmfm_block_t *block)
-{
-    int row;
-    int col;
-
-    for (row = 0; row < 16; row++) {
-        printf("%02d:%02d:%02x: ", block->track, block->sector, row * 16);
-        for (col = 0; col < 16; col++) {
-            printf("%02x ", block->data[row * 16 + col]);
-        }
-        for (col = 0; col < 16; col++) {
-            int ch = block->data[row * 16 + col];
-            putchar(isprint(ch) ? ch : '.');
-        }
-        putchar('\n');
-    }
 }

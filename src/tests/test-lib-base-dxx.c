@@ -30,10 +30,12 @@
 #include <inttypes.h>
 
 #include "lib.h"
-#include "image/d64.h"
+#include "base/image.h"
 #include "base/dir.h"
-
+#include "image/d64.h"
 #include "testcase.h"
+
+#include "test-lib-base-dxx.h"
 
 
 /** \brief  Test image: 'Armalyte +7dh 101%/remember'
@@ -41,6 +43,11 @@
 #define D64_ARMALYTE_FILE   "data/images/d64/armalyte+7dh101%-2004-remember.d64"
 
 
+/** \brief  Test image object
+ *
+ * Gets intialized by the module's setup() function and cleaned up by the
+ * module's teardown() function
+ */
 static cbmfm_d64_t image;
 
 
@@ -190,8 +197,8 @@ static bool test_lib_base_dxx_block(test_case_t *test)
         test->failed++;
     } else {
         printf("OK, dumping block data:\n");
-        cbmfm_dxx_block_dump(&block);
-        cbmfm_dxx_block_cleanup(&block);
+        cbmfm_block_dump(&block);
+        cbmfm_block_cleanup(&block);
     }
 
     return true;

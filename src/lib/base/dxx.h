@@ -84,6 +84,12 @@
 #define CBMFM_D64_SIZE_MAX      (196608 + 768)
 
 
+#define CBMFM_D64_BAM_TRACK     18
+#define CBMFM_D64_BAM_SECTOR    0
+
+
+#define CBMFM_D64_BAM_DISK_NAME 0x90
+#define CBMFM_D64_BAM_DISK_ID   0xa2
 
 
 
@@ -94,7 +100,4 @@ intmax_t    cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,
 bool        cbmfm_dxx_block_read(cbmfm_block_t *block,
                                  cbmfm_dxx_image_t *image,
                                  int track, int sector);
-void        cbmfm_dxx_block_cleanup(cbmfm_block_t *block);
-void        cbmfm_dxx_block_dump(const cbmfm_block_t *block);
-
 #endif

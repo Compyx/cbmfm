@@ -27,6 +27,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #include <inttypes.h>
 
 #include "lib.h"
@@ -45,23 +47,31 @@
 #define D64_ARMALYTE_SIZE   174848
 
 
+/** \brief  Disk name of 'Armalyte' in ASCII
+ */
+#define D64_ARMALYTE_DISK_NAME_ASC  "once upon a time"
+
+
+/** \brief  Disk ID (extended) of 'Armalyte' in ASCII
+ *
+ * Extended disk ID, meaning 5 bytes (ID + unused byte + DOStype)
+ */
+#define D64_ARMALYTE_DISK_ID_ASC  "-rem-"
+
+
+
+
 static bool test_lib_image_d64_open(test_case_t *test);
-#if 0
-static bool test_lib_image_ark_dir(test_case_t *test);
-static bool test_lib_image_ark_file(test_case_t *test);
-#endif
+static bool test_lib_image_d64_bam(test_case_t *test);
+
 
 /** \brief  List of tests for the base library functions
  */
 static test_case_t tests_lib_image_d64[] = {
-    { "open", "Opening d64 images",
+    { "open", "Opening D64 images",
         test_lib_image_d64_open, 0, 0 },
-#if 0
-    { "dir", "Directory handling of Ark archives",
-        test_lib_image_ark_dir, 0, 0 },
-    { "file", "File handling of Ark archives",
-        test_lib_image_ark_file, 0, 0 },
-#endif
+    { "bam", "BAM handling of D64 images",
+        test_lib_image_d64_bam, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -89,7 +99,7 @@ static bool test_lib_image_d64_open(test_case_t *test)
     cbmfm_d64_t image;
     bool result;
 
-    test->total = 2;
+    test->total = 3;
 
     cbmfm_d64_init(&image);
 
@@ -144,119 +154,64 @@ static bool test_lib_image_d64_open(test_case_t *test)
 }
 
 
-#if 0
-/** \brief  Test directory handling of Ark archives
+/** \brief  Test BAM handling of D64 images
  *
  * \param[in,out]   test    test object
  *
  * \return  bool
  */
-static bool test_lib_image_ark_dir(struct test_case_s *test)
+static bool test_lib_image_d64_bam(test_case_t *test)
 {
-    cbmfm_image_t image;
-    cbmfm_dir_t *dir;
+    cbmfm_d64_t image;
     bool result;
-
-    test->total = 1;
-
-    cbmfm_image_init(&image);
-
-    printf("..... calling cbmfm_ark_open(\"%s\" ... ", ARK_TPZTOOLS_FILE);
-    result = cbmfm_ark_open(&image, ARK_TPZTOOLS_FILE);
-    if (!result) {
-        /* fatal error*/
-        printf("failed: fatal\n");
-        return false;
-    }
-
-    printf("..... dumping stat via cbmfm_ark_dump_stats():\n");
-    cbmfm_ark_dump_stats(&image);
-
-    printf("..... dumping directory:\n");
-    dir = cbmfm_ark_read_dir(&image, true);
-    if (dir == NULL) {
-        fprintf(stderr, "failed!\n");
-        test->failed++;
-    } else {
-        cbmfm_dir_dump(dir);
-        cbmfm_dir_free(dir);
-    }
-
-    printf("..... calling cbmfm_ark_cleanup()\n");
-    cbmfm_image_cleanup(&image);
-    return true;
-}
-
-
-/** \brief  Test file handling of Ark archives
- *
- * \param[in,out]   test    test object
- *
- * \return  bool
- *
- * \todo    allow a prefix for the files, perhaps based on the image name?
- */
-static bool test_lib_image_ark_file(struct test_case_s *test)
-{
-    cbmfm_image_t image;
-    cbmfm_dir_t *dir;
-    bool result;
+    uint8_t *bam;
+    long offset;
+    char disk_name[CBMFM_CBMDOS_FILENAME_LEN + 1];
+    char disk_id[CBMFM_CBMDOS_DISK_ID_LEN_EXT + 1];
 
     test->total = 3;
 
-    cbmfm_image_init(&image);
+    cbmfm_d64_init(&image);
 
-    printf("..... calling cbmfm_ark_open(\"%s\" ... ", ARK_TPZTOOLS_FILE);
-    result = cbmfm_ark_open(&image, ARK_TPZTOOLS_FILE);
+    printf("..... calling cbmfm_d64_open(\"%s\" ... ", D64_ARMALYTE_FILE);
+    result = cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
     if (!result) {
         /* fatal error*/
         printf("failed: fatal\n");
         return false;
     }
+    printf("OK\n");
 
-    printf("..... dumping stat via cbmfm_ark_dump_stats():\n");
-    cbmfm_ark_dump_stats(&image);
-
-    /* this isn't supposed to fail */
-    printf("..... dumping directory:\n");
-    dir = cbmfm_ark_read_dir(&image, true);
-    if (dir == NULL) {
-        fprintf(stderr, "failed!\n");
+    bam = cbmfm_d64_bam_ptr(&image);
+    offset = bam - image.data;
+    printf("..... calling c64_d64_bam_ptr() = %p (offset = $%lx) -> %s\n",
+            bam, offset, offset == 0x16500 ? "OK" : "failed");
+    if (offset != 0x16500) {
+        test->failed++;
+        printf("BAM ptr test failed, all others test will fail too, exiting\n");
+        cbmfm_d64_cleanup(&image);
         return false;
     }
-    cbmfm_dir_dump(dir);
-    cbmfm_dir_free(dir);
 
-    /* extract file with original PETSCII name */
-    printf("..... calling cbmfm_ark_extract_file(image, NULL, 0) .. ");
-    if (!cbmfm_ark_extract_file(&image, NULL, 0)) {
-        printf("failed\n");
+    printf("..... calling cbmfm_get_disk_name_asc()..\n");
+    cbmfm_d64_get_disk_name_asc(&image, disk_name);
+    result = strcmp(disk_name, D64_ARMALYTE_DISK_NAME_ASC) == 0;
+    printf("....... disk name = '%s' -> %s\n", disk_name,
+            result ? "OK" : "failed");
+    if (!result) {
         test->failed++;
-    } else {
-        printf("OK\n");
     }
 
-    /* extract file with custom name */
-    printf("..... calling cbmfm_ark_extract_file(image, \"dlw-2.4.prg\", 0) .. ");
-    if (!cbmfm_ark_extract_file(&image, "dlw-2.4.prg", 0)) {
-        printf("failed\n");
+    printf("..... calling cbmfm_get_disk_id_asc()..\n");
+    cbmfm_d64_get_disk_id_asc(&image, disk_id);
+    result = strcmp(disk_id, D64_ARMALYTE_DISK_ID_ASC) == 0;
+    printf("....... disk id = '%s' -> %s\n", disk_id,
+            result ? "OK" : "failed");
+    if (!result) {
         test->failed++;
-    } else {
-        printf("OK\n");
-    }
-
-    /* extract all files */
-    printf("..... calling cbmfm_ark_extract_all() .. ");
-    if (!cbmfm_ark_extract_all(&image)) {
-        printf("failed\n");
-        test->failed++;
-    } else {
-        printf("OK\n");
     }
 
 
-    printf("..... calling cbmfm_ark_cleanup()\n");
-    cbmfm_image_cleanup(&image);
+    cbmfm_d64_cleanup(&image);
     return true;
 }
-#endif

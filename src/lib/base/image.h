@@ -33,6 +33,12 @@
 
 const char *    cbmfm_image_type_get_ext(cbmfm_image_type_t type);
 const char *    cbmfm_image_type_get_desc(cbmfm_image_type_t type);
+const char *    cbmfm_cbmdos_filetype(uint8_t filetype);
+void            cbmfm_block_init(cbmfm_block_t *block);
+
+void            cbmfm_block_cleanup(cbmfm_block_t *block);
+void            cbmfm_block_dump(const cbmfm_block_t *block);
+
 
 /*
  * Image creation/destruction functions

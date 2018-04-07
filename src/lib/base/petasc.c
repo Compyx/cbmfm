@@ -246,6 +246,29 @@ void cbmfm_pet_to_asc_str(char *asc, const uint8_t *pet, size_t n)
 }
 
 
+/** \brief  Translate at most \a n characters of \a asc to PETSCII in \a pet
+ *
+ * Stores at most \a n bytes in \a pet. If strlen(asc) < n the remaining bytes
+ * are set to 0.
+ *
+ * \param[out]  pet     target PETSCII string
+ * \param[in]   asc     ASCII string, optionally 0-terminated
+ * \param[in]   n       copy at most this number of characters from \a asc
+ */
+void cbmfm_asc_to_pet_str(uint8_t *pet, const char *asc, size_t n)
+{
+    size_t i = 0;
+
+    while (i < n && asc[i] != '\0') {
+        pet[i] = cbmfm_asc_to_pet((uint8_t)(asc[i]));
+        i++;
+    }
+    while (i < n) {
+        pet[i++] = 0x00;
+    }
+}
+
+
 /** \brief  Convert PETSCII filename \a pet to ASCII, optionally with extension
  *
  * Removes padding from PETSCII filename, both normal spaces and 0xa0, converts

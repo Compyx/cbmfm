@@ -29,12 +29,27 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "cbmfm_types.h"
-#include "base.h"
+#include "base/mem.h"
+#include "base/io.h"
 
 #include "base/image.h"
 
+
+/** \brief  CBMDOS file type strings
+ */
+static const char *filetype_str[8] = {
+    "del",  /* deleted */
+    "seq",  /* sequential */
+    "prg",  /* program */
+    "usr",  /* user defined */
+    "rel",  /* relative */
+    "dir",  /* directory/partition (d81) */
+    "???",
+    "???"
+};
 
 /** \brief  Image type meta data object
  */
@@ -58,6 +73,69 @@ static image_type_meta_t image_meta_data[CBMFM_IMAGE_TYPE_COUNT] = {
     { "lnx",    "Lynx archive" },
     { "t64",    "T64 archive" }
 };
+
+
+/** \brief  Initialize \a block
+ *
+ * Sets track and sector numbers to -1, marking it invalid
+ *
+ * \param[in,out]   block   block object
+ */
+void cbmfm_block_init(cbmfm_block_t *block)
+{
+    block->track = -1;
+    block->sector = -1;
+    block->data = NULL;
+    block->next = NULL;
+    block->prev = NULL;
+}
+
+
+/** \brief  Free block data inside \a block
+ *
+ * Frees the 256 bytes inside \a block
+ *
+ * \param[in,out]   block   block object
+ *
+ * \todo    move to more generic file
+ */
+void cbmfm_block_cleanup(cbmfm_block_t *block)
+{
+    cbmfm_free(block->data);
+    block->data = NULL;
+}
+
+
+void cbmfm_block_dump(const cbmfm_block_t *block)
+{
+    int row;
+    int col;
+
+    for (row = 0; row < 16; row++) {
+        printf("%02d:%02d:%02x: ", block->track, block->sector, row * 16);
+        for (col = 0; col < 16; col++) {
+            printf("%02x ", block->data[row * 16 + col]);
+        }
+        for (col = 0; col < 16; col++) {
+            int ch = block->data[row * 16 + col];
+            putchar(isprint(ch) ? ch : '.');
+        }
+        putchar('\n');
+    }
+}
+
+
+/** \brief  Get CBMDOS filetype string
+ *
+ * \param[in]   filetype    CBMDOS filetype byte
+ *
+ * \return  0-terminated file type in ASCII
+ */
+const char *cbmfm_cbmdos_filetype(uint8_t filetype)
+{
+    return filetype_str[filetype & 0x07];
+}
+
 
 
 /** \brief  Get image file extension

@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "cbmfm_types.h"
 #include "base.h"
@@ -128,5 +129,88 @@ bool cbmfm_d64_open(cbmfm_d64_t *image, const char *name)
         return false;
     }
     return true;
+}
+
+
+/** \brief  Get pointer to BAM of \a image
+ *
+ * \param   image   d64 image
+ *
+ * \return  pointer to BAM
+ */
+uint8_t *cbmfm_d64_bam_ptr(cbmfm_d64_t *image)
+{
+    return image->data + cbmfm_dxx_block_offset(image->zones,
+                                                CBMFM_D64_BAM_TRACK,
+                                                CBMFM_D64_BAM_SECTOR);
+}
+
+
+/** \brief  Get disk name in PETSCII of \a image
+ *
+ * Get the disk name of \a image and store it in \a name. The \a name argument
+ * most point to valid memory of at least 16 bytes.
+ *
+ * \param[in]   image   d64 image
+ * \param[out]  name    destination of disk name
+ */
+void cbmfm_d64_get_disk_name_pet(cbmfm_d64_t *image, uint8_t *name)
+{
+    uint8_t *bam = cbmfm_d64_bam_ptr(image);
+
+    memcpy(name, bam + CBMFM_D64_BAM_DISK_NAME, CBMFM_CBMDOS_FILENAME_LEN);
+}
+
+
+/** \brief  Get disk name in ASCII of \a image
+ *
+ * Get the disk name of \a image, translate to ASCII and store it in \a name.
+ * The \a name argument most point to valid memory of at least 17 bytes (disk
+ * name of 16 bytes + 1 byte for nil).
+ *
+ * \param[in]   image   d64 image
+ * \param[out]  name    destination of disk name
+ */
+
+void cbmfm_d64_get_disk_name_asc(cbmfm_d64_t *image, char *name)
+{
+    uint8_t pet[CBMFM_CBMDOS_FILENAME_LEN];
+
+    cbmfm_d64_get_disk_name_pet(image, pet);
+    cbmfm_pet_to_asc_str(name, pet, CBMFM_CBMDOS_FILENAME_LEN);
+}
+
+
+void cbmfm_d64_get_disk_id_pet(cbmfm_d64_t *image, uint8_t *id)
+{
+    uint8_t *bam = cbmfm_d64_bam_ptr(image);
+
+    memcpy(id, bam + CBMFM_D64_BAM_DISK_ID, CBMFM_CBMDOS_DISK_ID_LEN_EXT);
+}
+
+
+void cbmfm_d64_get_disk_id_asc(cbmfm_d64_t *image, char *id)
+{
+    uint8_t pet[CBMFM_CBMDOS_DISK_ID_LEN_EXT];
+
+    cbmfm_d64_get_disk_id_pet(image, pet);
+    cbmfm_pet_to_asc_str(id, pet, CBMFM_CBMDOS_DISK_ID_LEN_EXT);
+}
+
+
+void cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image, const uint8_t *name)
+{
+    uint8_t *bam = cbmfm_d64_bam_ptr(image);
+
+    memcpy(bam + CBMFM_D64_BAM_DISK_NAME, name, CBMFM_CBMDOS_FILENAME_LEN);
+}
+
+
+void cbmfm_d64_set_disk_name_asc(cbmfm_d64_t *image, const char *name)
+{
+    uint8_t pet[CBMFM_CBMDOS_FILENAME_LEN];
+
+    cbmfm_asc_to_pet_str(pet, name, CBMFM_CBMDOS_FILENAME_LEN);
+    cbmfm_d64_set_disk_name_pet(image, pet);
 }
 
