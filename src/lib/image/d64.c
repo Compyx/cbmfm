@@ -214,3 +214,81 @@ void cbmfm_d64_set_disk_name_asc(cbmfm_d64_t *image, const char *name)
     cbmfm_d64_set_disk_name_pet(image, pet);
 }
 
+
+/** \brief  Set disk ID, using \a len bytes of \a id
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       id      disk ID in PETSCII
+ * \param[in]       len     length of \a id
+ */
+static void set_disk_id_pet(cbmfm_d64_t *image, const uint8_t *id, size_t len)
+{
+    uint8_t *bam = cbmfm_d64_bam_ptr(image);
+
+    memcpy(bam + CBMFM_D64_BAM_DISK_ID, id, len);
+}
+
+
+/** \brief  Set standard 2-byte disk ID
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       id      2-byte disk ID
+ */
+void cbmfm_d64_set_disk_id_pet(cbmfm_d64_t *image, const uint8_t *id)
+{
+    set_disk_id_pet(image, id, CBMFM_CBMDOS_DISK_ID_LEN);
+}
+
+
+/** \brief  Set extended 5-byte disk ID
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       id      5-byte disk ID
+ */
+void cbmfm_d64_set_disk_id_pet_ext(cbmfm_d64_t *image, const uint8_t *id)
+{
+    set_disk_id_pet(image, id, CBMFM_CBMDOS_DISK_ID_LEN_EXT);
+}
+
+
+/** \brief  Set disk ID, using at most \a len bytes of \a id
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       id      disk ID in ASCII
+ * \param[in]       len     max length of \a id
+ */
+static void set_disk_id_asc(cbmfm_d64_t *image, const char *id, size_t len)
+{
+    uint8_t *bam;
+    uint8_t pet[CBMFM_CBMDOS_DISK_ID_LEN_EXT];
+
+    bam = cbmfm_d64_bam_ptr(image);
+    cbmfm_asc_to_pet_str(pet, id, len);
+    memcpy(bam + CBMFM_D64_BAM_DISK_ID, pet, len);
+}
+
+
+/** \brief  Set standard 2-byte disk ID
+ *
+ * Copies at most 2 bytes of \a id.
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       id      2-byte disk ID
+ */
+void cbmfm_d64_set_disk_id_asc(cbmfm_d64_t *image, const char *id)
+{
+    set_disk_id_asc(image, id, CBMFM_CBMDOS_DISK_ID_LEN);
+}
+
+
+/** \brief  Set extended 5-byte disk ID
+ *
+ * Copies at most 5 bytes of \a id.
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       id      5-byte disk ID
+ */
+void cbmfm_d64_set_disk_id_asc_ext(cbmfm_d64_t *image, const char *id)
+{
+    set_disk_id_asc(image, id, CBMFM_CBMDOS_DISK_ID_LEN_EXT);
+}

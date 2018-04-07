@@ -53,7 +53,16 @@ void            cbmfm_d64_get_disk_id_asc(cbmfm_d64_t *image, char *id);
 
 void            cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image,
                                             const uint8_t *name);
-
 void            cbmfm_d64_set_disk_name_asc(cbmfm_d64_t *image,
                                             const char *name);
+
+void            cbmfm_d64_set_disk_id_pet(cbmfm_d64_t *image,
+                                          const uint8_t *id);
+void            cbmfm_d64_set_disk_id_pet_ext(cbmfm_d64_t *image,
+                                              const uint8_t *id);
+
+void            cbmfm_d64_set_disk_id_asc(cbmfm_d64_t *image, const char *id);
+void            cbmfm_d64_set_disk_id_asc_ext(cbmfm_d64_t *image,
+                                              const char *id);
+
 #endif
