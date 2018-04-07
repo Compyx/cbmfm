@@ -55,11 +55,16 @@ bool            cbmfm_image_read_data(cbmfm_image_t *image, const char *path);
  * Image state functions
  */
 
+bool            cbmfm_image_get_flag(const cbmfm_image_t *imge, uint32_t flag);
+void            cbmfm_image_set_flag(cbmfm_image_t *image, uint32_t flag,
+                                     bool state);
+
 bool            cbmfm_image_get_readonly(const cbmfm_image_t *image);
 void            cbmfm_image_set_readonly(cbmfm_image_t *image, bool readonly);
 bool            cbmfm_image_get_dirty(const cbmfm_image_t *image);
 void            cbmfm_image_set_dirty(cbmfm_image_t *image, bool dirty);
-
+bool            cbmfm_image_get_invalid(const cbmfm_image_t *image);
+void            cbmfm_image_set_invalid(cbmfm_image_t *image, bool invalid);
 #endif
 
 

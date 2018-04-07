@@ -158,7 +158,7 @@ void cbmfm_d64_get_disk_name_pet(cbmfm_d64_t *image, uint8_t *name)
 {
     uint8_t *bam = cbmfm_d64_bam_ptr(image);
 
-    memcpy(name, bam + CBMFM_D64_BAM_DISK_NAME, CBMFM_CBMDOS_FILENAME_LEN);
+    memcpy(name, bam + CBMFM_D64_BAM_DISK_NAME, CBMFM_CBMDOS_DISK_NAME_LEN);
 }
 
 
@@ -173,10 +173,10 @@ void cbmfm_d64_get_disk_name_pet(cbmfm_d64_t *image, uint8_t *name)
  */
 void cbmfm_d64_get_disk_name_asc(cbmfm_d64_t *image, char *name)
 {
-    uint8_t pet[CBMFM_CBMDOS_FILENAME_LEN];
+    uint8_t pet[CBMFM_CBMDOS_DISK_NAME_LEN];
 
     cbmfm_d64_get_disk_name_pet(image, pet);
-    cbmfm_pet_to_asc_str(name, pet, CBMFM_CBMDOS_FILENAME_LEN);
+    cbmfm_pet_to_asc_str(name, pet, CBMFM_CBMDOS_DISK_NAME_LEN);
 }
 
 
@@ -225,7 +225,8 @@ void cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image, const uint8_t *name)
 {
     uint8_t *bam = cbmfm_d64_bam_ptr(image);
 
-    memcpy(bam + CBMFM_D64_BAM_DISK_NAME, name, CBMFM_CBMDOS_FILENAME_LEN);
+    memcpy(bam + CBMFM_D64_BAM_DISK_NAME, name, CBMFM_CBMDOS_DISK_NAME_LEN);
+    cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
 }
 
 
@@ -239,10 +240,11 @@ void cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image, const uint8_t *name)
  */
 void cbmfm_d64_set_disk_name_asc(cbmfm_d64_t *image, const char *name)
 {
-    uint8_t pet[CBMFM_CBMDOS_FILENAME_LEN];
+    uint8_t pet[CBMFM_CBMDOS_DISK_NAME_LEN];
 
-    cbmfm_asc_to_pet_str(pet, name, CBMFM_CBMDOS_FILENAME_LEN);
+    cbmfm_asc_to_pet_str(pet, name, CBMFM_CBMDOS_DISK_NAME_LEN);
     cbmfm_d64_set_disk_name_pet(image, pet);
+    cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
 }
 
 
@@ -257,6 +259,7 @@ static void set_disk_id_pet(cbmfm_d64_t *image, const uint8_t *id, size_t len)
     uint8_t *bam = cbmfm_d64_bam_ptr(image);
 
     memcpy(bam + CBMFM_D64_BAM_DISK_ID, id, len);
+    cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
 }
 
 
@@ -268,6 +271,7 @@ static void set_disk_id_pet(cbmfm_d64_t *image, const uint8_t *id, size_t len)
 void cbmfm_d64_set_disk_id_pet(cbmfm_d64_t *image, const uint8_t *id)
 {
     set_disk_id_pet(image, id, CBMFM_CBMDOS_DISK_ID_LEN);
+    cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
 }
 
 
@@ -279,6 +283,7 @@ void cbmfm_d64_set_disk_id_pet(cbmfm_d64_t *image, const uint8_t *id)
 void cbmfm_d64_set_disk_id_pet_ext(cbmfm_d64_t *image, const uint8_t *id)
 {
     set_disk_id_pet(image, id, CBMFM_CBMDOS_DISK_ID_LEN_EXT);
+    cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
 }
 
 
@@ -296,6 +301,7 @@ static void set_disk_id_asc(cbmfm_d64_t *image, const char *id, size_t len)
     bam = cbmfm_d64_bam_ptr(image);
     cbmfm_asc_to_pet_str(pet, id, len);
     memcpy(bam + CBMFM_D64_BAM_DISK_ID, pet, len);
+    cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
 }
 
 

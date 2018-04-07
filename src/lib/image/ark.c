@@ -202,7 +202,7 @@ static bool ark_parse_dirent(
 
     /* get CBMDOS filename */
     memcpy(dirent->filename, data + CBMFM_ARK_DIRENT_FILENAME,
-            CBMFM_CBMDOS_FILENAME_LEN);
+            CBMFM_CBMDOS_FILE_NAME_LEN);
 
     /* calculate file size */
     blocks = (size_t)(data[CBMFM_ARK_DIRENT_FILESIZE]
@@ -322,7 +322,7 @@ bool cbmfm_ark_extract_file(cbmfm_image_t *image, const char *name, int index)
 {
     cbmfm_dirent_t dirent;
     /* +4 for '.ext', +1 for '\0' */
-    char host_fname[CBMFM_CBMDOS_FILENAME_LEN + 4 + 1];
+    char host_fname[CBMFM_CBMDOS_FILE_NAME_LEN + 4 + 1];
     uint8_t *data;
 
     if (!ark_file_index_check(image, index)) {

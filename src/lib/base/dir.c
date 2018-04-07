@@ -60,7 +60,7 @@ cbmfm_dirent_t *cbmfm_dirent_alloc(void)
  */
 void cbmfm_dirent_init(cbmfm_dirent_t *dirent)
 {
-    memset(dirent->filename, 0, CBMFM_CBMDOS_FILENAME_LEN);
+    memset(dirent->filename, 0, CBMFM_CBMDOS_FILE_NAME_LEN);
     dirent->filedata = NULL;
     dirent->filesize = 0;
     dirent->filetype = 0;
@@ -95,7 +95,7 @@ cbmfm_dirent_t *cbmfm_dirent_dup(const cbmfm_dirent_t *dirent)
     cbmfm_dirent_t *dupl = cbmfm_dirent_new();
 
     /* copy file name */
-    memcpy(dupl->filename, dirent->filename, CBMFM_CBMDOS_FILENAME_LEN);
+    memcpy(dupl->filename, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
     if (dirent->filedata != NULL) {
         /* copy file data */
         dupl->filedata = cbmfm_memdup(dirent->filedata, dirent->filesize);
@@ -151,9 +151,9 @@ void cbmfm_dirent_free(cbmfm_dirent_t *dirent)
  */
 int cbmfm_dirent_dump(const cbmfm_dirent_t *dirent)
 {
-    char name[CBMFM_CBMDOS_FILENAME_LEN + 1];
+    char name[CBMFM_CBMDOS_FILE_NAME_LEN + 1];
 
-    cbmfm_pet_to_asc_str(name, dirent->filename, CBMFM_CBMDOS_FILENAME_LEN);
+    cbmfm_pet_to_asc_str(name, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
 
     return printf("%-5u \"%s\" %c%s%c\n",
             dirent->size_blocks, name,

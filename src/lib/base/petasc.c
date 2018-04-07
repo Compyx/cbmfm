@@ -283,9 +283,9 @@ void cbmfm_asc_to_pet_str(uint8_t *pet, const char *asc, size_t n)
 void cbmfm_pet_filename_to_host(char *asc, const uint8_t *pet, const char *ext)
 {
     int lead = 0;
-    int trail = CBMFM_CBMDOS_FILENAME_LEN - 1;
+    int trail = CBMFM_CBMDOS_FILE_NAME_LEN - 1;
 
-    while (lead < CBMFM_CBMDOS_FILENAME_LEN &&
+    while (lead < CBMFM_CBMDOS_FILE_NAME_LEN &&
             (pet[lead] == 0x20 || pet[lead] == 0xa0)) {
         lead++;
     }

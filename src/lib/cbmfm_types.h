@@ -48,7 +48,12 @@
 
 /** \brief  Length of a CBMDOS filename
  */
-#define CBMFM_CBMDOS_FILENAME_LEN   0x10
+#define CBMFM_CBMDOS_FILE_NAME_LEN  0x10
+
+
+/** \brief  Length of a CBMDOS disk name
+ */
+#define CBMFM_CBMDOS_DISK_NAME_LEN  0x10
 
 /** \brief  Length of a standard disk ID
  */
@@ -76,14 +81,22 @@
  * When set, the image is assumed to be read only and cannot be written back
  * to its original file.
  */
-#define CBMFM_IMAGE_FLAGS_READONLY  0x01U
+#define CBMFM_IMAGE_FLAG_READONLY   0x01U
 
 
 /** \brief  Image flag: dirty bit
  *
  * When set, the image data has been altered since it was opened.
  */
-#define CBMFM_IMAGE_FLAGS_DIRTY     0x02U
+#define CBMFM_IMAGE_FLAG_DIRTY      0x02U
+
+
+/** \brief  Image flag: invalid bit
+ *
+ * When set, this bit indicates an operation on the image altered some data but
+ * didn't complete succesfully, leaving the image in an invalid state.
+ */
+#define CBMFM_IMAGE_FLAG_INVALID    0x04U
 
 
 /** \brief  Image type enumerators
@@ -126,7 +139,7 @@ typedef struct cbmfm_block_s {
  * Contains information on a directory entry.
  */
 typedef struct cbmfm_dirent_s {
-    uint8_t     filename[CBMFM_CBMDOS_FILENAME_LEN];    /**< CBMDOS filename */
+    uint8_t     filename[CBMFM_CBMDOS_FILE_NAME_LEN];    /**< CBMDOS filename */
     uint8_t *   filedata;   /**< raw file data (optional) */
     size_t      filesize;   /**< raw file size (optional) */
     uint8_t     filetype;   /**< CBMDOS file type and flags */

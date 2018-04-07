@@ -263,6 +263,36 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path)
  */
 
 
+/** \brief  Get image flag
+ *
+ * \param[in]   image   image
+ * \param[in]   flag    flag mask
+ *
+ * \see #cbmfm_types.h for the flag constants
+ */
+bool cbmfm_image_get_flag(const cbmfm_image_t *image, uint32_t flag)
+{
+    return (bool)(image->flags & flag);
+}
+
+
+/** \brief  Set image flag
+ *
+ * \param[in]   image   image
+ * \param[in]   flag    flag mask
+ * \param[in]   state   flag state
+ *
+ * \see #cbmfm_types.h for the flag constants
+ */
+void cbmfm_image_set_flag(cbmfm_image_t *image, uint32_t flag, bool state)
+{
+    image->flags &= ~flag;
+    if (state) {
+        image->flags |= flag;
+    }
+}
+
+
 /** \brief  Check if \a image is marked read only
  *
  * \param[in]   image   image handle
@@ -271,7 +301,7 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path)
  */
 bool cbmfm_image_get_readonly(const cbmfm_image_t *image)
 {
-    return (bool)(image->flags & CBMFM_IMAGE_FLAGS_READONLY);
+    return cbmfm_image_get_flag(image, CBMFM_IMAGE_FLAG_READONLY);
 }
 
 
@@ -282,10 +312,7 @@ bool cbmfm_image_get_readonly(const cbmfm_image_t *image)
  */
 void cbmfm_image_set_readonly(cbmfm_image_t *image, bool readonly)
 {
-    image->flags &= ~CBMFM_IMAGE_FLAGS_READONLY;
-    if (readonly) {
-        image->flags |= CBMFM_IMAGE_FLAGS_READONLY;
-    }
+    cbmfm_image_set_flag(image, CBMFM_IMAGE_FLAG_READONLY, readonly);
 }
 
 
@@ -300,7 +327,7 @@ void cbmfm_image_set_readonly(cbmfm_image_t *image, bool readonly)
  */
 bool cbmfm_image_get_dirty(const cbmfm_image_t *image)
 {
-    return (bool)(image->flags & CBMFM_IMAGE_FLAGS_DIRTY);
+    return cbmfm_image_get_flag(image, CBMFM_IMAGE_FLAG_DIRTY);
 }
 
 
@@ -311,8 +338,32 @@ bool cbmfm_image_get_dirty(const cbmfm_image_t *image)
  */
 void cbmfm_image_set_dirty(cbmfm_image_t *image, bool dirty)
 {
-    image->flags &= ~CBMFM_IMAGE_FLAGS_DIRTY;
-    if (dirty) {
-        image->flags |= CBMFM_IMAGE_FLAGS_DIRTY;
+    cbmfm_image_set_flag(image, CBMFM_IMAGE_FLAG_DIRTY, dirty);
+}
+
+
+/** \brief  Get invalid flag of \a image
+ *
+ * \param[in,out]   image   image handle
+ *
+ * \return  invalid state
+ */
+bool cbmfm_image_get_invalid(const cbmfm_image_t *image)
+{
+   return cbmfm_image_get_flag(image, CBMFM_IMAGE_FLAG_INVALID);
+}
+
+
+/** \brief  Set invalid flag on \a image
+ *
+ * \param[in,out]   image   image handle
+ * \param[in]       invalid some operation failed, leaving the image in an
+ *                          invalid state
+ */
+void cbmfm_image_set_invalid(cbmfm_image_t *image, bool invalid)
+{
+    image->flags &= CBMFM_IMAGE_FLAG_INVALID;
+    if (invalid) {
+        image->flags |= CBMFM_IMAGE_FLAG_INVALID;
     }
 }

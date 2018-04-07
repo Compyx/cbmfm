@@ -166,7 +166,7 @@ static bool test_lib_image_d64_bam(test_case_t *test)
     bool result;
     uint8_t *bam;
     long offset;
-    char disk_name[CBMFM_CBMDOS_FILENAME_LEN + 1];
+    char disk_name[CBMFM_CBMDOS_FILE_NAME_LEN + 1];
     char disk_id[CBMFM_CBMDOS_DISK_ID_LEN_EXT + 1];
 
     test->total = 3;
