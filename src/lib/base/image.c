@@ -77,7 +77,8 @@ static image_type_meta_t image_meta_data[CBMFM_IMAGE_TYPE_COUNT] = {
 
 /** \brief  Initialize \a block
  *
- * Sets track and sector numbers to -1, marking it invalid
+ * Sets track and sector numbers to -1, marking it invalid, sets pointers to
+ * `NULL`.
  *
  * \param[in,out]   block   block object
  */
@@ -96,8 +97,6 @@ void cbmfm_block_init(cbmfm_block_t *block)
  * Frees the 256 bytes inside \a block
  *
  * \param[in,out]   block   block object
- *
- * \todo    move to more generic file
  */
 void cbmfm_block_cleanup(cbmfm_block_t *block)
 {
@@ -106,6 +105,10 @@ void cbmfm_block_cleanup(cbmfm_block_t *block)
 }
 
 
+/** \brief  Dump block data on stdout
+ *
+ * \param[in]   block   block object
+ */
 void cbmfm_block_dump(const cbmfm_block_t *block)
 {
     int row;

@@ -50,7 +50,15 @@
  */
 #define CBMFM_CBMDOS_FILENAME_LEN   0x10
 
+/** \brief  Length of a standard disk ID
+ */
 #define CBMFM_CBMDOS_DISK_ID_LEN        0x02
+
+/** \brief  Length of an extended disk ID
+ *
+ * Many scene releases use the unused byte after the ID and the 2-byte
+ * 'DOS type' to get a 5-byte ID.
+ */
 #define CBMFM_CBMDOS_DISK_ID_LEN_EXT    0x05
 
 
@@ -171,6 +179,8 @@ typedef struct cbmfm_dxx_speedzone_s {
 } cbmfm_dxx_speedzone_t;
 
 
+/** \brief  Dxx image shared members
+ */
 #define CBMFM_DXX_IMAGE_SHARED_MEMBERS \
     const cbmfm_dxx_speedzone_t *zones;
 

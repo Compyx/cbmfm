@@ -171,7 +171,6 @@ void cbmfm_d64_get_disk_name_pet(cbmfm_d64_t *image, uint8_t *name)
  * \param[in]   image   d64 image
  * \param[out]  name    destination of disk name
  */
-
 void cbmfm_d64_get_disk_name_asc(cbmfm_d64_t *image, char *name)
 {
     uint8_t pet[CBMFM_CBMDOS_FILENAME_LEN];
@@ -181,6 +180,15 @@ void cbmfm_d64_get_disk_name_asc(cbmfm_d64_t *image, char *name)
 }
 
 
+/** \brief  Get PETSCII disk ID
+ *
+ * The disk ID returned is the 'extended' ID and requires 5 bytes of storage.
+ *
+ * \see #CBMFM_CBMDOS_DISK_ID_LEN_EXT
+ *
+ * \param[in]   image   d64 image
+ * \param[out]  id      disk ID (5 bytes)
+ */
 void cbmfm_d64_get_disk_id_pet(cbmfm_d64_t *image, uint8_t *id)
 {
     uint8_t *bam = cbmfm_d64_bam_ptr(image);
@@ -189,6 +197,16 @@ void cbmfm_d64_get_disk_id_pet(cbmfm_d64_t *image, uint8_t *id)
 }
 
 
+/** \brief  Get ASCII disk ID
+ *
+ * The disk ID returned is the 'extended' ID and requires 6 bytes of storage.
+ * (5 bytes for the extended ID, 1 byte for nil)
+ *
+ * \see #CBMFM_CBMDOS_DISK_ID_LEN_EXT
+ *
+ * \param[in]   image   d64 image
+ * \param[out]  id      disk ID (5 bytes)
+ */
 void cbmfm_d64_get_disk_id_asc(cbmfm_d64_t *image, char *id)
 {
     uint8_t pet[CBMFM_CBMDOS_DISK_ID_LEN_EXT];
@@ -198,6 +216,11 @@ void cbmfm_d64_get_disk_id_asc(cbmfm_d64_t *image, char *id)
 }
 
 
+/** \brief  Set disk name using PETSCII
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       name    PETSCII disk name (16 bytes)
+ */
 void cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image, const uint8_t *name)
 {
     uint8_t *bam = cbmfm_d64_bam_ptr(image);
@@ -206,6 +229,14 @@ void cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image, const uint8_t *name)
 }
 
 
+/** \brief  Set disk name using ASCII
+ *
+ * Sets disk name using at most 16 bytes of ASCII string \a name, the remaining
+ * bytes (if any) are padded with 0.
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       name    ASSCII disk name
+ */
 void cbmfm_d64_set_disk_name_asc(cbmfm_d64_t *image, const char *name)
 {
     uint8_t pet[CBMFM_CBMDOS_FILENAME_LEN];

@@ -83,12 +83,21 @@
  */
 #define CBMFM_D64_SIZE_MAX      (196608 + 768)
 
-
+/** \brief  BAM track number
+ */
 #define CBMFM_D64_BAM_TRACK     18
+
+/** \brief  BAM sector number
+ */
 #define CBMFM_D64_BAM_SECTOR    0
 
 
+/** \brief  Offset in BAM of disk name (16 bytes)
+ */
 #define CBMFM_D64_BAM_DISK_NAME 0x90
+
+/** \brief  Offset in BAM of disk ID (2 bytes, or 5 bytes)
+ */
 #define CBMFM_D64_BAM_DISK_ID   0xa2
 
 
