@@ -25,6 +25,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
+/** \defgroup   tests   Unit testing
+ * @{
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,10 +40,10 @@
 /*
  * Test modules
  */
-#include "test-lib-base.h"
-#include "test-lib-image-ark.h"
-#include "test-lib-image-d64.h"
-#include "test-lib-base-dxx.h"
+#include "test_lib_base.h"
+#include "test_lib_image_ark.h"
+#include "test_lib_image_d64.h"
+#include "test_lib_base_dxx.h"
 
 
 /** \brief  Print usage/help message on stdout
@@ -100,3 +104,5 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
+
+/** @} */

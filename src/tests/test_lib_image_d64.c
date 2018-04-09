@@ -1,6 +1,6 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-image-d64.c
+/** \file   src/tests/test_lib_image_d64.c
  * \brief   Unit test for src/lib/image/d64.c
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
@@ -34,8 +34,9 @@
 #include "lib.h"
 #include "image/d64.h"
 #include "base/dir.h"
-
 #include "testcase.h"
+
+#include "test_lib_image_d64.h"
 
 
 /** \brief  Test image: 'Armalyte +7dh 101%/remember'

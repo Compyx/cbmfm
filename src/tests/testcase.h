@@ -25,6 +25,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
+/** \ingroup    tests
+ * @{
+ */
+
 #ifndef CBMFM_TESTS_TESTCASE_H
 #define CBMFM_TESTS_TESTCASE_H
 
@@ -71,4 +75,5 @@ void test_module_list_tests(const char *name);
 void test_module_list_modules(void);
 bool test_module_run_tests(const char *mod_name, const char *test_name);
 
+/** @} */
 #endif

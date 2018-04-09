@@ -1,6 +1,6 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-base-dxx.c
+/** \file   src/tests/test_lib_base_dxx.c
  * \brief   Unit test for src/lib/base/dxx.c
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
@@ -35,7 +35,7 @@
 #include "image/d64.h"
 #include "testcase.h"
 
-#include "test-lib-base-dxx.h"
+#include "test_lib_base_dxx.h"
 
 
 /** \brief  Test image: 'Armalyte +7dh 101%/remember'
@@ -194,10 +194,10 @@ static bool test_lib_base_dxx_block(test_case_t *test)
 {
     cbmfm_block_t block;
     cbmfm_dxx_block_iter_t iter;
-    int blocks;
+    int blocks = 0;
 
     printf("..... Testing block reading (cbmfm_dxx_block_read()):\n");
-    test->total = 2;
+    test->total = 3;
 
     cbmfm_block_init(&block);
     printf("....... Reading block (18,0) from test image .. ");
@@ -227,6 +227,12 @@ static bool test_lib_base_dxx_block(test_case_t *test)
         } while (cbmfm_dxx_block_iter_next(&iter));
         printf("%d\n", iter.curr.sector);
         printf("\n....... got %d blocks\n", blocks);
+    }
+    if (blocks != 163) {
+        printf("..... failed\n");
+        test->failed++;
+    } else {
+        printf("OK\n");
     }
 
     return true;

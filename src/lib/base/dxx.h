@@ -101,6 +101,8 @@
 #define CBMFM_D64_SIZE_MAX      CBMFM_D64_SIZE_EXT_ERR
 
 
+/** \brief  D64 directory track number
+ */
 #define CBMFM_D64_DIR_TRACK     18
 
 /** \brief  BAM track number
@@ -112,8 +114,20 @@
 #define CBMFM_D64_BAM_SECTOR    0
 
 
+/** \brief  Offset in BAM of directory track number
+ *
+ * This is completely ignored by all drive ROMS I'm aware of.
+ */
 #define CBMFM_D64_BAM_DIR_TRACK     0x00
+
+/** \brief  Offset in BAM of directory sector number
+ *
+ * This is completely ignored by all drive ROMS I'm aware of.
+ */
 #define CBMFM_D64_BAM_DIR_SECTOR    0x01
+
+/** \brief  Offset in BAM of disk DOS version byte
+ */
 #define CBMFM_D64_BAM_DISK_DOS_VER  0x02
 
 /** \brief  Offset in BAM of track entries
@@ -124,6 +138,12 @@
  */
 #define CBMFM_D64_BAM_ENTRIES       0x04
 
+/** \brief  Size of a BAM entry for a single track
+ *
+ * A 1541 BAM entry is four bytes: the first byte keeps a count of the number
+ * of free blocks in the track, and the next three bytes present a bitmap with
+ * each bit indicating if a particular block is free in the sector.
+ */
 #define CBMFM_D64_BAMENT_SIZE       4
 
 /** \brief  Offset in BAM of disk name (16 bytes)

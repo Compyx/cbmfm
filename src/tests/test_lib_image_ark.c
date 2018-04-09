@@ -1,6 +1,6 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-image-ark.c
+/** \file   src/tests/test_lib_image_ark.c
  * \brief   Unit test for src/lib/image/ark.c
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
@@ -32,8 +32,9 @@
 #include "lib.h"
 #include "image/ark.h"
 #include "base/dir.h"
-
 #include "testcase.h"
+
+#include "test_lib_image_ark.h"
 
 /** \brief  Test image: 'Topaz tools'
  */

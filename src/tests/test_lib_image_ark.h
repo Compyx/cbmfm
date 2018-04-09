@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-base-dxx.h
- * \brief   Unit test for src/lib/base/dxx.c - header
+/** \file   src/tests/test_lib_image_ark.h
+ * \brief   Unit test for src/lib/image/ark.c - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,18 +25,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_TESTS_LIB_BASE_DXX_H
-#define CBMFM_TESTS_LIB_BASE_DXX_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <inttypes.h>
+#ifndef CMBFM_TEST_IMAGE_ARK_H
+#define CMBFM_TEST_IMAGE_ARK_H
 
-#include "lib.h"
-#include "base/dxx.h"
 #include "testcase.h"
 
-
-extern test_module_t module_lib_base_dxx;
+extern test_module_t module_lib_image_ark;
 
 #endif

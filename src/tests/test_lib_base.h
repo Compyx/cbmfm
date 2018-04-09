@@ -1,6 +1,6 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-base.h
+/** \file   src/tests/test_lib_base.h
  * \brief   Unit test for src/lib/base - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>

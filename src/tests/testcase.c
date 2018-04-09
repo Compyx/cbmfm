@@ -25,6 +25,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
+/** \ingroup    tests
+ * @{
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -216,3 +220,5 @@ void test_module_list_modules(void)
         printf("%s\t%s\n", module->name, module->desc);
     }
 }
+
+/** @} */

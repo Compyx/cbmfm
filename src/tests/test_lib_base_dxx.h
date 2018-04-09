@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-image-d64.h
- * \brief   Unit test for src/lib/image/d64.c - header
+/** \file   src/tests/test_lib_base_dxx.h
+ * \brief   Unit test for src/lib/base/dxx.c - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,12 +25,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
+#ifndef CBMFM_TESTS_LIB_BASE_DXX_H
+#define CBMFM_TESTS_LIB_BASE_DXX_H
 
-#ifndef CMBFM_TEST_IMAGE_D64_H
-#define CMBFM_TEST_IMAGE_D64_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
 
+#include "lib.h"
+#include "base/dxx.h"
 #include "testcase.h"
 
-extern test_module_t module_lib_image_d64;
+
+extern test_module_t module_lib_base_dxx;
 
 #endif

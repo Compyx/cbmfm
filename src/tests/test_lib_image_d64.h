@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/tests/test-lib-image-ark.h
- * \brief   Unit test for src/lib/image/ark.c - header
+/** \file   src/tests/test_lib_image_d64.h
+ * \brief   Unit test for src/lib/image/d64.c - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -26,11 +26,11 @@
  */
 
 
-#ifndef CMBFM_TEST_IMAGE_ARK_H
-#define CMBFM_TEST_IMAGE_ARK_H
+#ifndef CMBFM_TEST_IMAGE_D64_H
+#define CMBFM_TEST_IMAGE_D64_H
 
 #include "testcase.h"
 
-extern test_module_t module_lib_image_ark;
+extern test_module_t module_lib_image_d64;
 
 #endif
