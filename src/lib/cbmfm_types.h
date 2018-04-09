@@ -195,7 +195,9 @@ typedef struct cbmfm_dxx_speedzone_s {
 /** \brief  Dxx image shared members
  */
 #define CBMFM_DXX_IMAGE_SHARED_MEMBERS \
-    const cbmfm_dxx_speedzone_t *zones;
+    const cbmfm_dxx_speedzone_t *zones; \
+    int track_max; \
+    bool errors;
 
 
 /** \brief  Dxx image

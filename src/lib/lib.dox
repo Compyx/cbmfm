@@ -1,0 +1,11 @@
+/* vim: set et ts=4 sw=4 sts=4 syntax=c.doxygen cindent: */
+
+/** \defgroup   lib     CbmFM library
+ */
+
+/** \defgroup   lib_base    Base functions and types
+ * \ingroup     lib
+ */
+
+/** \defgroup   lib_image   Image handling
+  */

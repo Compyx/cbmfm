@@ -37,6 +37,10 @@
 
 #include "base/image.h"
 
+/**
+ * \ingroup lib_base
+ * @{
+ */
 
 /** \brief  CBMDOS file type strings
  */
@@ -268,7 +272,9 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path)
  * \param[in]   image   image
  * \param[in]   flag    flag mask
  *
- * \see #cbmfm_types.h for the flag constants
+ * \see cbmfm_types.h for the flag constants
+ *
+ * \return  bool
  */
 bool cbmfm_image_get_flag(const cbmfm_image_t *image, uint32_t flag)
 {
@@ -282,7 +288,7 @@ bool cbmfm_image_get_flag(const cbmfm_image_t *image, uint32_t flag)
  * \param[in]   flag    flag mask
  * \param[in]   state   flag state
  *
- * \see #cbmfm_types.h for the flag constants
+ * \see cbmfm_types.h for the flag constants
  */
 void cbmfm_image_set_flag(cbmfm_image_t *image, uint32_t flag, bool state)
 {
@@ -367,3 +373,5 @@ void cbmfm_image_set_invalid(cbmfm_image_t *image, bool invalid)
         image->flags |= CBMFM_IMAGE_FLAG_INVALID;
     }
 }
+
+/** @} */

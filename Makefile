@@ -96,4 +96,4 @@ doc:
 
 .PHONY: distclean
 distclean: clean
-	rm -rfd doc/html/*
+	rm -rfd doc/doxygen/*

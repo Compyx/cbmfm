@@ -71,17 +71,36 @@
 #define CBMFM_D64_BLOCK_COUNT_EXT   768
 
 
+
+/** \brief  Size of a standard 35-track image, no error bytes
+ */
+#define CBMFM_D64_SIZE_STD      174848
+
+/** \brief  Size of a standard 35-track image with error bytes
+ */
+#define CBMFM_D64_SIZE_STD_ERR  (CBMFM_D64_SIZE_STD + 683)
+
+/** \brief  Size of an extended 40-track image, no error bytes
+ */
+#define CBMFM_D64_SIZE_EXT      196608
+
+/** \brief  Size of an extended 40-track image with error bytes
+ */
+#define CBMFM_D64_SIZE_EXT_ERR  (CBMFM_D64_SIZE_EXT + 768)
+
 /** \brief  Minimum size of a d64 image
  *
  * Size of a standard 35-track image without error info
  */
-#define CBMFM_D64_SIZE_MIN      174848
+#define CBMFM_D64_SIZE_MIN      CBMFM_D64_SIZE_MIN
 
 /** \brief  Maximum size of a d64 image
  *
  * Size of an extended 40-track image with error info
  */
-#define CBMFM_D64_SIZE_MAX      (196608 + 768)
+#define CBMFM_D64_SIZE_MAX      CBMFM_D64_SIZE_EXT_ERR
+
+
 
 /** \brief  BAM track number
  */

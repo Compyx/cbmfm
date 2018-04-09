@@ -121,12 +121,30 @@ bool cbmfm_d64_open(cbmfm_d64_t *image, const char *name)
         return false;
     }
 
-    /* check size */
-    if (image->size < CBMFM_D64_SIZE_MIN || image->size > CBMFM_D64_SIZE_MAX) {
-        cbmfm_free(image->data);
-        image->data = NULL;
-        cbmfm_errno = CBMFM_ERR_SIZE_MISMATCH;
-        return false;
+    /* check size, set track count & error bytes */
+    switch (image->size) {
+        case CBMFM_D64_SIZE_STD:
+            image->track_max = 35;
+            image->errors = false;
+            break;
+        case CBMFM_D64_SIZE_STD_ERR:
+            image->track_max = 35;
+            image->errors = true;
+            break;
+        case CBMFM_D64_SIZE_EXT:
+            image->track_max = 40;
+            image->errors = false;
+            break;
+        case CBMFM_D64_SIZE_EXT_ERR:
+            image->track_max = 40;
+            image->errors = true;
+            break;
+        default:
+            /* invalid size */
+            cbmfm_free(image->data);
+            image->data = NULL;
+            cbmfm_errno = CBMFM_ERR_SIZE_MISMATCH;
+            return false;
     }
     return true;
 }

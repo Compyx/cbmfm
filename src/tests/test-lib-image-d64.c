@@ -118,9 +118,10 @@ static bool test_lib_image_d64_open(test_case_t *test)
     if (image.size != D64_ARMALYTE_SIZE) {
         printf("fail\n");
         test->failed++;
-    } else {
-        printf("OK\n");
     }
+    printf("OK\n");
+    printf("....... track count = %d, error bytes = %s\n",
+            image.track_max, image.errors ? "yes" : "no");
 
     /* check readonly */
     result = cbmfm_image_get_readonly((cbmfm_image_t *)&image);
