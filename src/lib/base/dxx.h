@@ -136,6 +136,22 @@
 
 
 
+
+#define CBMFM_D64_DIRENT_NEXT_DIR_TRACK     0x00
+#define CBMFM_D64_DIRENT_NEXT_DIR_SECTOR    0x01
+#define CBMFM_D64_DIRENT_FILE_TYPE          0x02
+#define CBMFM_D64_DIRENT_FILE_TRACK         0x03
+#define CBMFM_D64_DIRENT_FILE_SECTOR        0x04
+#define CBMFM_D64_DIRENT_FILE_NAME          0x05
+#define CBMFM_D64_DIRENT_REL_SSB_TRACK      0x15
+#define CBMFM_D64_DIRENT_REL_SSB_SECTOR     0x16
+#define CBMFM_D64_DIRENT_REL_REC_SIZE       0x17
+/* TODO: GEOS uses 0x18-0x1d */
+#define CBMFM_D64_DIRENT_BLOCKS_LSB         0x1e
+#define CBMFM_D64_DIRENT_BLOCKS_MSB         0x1f
+
+
+
 int         cbmfm_dxx_block_number(const cbmfm_dxx_speedzone_t *zones,
                                    int track, int sector);
 intmax_t    cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,
@@ -145,5 +161,12 @@ bool        cbmfm_dxx_block_read(cbmfm_block_t *block,
                                  int track, int sector);
 
 int         cbmfm_dxx_track_block_count(cbmfm_dxx_image_t *image, int track);
+
+bool        cbmfm_dxx_block_iter_init(cbmfm_dxx_block_iter_t *iter,
+                                      cbmfm_dxx_image_t *image,
+                                      int track, int sector);
+bool        cbmfm_dxx_block_iter_next(cbmfm_dxx_block_iter_t *iter);
+void        cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter,
+                                           uint8_t *dest);
 
 #endif

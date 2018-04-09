@@ -193,9 +193,11 @@ static bool test_lib_base_dxx_geometry(test_case_t *test)
 static bool test_lib_base_dxx_block(test_case_t *test)
 {
     cbmfm_block_t block;
+    cbmfm_dxx_block_iter_t iter;
+    int blocks;
 
     printf("..... Testing block reading (cbmfm_dxx_block_read()):\n");
-    test->total = 1;
+    test->total = 2;
 
     cbmfm_block_init(&block);
     printf("....... Reading block (18,0) from test image .. ");
@@ -206,6 +208,25 @@ static bool test_lib_base_dxx_block(test_case_t *test)
         printf("OK, dumping block data:\n");
         cbmfm_block_dump(&block);
         cbmfm_block_cleanup(&block);
+    }
+
+    printf("..... Testing block iterator:\n");
+    printf("....... calling cbmfm_dxx_block_iter_init(&image, 17, 0) .. ");
+    if (!cbmfm_dxx_block_iter_init(&iter, (cbmfm_dxx_image_t*)&image, 17, 0)) {
+        cbmfm_perror("failed");
+        test->failed++;
+    } else {
+        printf("OK\n");
+
+        blocks = 0;
+        do {
+            if (iter.curr.track != 0) {
+                printf("(%d,%d) -> ", iter.curr.track, iter.curr.sector);
+                blocks++;
+            }
+        } while (cbmfm_dxx_block_iter_next(&iter));
+        printf("%d\n", iter.curr.sector);
+        printf("\n....... got %d blocks\n", blocks);
     }
 
     return true;

@@ -35,6 +35,7 @@
 #include "base.h"
 #include "base/image.h"
 #include "base/dxx.h"
+#include "base/dir.h"
 
 #include "d64.h"
 
@@ -525,4 +526,17 @@ int cbmfm_d64_blocks_free(cbmfm_d64_t *image)
         }
     }
     return blocks;
+}
+
+
+void cbmfm_d64_dirent_parse(cbmfm_dirent_t *dirent, const uint8_t *data)
+{
+    cbmfm_dirent_init(dirent);
+
+    memcpy(dirent->filename,
+            data + CBMFM_D64_DIRENT_FILE_NAME,
+            CBMFM_CBMDOS_FILE_NAME_LEN);
+    dirent->filetype = data[CBMFM_D64_DIRENT_FILE_TYPE];
+    dirent->first_block.track = data[CBMFM_D64_DIRENT_BLOCKS_LSB];
+    dirent->first_block.sector = data[CBMFM_D64_DIRENT_BLOCKS_MSB];
 }

@@ -80,4 +80,8 @@ bool cbmfm_d64_bam_sector_get_free(cbmfm_d64_t *image, int track, int sector,
 
 int cbmfm_d64_blocks_free(cbmfm_d64_t *image);
 
+
+void cbmfm_d64_dirent_parse(cbmfm_dirent_t *dirent, const uint8_t *data);
+
+
 #endif

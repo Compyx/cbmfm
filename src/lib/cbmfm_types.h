@@ -216,6 +216,19 @@ typedef struct cbmfm_d64_s {
 } cbmfm_d64_t;
 
 
+/** \brief  Disk image block iterator
+ *
+ * An object to iterate over a block chain of a file/directory listing.
+ * The `curr` member contains information on the current block the iterator is
+ * at, while the `prev` member contains information on the previous block the
+ * iterator was at (allows for back-patching track/sector pointers when writing
+ * a block chain).
+ */
+typedef struct cbmfm_dxx_block_iter_s {
+    cbmfm_block_t       curr;   /**< current block */
+    cbmfm_block_t       prev;   /**< previous block */
+    cbmfm_dxx_image_t * image;  /**< parent image reference */
+} cbmfm_dxx_block_iter_t;
 
 
 #endif

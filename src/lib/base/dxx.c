@@ -169,3 +169,90 @@ int cbmfm_dxx_track_block_count(cbmfm_dxx_image_t *image, int track)
     return zones[z].blocks;
 }
 
+
+/** \brief  Initialize Dxx image block iterator
+ *
+ * \param[out]  iter    block iterator
+ * \param[in]   image   dxx image
+ * \param[in]   track   track number of initial block
+ * \param[in]   sector  sector number of initial block
+ *
+ * \return  true if succesful
+ *
+ * \throw   #CBMFM_ERR_ILLEGAL_TRACK
+ * \throw   #CBMFM_ERR_ILLEGAL_SECTOR
+ */
+bool cbmfm_dxx_block_iter_init(cbmfm_dxx_block_iter_t *iter,
+                               cbmfm_dxx_image_t *image,
+                               int track, int sector)
+{
+    iter->image = image;
+
+    cbmfm_block_init(&(iter->curr));
+    cbmfm_block_init(&(iter->prev));
+
+    /* check track number */
+    if (track < 1 || track > image->track_max) {
+        cbmfm_errno = CBMFM_ERR_ILLEGAL_TRACK;
+        return false;
+    }
+    /* check sector number */
+    if (sector < 0 || sector >= cbmfm_dxx_track_block_count(image, track)) {
+        cbmfm_errno = CBMFM_ERR_ILLEGAL_SECTOR;
+        return false;
+    }
+
+    iter->curr.track = track;
+    iter->curr.sector = sector;
+    return true;
+}
+
+
+/** \brief  Move block iterator \a iter to the next block
+ *
+ * \param[in,out]   iter    dxx block iterator
+ *
+ * \return  true if next block found
+ */
+bool cbmfm_dxx_block_iter_next(cbmfm_dxx_block_iter_t *iter)
+{
+    intmax_t offset;
+    uint8_t *data;
+    uint8_t next_track;
+    uint8_t next_sector;
+
+    if (iter->curr.track == 0) {
+        return false;
+    }
+
+    offset = cbmfm_dxx_block_offset(iter->image->zones,
+            iter->curr.track, iter->curr.sector);
+    data = iter->image->data + offset;
+    next_track = data[0];
+    next_sector = data[1];
+
+    iter->prev.track = iter->curr.track;
+    iter->prev.sector = iter->curr.sector;
+    iter->curr.track = next_track;
+    iter->curr.sector = next_sector;
+
+    return true;
+}
+
+
+/** \brief  Copy 256 bytes of current block in \a iter to \a dest
+ *
+ * \param[in]   iter    block iterator
+ * \param[out]  dest    destination of block data (should be 256+ bytes)
+ */
+void cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter, uint8_t *dest)
+{
+    intmax_t offset;
+    uint8_t *data;
+
+    offset = cbmfm_dxx_block_offset(iter->image->zones,
+            iter->curr.track, iter->curr.sector);
+    data = iter->image->data + offset;
+
+    memcpy(dest, data, CBMFM_BLOCK_SIZE_RAW);
+}
