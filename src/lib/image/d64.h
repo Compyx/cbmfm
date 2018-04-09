@@ -45,6 +45,14 @@ void            cbmfm_d64_free(cbmfm_d64_t *image);
 bool            cbmfm_d64_open(cbmfm_d64_t *image, const char *name);
 
 uint8_t *       cbmfm_d64_bam_ptr(cbmfm_d64_t *imge);
+uint8_t *       cbmfm_d64_bam_ptr_trk(cbmfm_d64_t *image, int track);
+bool            cbmfm_d64_bam_get_bament(cbmfm_d64_t *image,
+                                         int track,
+                                         uint8_t *dest);
+void            cbmfm_d64_bam_dump(cbmfm_d64_t *image);
+
+int             cbmfm_d64_bam_track_get_blocks_free(cbmfm_d64_t *image,
+                                                    int track);
 
 void            cbmfm_d64_get_disk_name_pet(cbmfm_d64_t *image, uint8_t *name);
 void            cbmfm_d64_get_disk_name_asc(cbmfm_d64_t *image, char *name);
@@ -64,5 +72,12 @@ void            cbmfm_d64_set_disk_id_pet_ext(cbmfm_d64_t *image,
 void            cbmfm_d64_set_disk_id_asc(cbmfm_d64_t *image, const char *id);
 void            cbmfm_d64_set_disk_id_asc_ext(cbmfm_d64_t *image,
                                               const char *id);
+
+
+bool cbmfm_d64_bam_sector_get_free(cbmfm_d64_t *image, int track, int sector,
+        bool *state);
+
+
+int cbmfm_d64_blocks_free(cbmfm_d64_t *image);
 
 #endif

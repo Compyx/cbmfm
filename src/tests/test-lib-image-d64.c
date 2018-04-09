@@ -46,17 +46,19 @@
  */
 #define D64_ARMALYTE_SIZE   174848
 
-
 /** \brief  Disk name of 'Armalyte' in ASCII
  */
 #define D64_ARMALYTE_DISK_NAME_ASC  "once upon a time"
-
 
 /** \brief  Disk ID (extended) of 'Armalyte' in ASCII
  *
  * Extended disk ID, meaning 5 bytes (ID + unused byte + DOStype)
  */
 #define D64_ARMALYTE_DISK_ID_ASC  "-rem-"
+
+/** \brief  Blocks free for 'Armalyte'
+ */
+#define D64_ARMALYTE_BLOCKS_FREE        92
 
 
 
@@ -169,8 +171,9 @@ static bool test_lib_image_d64_bam(test_case_t *test)
     long offset;
     char disk_name[CBMFM_CBMDOS_FILE_NAME_LEN + 1];
     char disk_id[CBMFM_CBMDOS_DISK_ID_LEN_EXT + 1];
+    int blocks_free;
 
-    test->total = 3;
+    test->total = 4;
 
     cbmfm_d64_init(&image);
 
@@ -194,7 +197,10 @@ static bool test_lib_image_d64_bam(test_case_t *test)
         return false;
     }
 
-    printf("..... calling cbmfm_get_disk_name_asc()..\n");
+    printf("..... dumping BAM track entries:\n\n");
+    cbmfm_d64_bam_dump(&image);
+
+    printf("..... calling cbmfm_d64_get_disk_name_asc()..\n");
     cbmfm_d64_get_disk_name_asc(&image, disk_name);
     result = strcmp(disk_name, D64_ARMALYTE_DISK_NAME_ASC) == 0;
     printf("....... disk name = '%s' -> %s\n", disk_name,
@@ -203,7 +209,7 @@ static bool test_lib_image_d64_bam(test_case_t *test)
         test->failed++;
     }
 
-    printf("..... calling cbmfm_get_disk_id_asc()..\n");
+    printf("..... calling cbmfm_d64_get_disk_id_asc()..\n");
     cbmfm_d64_get_disk_id_asc(&image, disk_id);
     result = strcmp(disk_id, D64_ARMALYTE_DISK_ID_ASC) == 0;
     printf("....... disk id = '%s' -> %s\n", disk_id,
@@ -212,6 +218,13 @@ static bool test_lib_image_d64_bam(test_case_t *test)
         test->failed++;
     }
 
+    blocks_free = cbmfm_d64_blocks_free(&image);
+    result = D64_ARMALYTE_BLOCKS_FREE == blocks_free;
+    printf("..... calling cbmfm_d64_blocks_free() = %d -> %s\n",
+            blocks_free, result ? "OK" : "failed\n");
+    if (!result) {
+        test->failed++;
+    }
 
     cbmfm_d64_cleanup(&image);
     return true;

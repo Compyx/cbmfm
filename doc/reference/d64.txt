@@ -1,4 +1,3 @@
-
 *** D64 (Electronic form of a physical 1541 disk)
 *** Document revision: 1.11
 *** Last updated: Nov 7, 2008

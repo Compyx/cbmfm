@@ -142,3 +142,30 @@ bool cbmfm_dxx_block_read(cbmfm_block_t *block,
     block->data = cbmfm_memdup(image->data + offset, CBMFM_BLOCK_SIZE_RAW);
     return true;
 }
+
+
+/** \brief  Get number of available blocks for \a track in \a image
+ *
+ * \param[in]   image   dxx image
+ * \param[in]   track   track number
+ *
+ * \return  block count of \a track or -1 on error
+ *
+ * \throw   #CBMFM_ERR_ILLEGAL_TRACK
+ */
+int cbmfm_dxx_track_block_count(cbmfm_dxx_image_t *image, int track)
+{
+    const cbmfm_dxx_speedzone_t *zones = image->zones;
+    int z = 0;
+
+    if (track < 1 || track > image->track_max) {
+        cbmfm_errno = CBMFM_ERR_ILLEGAL_TRACK;
+        return -1;
+    }
+
+    while (track > zones[z].trk_hi && zones[z].trk_hi >= 1) {
+        z++;
+    }
+    return zones[z].blocks;
+}
+

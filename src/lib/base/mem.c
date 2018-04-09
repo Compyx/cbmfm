@@ -45,6 +45,18 @@
 #include "mem.h"
 
 
+/** \brief  Popcount table
+ *
+ * Number of bits for values 0 - 15, used to quickly determine the number of
+ * bits in an integer.
+ */
+static const int popcount_table[16] = {
+    0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4
+};
+
+
+
+
 /** \brief  Allocate \a size bytes of memory
  *
  * This function uses a succeed-or-die approach, since both GLib and Gtk+ use
@@ -217,4 +229,14 @@ void *cbmfm_memdup(const void *data, size_t size)
     void *dest = cbmfm_malloc(size);
     memcpy(dest, data, size);
     return dest;
+}
+
+
+/** \brief  Count number of set(1) bits in byte \a b
+ *
+ * \return  number of set bits in \a b
+ */
+int cbmfm_popcount_byte(uint8_t b)
+{
+    return popcount_table[b & 0x0f] + popcount_table[(b >> 4) & 0x0f];
 }

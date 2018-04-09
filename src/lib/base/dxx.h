@@ -101,6 +101,7 @@
 #define CBMFM_D64_SIZE_MAX      CBMFM_D64_SIZE_EXT_ERR
 
 
+#define CBMFM_D64_DIR_TRACK     18
 
 /** \brief  BAM track number
  */
@@ -110,6 +111,20 @@
  */
 #define CBMFM_D64_BAM_SECTOR    0
 
+
+#define CBMFM_D64_BAM_DIR_TRACK     0x00
+#define CBMFM_D64_BAM_DIR_SECTOR    0x01
+#define CBMFM_D64_BAM_DISK_DOS_VER  0x02
+
+/** \brief  Offset in BAM of track entries
+ *
+ * Each track entry consists of four bytes, the first is a count of free
+ * sectors in the track and the next tree bytes are bitmap of free sectors
+ * in the track.
+ */
+#define CBMFM_D64_BAM_ENTRIES       0x04
+
+#define CBMFM_D64_BAMENT_SIZE       4
 
 /** \brief  Offset in BAM of disk name (16 bytes)
  */
@@ -128,4 +143,7 @@ intmax_t    cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,
 bool        cbmfm_dxx_block_read(cbmfm_block_t *block,
                                  cbmfm_dxx_image_t *image,
                                  int track, int sector);
+
+int         cbmfm_dxx_track_block_count(cbmfm_dxx_image_t *image, int track);
+
 #endif

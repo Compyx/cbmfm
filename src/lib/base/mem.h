@@ -30,6 +30,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 
 void *  cbmfm_malloc(size_t size);
@@ -41,5 +42,7 @@ void    cbmfm_free(void *ptr);
 char *  cbmfm_strdup(const char *s);
 char *  cbmfm_strndup(const char *s, size_t n);
 void *  cbmfm_memdup(const void *data, size_t size);
+
+int     cbmfm_popcount_byte(uint8_t b);
 
 #endif
