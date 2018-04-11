@@ -39,6 +39,8 @@
 
 #include "d64.h"
 
+/** \ingroup    lib_image_d64
+ */
 
 /** \brief  Speed zones for D64 images
  */
@@ -529,6 +531,11 @@ int cbmfm_d64_blocks_free(cbmfm_d64_t *image)
 }
 
 
+/** \brief  Parse d64 dirent
+ *
+ * \param[out]  dirent  dirent object
+ * \param[in]   data    data to parse
+ */
 void cbmfm_d64_dirent_parse(cbmfm_dirent_t *dirent, const uint8_t *data)
 {
     cbmfm_dirent_init(dirent);
@@ -537,6 +544,42 @@ void cbmfm_d64_dirent_parse(cbmfm_dirent_t *dirent, const uint8_t *data)
             data + CBMFM_D64_DIRENT_FILE_NAME,
             CBMFM_CBMDOS_FILE_NAME_LEN);
     dirent->filetype = data[CBMFM_D64_DIRENT_FILE_TYPE];
-    dirent->first_block.track = data[CBMFM_D64_DIRENT_BLOCKS_LSB];
-    dirent->first_block.sector = data[CBMFM_D64_DIRENT_BLOCKS_MSB];
+
+    dirent->first_block.track = data[CBMFM_D64_DIRENT_FILE_TRACK];
+    dirent->first_block.sector = data[CBMFM_D64_DIRENT_FILE_SECTOR];
+
+    dirent->size_blocks = (uint16_t)(data[CBMFM_D64_DIRENT_BLOCKS_LSB] +
+            data[CBMFM_D64_DIRENT_BLOCKS_MSB] * 256);
 }
+
+
+/** \brief  Read directory of \a image
+ *
+ * \param[in]   image   d64 image
+ *
+ * \return  directory object or `NULL` on failure
+ */
+cbmfm_dir_t *cbmfm_d64_dir_read(cbmfm_d64_t *image)
+{
+    cbmfm_dir_t *dir;
+    cbmfm_dxx_dir_iter_t iter;
+
+    dir = cbmfm_dir_new();
+    if (!cbmfm_dxx_dir_iter_init(&iter, (cbmfm_dxx_image_t *)(image), 18, 1)) {
+        cbmfm_dir_free(dir);
+        return NULL;
+    }
+
+    do {
+        cbmfm_dirent_t dirent;
+        uint8_t *data;
+
+        data = cbmfm_dxx_dir_iter_entry_ptr(&iter);
+        cbmfm_d64_dirent_parse(&dirent, data);
+        cbmfm_dir_append_dirent(dir, &dirent);
+
+    } while (cbmfm_dxx_dir_iter_next(&iter));
+
+    return dir;
+}
+

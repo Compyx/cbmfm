@@ -108,6 +108,7 @@ test_module_t module_lib_base_dir = {
 static bool test_lib_base_dir_iter(test_case_t *test)
 {
     cbmfm_dxx_dir_iter_t iter;
+    cbmfm_dirent_t dirent;
     int count;
 
     test->total = 1;
@@ -123,12 +124,21 @@ static bool test_lib_base_dir_iter(test_case_t *test)
     /* bad test, I know */
     count = 0;
     do {
+        uint8_t *data;
+
         printf("%2d,%2d, %02x:\n",
                 iter.block_iter.curr.track,
                 iter.block_iter.curr.sector,
                 (unsigned int)iter.entry_offset);
-        cbmfm_hexdump(cbmfm_dxx_dir_iter_entry_ptr(&iter), 0, 32);
+
+        data = cbmfm_dxx_dir_iter_entry_ptr(&iter);
+        cbmfm_hexdump(data, 0, 32);
+        cbmfm_d64_dirent_parse(&dirent, data);
+        cbmfm_dirent_dump(&dirent);
+        putchar('\n');
+
         count++;
+
     } while (cbmfm_dxx_dir_iter_next(&iter));
     printf("\n..... got %d entries -> %s\n",
             count, count == 12 ? "OK" : "failed");

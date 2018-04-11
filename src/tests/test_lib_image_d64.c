@@ -66,6 +66,7 @@
 
 static bool test_lib_image_d64_open(test_case_t *test);
 static bool test_lib_image_d64_bam(test_case_t *test);
+static bool test_lib_image_d64_dir(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
@@ -75,6 +76,8 @@ static test_case_t tests_lib_image_d64[] = {
         test_lib_image_d64_open, 0, 0 },
     { "bam", "BAM handling of D64 images",
         test_lib_image_d64_bam, 0, 0 },
+    { "dir", "Directory handling of D64 image",
+        test_lib_image_d64_dir, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -225,6 +228,47 @@ static bool test_lib_image_d64_bam(test_case_t *test)
             blocks_free, result ? "OK" : "failed\n");
     if (!result) {
         test->failed++;
+    }
+
+    cbmfm_d64_cleanup(&image);
+    return true;
+}
+
+
+/** \brief  Test directory handling of D64 images
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_d64_dir(test_case_t *test)
+{
+    cbmfm_d64_t image;
+    cbmfm_dir_t *dir;
+    bool result;
+
+    test->total = 1;
+
+    cbmfm_d64_init(&image);
+
+    printf("..... calling cbmfm_d64_open(\"%s\" ... ", D64_ARMALYTE_FILE);
+    result = cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
+    if (!result) {
+        /* fatal error*/
+        printf("failed: fatal\n");
+        return false;
+    }
+    printf("OK\n");
+
+    printf("..... calling cbmfm_d64_dir_read() .. ");
+    dir = cbmfm_d64_dir_read(&image);
+    if (dir == NULL) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK: dumping directory:\n");
+        cbmfm_dir_dump(dir);
+        cbmfm_dir_free(dir);
     }
 
     cbmfm_d64_cleanup(&image);

@@ -8,4 +8,35 @@
  */
 
 /** \defgroup   lib_image   Image handling
-  */
+ * \ingroup     lib
+ */
+
+/** \defgroup   lib_image_d64   D64 image handling
+ * \ingroup     lib_image
+ */
+
+/** \defgroup   lib_image_d71   D71 image handling
+ * \ingroup     lib_image
+ */
+
+/** \defgroup   lib_image_d81   D81 image handling
+ * \ingroup     lib_image
+ */
+
+/** \defgroup   lib_archvie     Archive handling
+ * \ingroup     lib
+ */
+
+/** \defgroup   lib_archive_ark ARK archive handling
+ * \ingroup     lib_archive
+ */
+
+/** \defgroup   lib_archive_lnx Lynx archive handling
+ * \ingroup     lib_archive
+ */
+
+/** \defgroup   lib_archive_t64 T64 archive handling
+ * \ingroup     lib_archive
+ */
+
+

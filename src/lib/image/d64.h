@@ -83,5 +83,6 @@ int cbmfm_d64_blocks_free(cbmfm_d64_t *image);
 
 void cbmfm_d64_dirent_parse(cbmfm_dirent_t *dirent, const uint8_t *data);
 
+cbmfm_dir_t *cbmfm_d64_dir_read(cbmfm_d64_t *image);
 
 #endif

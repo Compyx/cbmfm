@@ -34,6 +34,10 @@
 #include "cbmfm_types.h"
 
 
+/** \ingroup    lib_image
+ * @{
+ */
+
 /** \brief  Lowest track number for disk images
  */
 #define CBMFM_DXX_TRACK_MIN     1
@@ -155,19 +159,61 @@
 #define CBMFM_D64_BAM_DISK_ID   0xa2
 
 
+/*
+ * D64 directory entry constants
+ */
 
 
+/** \brief  Offset of the next directory block track number
+ *
+ * This is only valid for the first directory entry at 0x00 and is just the
+ * track part of the (track,sector) link of the direcctory block.
+ */
 #define CBMFM_D64_DIRENT_NEXT_DIR_TRACK     0x00
+
+/** \brief  Offset of the next directory block sector number
+ *
+ * This is only valid for the first directory entry at 0x00 and is just the
+ * track part of the (track,sector) link of the direcctory block.
+ */
 #define CBMFM_D64_DIRENT_NEXT_DIR_SECTOR    0x01
+
+/** \brief  Offset of the CBMDOS filetype and flags
+ */
 #define CBMFM_D64_DIRENT_FILE_TYPE          0x02
+
+/** \brief  Offset of the file's first block track number
+ */
 #define CBMFM_D64_DIRENT_FILE_TRACK         0x03
+
+/** \brief  Offset of the file's first block sector number
+ */
 #define CBMFM_D64_DIRENT_FILE_SECTOR        0x04
+
+/** \brief  Offset of the file name in PETSCII (16 bytes)
+ */
 #define CBMFM_D64_DIRENT_FILE_NAME          0x05
+
+/** \brief  Offset of the REL file side sector block track number
+ */
 #define CBMFM_D64_DIRENT_REL_SSB_TRACK      0x15
+
+/** \brief  Offset of the REL file side sector block sector number
+ */
 #define CBMFM_D64_DIRENT_REL_SSB_SECTOR     0x16
+
+/** \brief  Offset of the REL file record size
+ */
 #define CBMFM_D64_DIRENT_REL_REC_SIZE       0x17
+
 /* TODO: GEOS uses 0x18-0x1d */
+
+/** \brief  Offset of the file's size in blocks (LSB)
+ */
 #define CBMFM_D64_DIRENT_BLOCKS_LSB         0x1e
+
+/** \brief  Offset of the file's size in blocks (MSB)
+ */
 #define CBMFM_D64_DIRENT_BLOCKS_MSB         0x1f
 
 
@@ -193,5 +239,7 @@ bool        cbmfm_dxx_block_iter_init(cbmfm_dxx_block_iter_t *iter,
 bool        cbmfm_dxx_block_iter_next(cbmfm_dxx_block_iter_t *iter);
 void        cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter,
                                            uint8_t *dest);
+
+/** @} */
 
 #endif

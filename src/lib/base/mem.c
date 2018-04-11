@@ -235,6 +235,8 @@ void *cbmfm_memdup(const void *data, size_t size)
 
 /** \brief  Count number of set(1) bits in byte \a b
  *
+ * \param[in]   b   byte
+ *
  * \return  number of set bits in \a b
  */
 int cbmfm_popcount_byte(uint8_t b)
