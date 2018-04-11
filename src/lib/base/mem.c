@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "errors.h"
 
@@ -239,4 +240,45 @@ void *cbmfm_memdup(const void *data, size_t size)
 int cbmfm_popcount_byte(uint8_t b)
 {
     return popcount_table[b & 0x0f] + popcount_table[(b >> 4) & 0x0f];
+}
+
+
+/** \brief  Create hexdump of \a data on stdout
+ *
+ * \param[in]   data    data to dump
+ * \param[in]   skip    number of bytes to skip
+ * \param[in]   size    number of bytes to dump
+ */
+void cbmfm_hexdump(const uint8_t *data, size_t skip, size_t size)
+{
+    size_t offset = skip;
+    size_t count = 0;
+    size_t col;
+    uint8_t text[17];
+
+    text[16] = '\0';
+    while (count < size) {
+        memset(text, ' ', 16);
+        printf("%04x:%04x  ",
+                (unsigned int)(offset >> 16),
+                (unsigned int)(offset & 0xffff));
+        col = 0;
+        while (col < 16 && count + col < size) {
+            uint8_t b = data[offset + col];
+
+            text[col] = isprint((int)b) ? b : '.';
+            printf("%02x ", data[offset + col]);
+            col++;
+        }
+        /* add spacing if last row printed contained less than 16 bytes */
+        while (col < 16) {
+            printf("   ");
+            col++;
+        }
+
+        printf("%s\n", text);
+
+        count += 16;
+        offset += 16;
+    }
 }

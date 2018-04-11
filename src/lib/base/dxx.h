@@ -172,6 +172,11 @@
 
 
 
+/** \brief  Size of a raw directory entry of Dxx images
+ */
+#define CBMFM_DXX_DIRENT_SIZE               0x20
+
+
 int         cbmfm_dxx_block_number(const cbmfm_dxx_speedzone_t *zones,
                                    int track, int sector);
 intmax_t    cbmfm_dxx_block_offset(const cbmfm_dxx_speedzone_t *zones,

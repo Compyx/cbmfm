@@ -231,4 +231,13 @@ typedef struct cbmfm_dxx_block_iter_s {
 } cbmfm_dxx_block_iter_t;
 
 
+/** \brief  Directory entry iterator
+ */
+typedef struct cbmfm_dxx_dir_iter_s {
+    cbmfm_dxx_block_iter_t block_iter;
+    size_t entry_offset;
+    cbmfm_dxx_image_t *image;
+} cbmfm_dxx_dir_iter_t;
+
+
 #endif

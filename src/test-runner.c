@@ -44,6 +44,7 @@
 #include "test_lib_image_ark.h"
 #include "test_lib_image_d64.h"
 #include "test_lib_base_dxx.h"
+#include "test_lib_base_dir.h"
 
 
 /** \brief  Print usage/help message on stdout
@@ -67,6 +68,7 @@ static void register_modules(void)
     test_module_register(&module_lib_image_ark);
     test_module_register(&module_lib_base_dxx);
     test_module_register(&module_lib_image_d64);
+    test_module_register(&module_lib_base_dir);
 }
 
 

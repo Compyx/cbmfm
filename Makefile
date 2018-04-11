@@ -32,7 +32,8 @@ GUI_SRCS = src/gui/main.c
 
 TEST_SRCS = src/tests/testcase.c \
 	    src/tests/test_lib_base.c \
-	    src/tests/test_lib_dxx.c \
+	    src/tests/test_lib_base_dxx.c \
+	    src/tests/test_lib_base_dir.c \
 	    src/tests/test_lib_image_ark.c \
 	    src/tests/test_lib_image_d64.c
 
@@ -46,7 +47,8 @@ TESTER_OBJS = test-runner.o \
 	      test_lib_base.o \
 	      test_lib_base_dxx.o \
 	      test_lib_image_ark.o \
-	      test_lib_image_d64.o
+	      test_lib_image_d64.o \
+	      test_lib_base_dir.o
 GUI = cbmfm
 
 LIB_OBJS = $(LIB_SRCS:.c=.o)

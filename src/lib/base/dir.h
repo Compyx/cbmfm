@@ -53,4 +53,11 @@ void            cbmfm_dir_append_dirent(cbmfm_dir_t *dir,
                                         const cbmfm_dirent_t *dirent);
 
 void            cbmfm_dir_dump(const cbmfm_dir_t *dir);
+
+bool            cbmfm_dxx_dir_iter_init(cbmfm_dxx_dir_iter_t *iter,
+                                        cbmfm_dxx_image_t *image,
+                                        int track, int sector);
+bool            cbmfm_dxx_dir_iter_next(cbmfm_dxx_dir_iter_t *iter);
+uint8_t *       cbmfm_dxx_dir_iter_entry_ptr(cbmfm_dxx_dir_iter_t *iter);
+
 #endif

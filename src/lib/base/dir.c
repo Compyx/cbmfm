@@ -32,6 +32,7 @@
 #include <stdbool.h>
 
 #include "cbmfm_types.h"
+#include "base/dxx.h"
 #include "base.h"
 
 #include "dir.h"
@@ -268,4 +269,72 @@ void cbmfm_dir_dump(const cbmfm_dir_t *dir)
     for (index = 0; index < dir->entry_used; index++) {
         cbmfm_dirent_dump(dir->entries[index]);
     }
+}
+
+
+/** \brief  Initialize directory iterator
+ *
+ * \param[out]  iter    directory iterator
+ * \param[in]   image   Dxx image
+ * \param[in]   track   track number of first directory block
+ * \param[in]   sector  sector number of first directory block
+ *
+ * \return  bool
+ */
+bool cbmfm_dxx_dir_iter_init(cbmfm_dxx_dir_iter_t *iter,
+                         cbmfm_dxx_image_t *image,
+                         int track, int sector)
+{
+    if (!cbmfm_dxx_block_iter_init(&(iter->block_iter), image, track, sector)) {
+        return false;
+    }
+    iter->image = image;
+    iter->entry_offset = 0;
+    return true;
+}
+
+
+/** \brief  Move directory iterator to next entry
+ *
+ * \param[in,out]   iter    directory iterator
+ *
+ * \return  true if a next entry was found, false otherwise
+ */
+bool cbmfm_dxx_dir_iter_next(cbmfm_dxx_dir_iter_t *iter)
+{
+    uint8_t *entry;
+
+    iter->entry_offset += CBMFM_DXX_DIRENT_SIZE;
+
+    if (iter->entry_offset >= CBMFM_BLOCK_SIZE_RAW) {
+        /* move block iterator to next block */
+        if (!cbmfm_dxx_block_iter_next(&(iter->block_iter))) {
+            printf("END OF BLOCK ITER\n");
+            return false;
+        }
+        iter->entry_offset = 0;
+    }
+
+    entry = cbmfm_dxx_dir_iter_entry_ptr(iter);
+    if (entry[CBMFM_D64_DIRENT_FILE_NAME] == 0x00) {
+        /* no more entries */
+        return false;
+    }
+    return true;
+}
+
+
+/** \brief  Get a pointer to the current directory entry
+ *
+ * \param[in]   iter    directory iterator
+ *
+ * \return  pointer to entry on image
+ */
+uint8_t *cbmfm_dxx_dir_iter_entry_ptr(cbmfm_dxx_dir_iter_t *iter)
+{
+    return iter->image->data +
+        cbmfm_dxx_block_offset(iter->image->zones,
+                iter->block_iter.curr.track,
+                iter->block_iter.curr.sector) +
+        iter->entry_offset;
 }
