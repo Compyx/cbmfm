@@ -284,3 +284,9 @@ void cbmfm_hexdump(const uint8_t *data, size_t skip, size_t size)
         offset += 16;
     }
 }
+
+
+uint16_t cbmfm_word_get_le(const uint8_t *p)
+{
+    return p[0] + p[1] * 256;
+}

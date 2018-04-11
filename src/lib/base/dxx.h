@@ -106,8 +106,19 @@
 
 
 /** \brief  D64 directory track number
+ *
+ * This is a fixed number in the drive ROM, although the BAM seems to allow
+ * setting the dir track number.
  */
 #define CBMFM_D64_DIR_TRACK     18
+
+/** \brief  D64 directory sector number
+ *
+ * This is a fixed number in the drive ROM, although the BAM seems to allow
+ * setting the dir sector number.
+*/
+#define CBMFM_D64_DIR_SECTOR    1
+
 
 /** \brief  BAM track number
  */
@@ -217,10 +228,10 @@
 #define CBMFM_D64_DIRENT_BLOCKS_MSB         0x1f
 
 
-
 /** \brief  Size of a raw directory entry of Dxx images
  */
 #define CBMFM_DXX_DIRENT_SIZE               0x20
+
 
 
 int         cbmfm_dxx_block_number(const cbmfm_dxx_speedzone_t *zones,

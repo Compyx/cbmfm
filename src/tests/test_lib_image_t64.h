@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/lib/base/mem.h
- * \brief   Base library memory allocation handling - header
+/** \file   src/tests/test_lib_image_t64.h
+ * \brief   Unit test for src/lib/image/t64.c - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,29 +25,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_MEM_H
-#define CBMFM_LIB_BASE_MEM_H
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
+#ifndef CMBFM_TEST_IMAGE_T64_H
+#define CMBFM_TEST_IMAGE_T64_H
 
+#include "testcase.h"
 
-void *  cbmfm_malloc(size_t size);
-void *  cbmfm_calloc(size_t nmemb, size_t size);
-void *  cbmfm_realloc(void *ptr, size_t size);
-void *  cbmfm_realloc_smaller(void *ptr, size_t size, bool *success);
-void    cbmfm_free(void *ptr);
-
-char *  cbmfm_strdup(const char *s);
-char *  cbmfm_strndup(const char *s, size_t n);
-void *  cbmfm_memdup(const void *data, size_t size);
-
-int     cbmfm_popcount_byte(uint8_t b);
-
-void    cbmfm_hexdump(const uint8_t *data, size_t skip, size_t size);
-
-uint16_t cbmfm_word_get_le(const uint8_t *p);
-
+extern test_module_t module_lib_image_t64;
 
 #endif

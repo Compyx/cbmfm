@@ -565,7 +565,8 @@ cbmfm_dir_t *cbmfm_d64_dir_read(cbmfm_d64_t *image)
     cbmfm_dxx_dir_iter_t iter;
 
     dir = cbmfm_dir_new();
-    if (!cbmfm_dxx_dir_iter_init(&iter, (cbmfm_dxx_image_t *)(image), 18, 1)) {
+    if (!cbmfm_dxx_dir_iter_init(&iter, (cbmfm_dxx_image_t *)(image),
+                CBMFM_D64_DIR_TRACK, CBMFM_D64_DIR_SECTOR)) {
         cbmfm_dir_free(dir);
         return NULL;
     }

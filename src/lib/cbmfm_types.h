@@ -240,4 +240,28 @@ typedef struct cbmfm_dxx_dir_iter_s {
 } cbmfm_dxx_dir_iter_t;
 
 
+/** \brief  Length of the header magic bytes
+ */
+#define CBMFM_T64_HDR_MAGIC_LEN 0x20
+
+/** \brief  Length of 'tape' name
+ */
+#define CBMFM_T64_HDR_TAPE_NAME_LEN 0x18
+
+
+/** \brief  T64 image
+ */
+typedef struct cbmfm_t64_s {
+    CBMFM_IMAGE_SHARED_MEMBERS
+
+    char magic[CBMFM_T64_HDR_MAGIC_LEN];
+    char tape_name[CBMFM_T64_HDR_TAPE_NAME_LEN + 1];
+    uint16_t version;
+    uint16_t entry_max;
+    uint16_t entry_used;
+
+} cbmfm_t64_t;
+
+
+
 #endif
