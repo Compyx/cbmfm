@@ -35,6 +35,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+#include "log.h"
 #include "testcase.h"
 
 /*
@@ -83,6 +84,7 @@ static void register_modules(void)
  */
 int main(int argc, char **argv)
 {
+    cbmfm_log_set_level(CBMFM_LOG_DEBUG);
 
     register_modules();
 

@@ -137,11 +137,11 @@ typedef struct cbmfm_block_s {
 /** \brief  T64 specific dirent fields
  */
 typedef struct cbmfm_dirent_t64_s {
-    uint32_t    data_offset;
-    uint16_t    load_addr;
-    uint16_t    end_addr;
-    uint8_t     c64s_type;
-    uint16_t    dir_index;
+    uint32_t    data_offset;    /**< offset in image of file data */
+    uint16_t    load_addr;      /**< load address */
+    uint16_t    end_addr;       /**< end address (unreliable) */
+    uint8_t     c64s_type;      /**< C64s file type byte */
+    uint16_t    dir_index;      /**< index in directory */
 } cbmfm_dirent_t64_t;
 
 
@@ -270,11 +270,11 @@ typedef struct cbmfm_dxx_dir_iter_s {
 typedef struct cbmfm_t64_s {
     CBMFM_IMAGE_SHARED_MEMBERS
 
-    char magic[CBMFM_T64_HDR_MAGIC_LEN];
-    char tape_name[CBMFM_T64_HDR_TAPE_NAME_LEN + 1];
-    uint16_t version;
-    uint16_t entry_max;
-    uint16_t entry_used;
+    char magic[CBMFM_T64_HDR_MAGIC_LEN];    /**< magic bytes */
+    char tape_name[CBMFM_T64_HDR_TAPE_NAME_LEN + 1];    /**< tape name */
+    uint16_t version;       /**< tape version number (useless) */
+    uint16_t entry_max;     /**< size of directory in entries */
+    uint16_t entry_used;    /**< number of used entries (unreliable) */
 
 } cbmfm_t64_t;
 

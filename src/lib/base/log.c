@@ -37,13 +37,24 @@
 #include "log.h"
 
 
+/** \brief  Prefixes used in log messages
+ */
+static const char *log_prefixes[] = {
+    "None",
+    "Error",
+    "Warning",
+    "Info",
+    "Debug"
+};
+
+
 /** \brief  Log file pointer
  */
 static FILE *log_file = NULL;
 
 /** \brief  Log level
  */
-static cbmfm_log_level_t log_level = CBMFM_LOG_LEVEL_NONE;
+static cbmfm_log_level_t log_level = CBMFM_LOG_NONE;
 
 
 /** \brief  Set log level
@@ -93,13 +104,21 @@ void cbmfm_log_close(void)
  */
 void cbmfm_log_message(cbmfm_log_level_t level, const char *fmt, ...)
 {
-    FILE *fp;
+    FILE *fp = log_file != NULL ? log_file : stdout;
     va_list args;
 
-    va_start(args, fmt);
+    if (log_level == 0) {
+        return;
+    }
 
     if (level <= log_level) {
-        fp = log_file != NULL ? log_file : stdout;
+        fprintf(fp, "%s: ", log_prefixes[level]);
+        fflush(fp);
+
+        va_start(args, fmt);
+
         vfprintf(fp, fmt, args);
+
+        va_end(args);
     }
 }

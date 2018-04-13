@@ -34,14 +34,14 @@
 #include <stdbool.h>
 
 
-/** \brief  Log level enumeration
+/** \brief  Log levels
  */
 typedef enum cbmfm_log_level_e {
-    CBMFM_LOG_LEVEL_NONE,       /**< don't log anything */
-    CBMFM_LOG_LEVEL_ERROR,      /**< errors */
-    CBMFM_LOG_LEVEL_WARNING,    /**< warning and errors */
-    CBMFM_LOG_LEVEL_INFO,       /**< info, warning and errors */
-    CBMFM_LOG_LEVEL_DEBUG       /**< debug, info warning and errors */
+    CBMFM_LOG_NONE,     /**< don't log anything */
+    CBMFM_LOG_ERROR,    /**< errors */
+    CBMFM_LOG_WARNING,  /**< warning and errors */
+    CBMFM_LOG_INFO,     /**< info, warning and errors */
+    CBMFM_LOG_DEBUG     /**< debug, info warning and errors */
 } cbmfm_log_level_t;
 
 
@@ -50,5 +50,30 @@ bool cbmfm_log_set_file(const char *path);
 void cbmfm_log_close(void);
 
 void cbmfm_log_message(cbmfm_log_level_t level, const char *fmt, ...);
+
+
+/** \brief  Log error message
+ */
+#define cbmfm_log_error(...) \
+    cbmfm_log_message(CBMFM_LOG_ERROR, __VA_ARGS__)
+
+/** \brief  Log warning message
+ */
+#define cbmfm_log_warning(...) \
+    cbmfm_log_message(CBMFM_LOG_WARNING, __VA_ARGS__)
+
+/** \brief  Log info message
+ */
+#define cbmfm_log_info(...) \
+    cbmfm_log_message(CBMFM_LOG_INFO, __VA_ARGS__)
+
+/** \brief  Log debug message
+ */
+#define cbmfm_log_debug(...) \
+    cbmfm_log_message(CBMFM_LOG_DEBUG, __VA_ARGS__)
+
+
+
+
 
 #endif

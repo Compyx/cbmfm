@@ -36,6 +36,7 @@
 #include "base.h"
 #include "base/image.h"
 #include "base/dir.h"
+#include "log.h"
 
 #include "t64.h"
 
@@ -71,6 +72,12 @@ static void cbmfm_t64_parse_header(cbmfm_t64_t *image)
     image->entry_max = cbmfm_word_get_le(data + CBMFM_T64_HDR_DIR_MAX);
     /* used entries in dir */
     image->entry_used = cbmfm_word_get_le(data + CBMFM_T64_HDR_DIR_USED);
+
+    if (image->entry_used == 0) {
+        cbmfm_log_warning("%s(): found entry count 0, adjusting to 1\n",
+                __func__);
+        image->entry_used++;
+    }
 
 }
 
@@ -166,6 +173,7 @@ void cbmfm_t64_dump_header(const cbmfm_t64_t *image)
 }
 
 
+#if 0
 /** \brief  Determine offset in \a image of the file data segment
  *
  * \param[in]   image   t64 image
@@ -189,6 +197,7 @@ static uint8_t *t64_data_ptr(cbmfm_t64_t *image)
 {
     return image->data + t64_data_offset(image);
 }
+#endif
 
 
 /** \brief  Initialize \a dirent, including t64 specific data
@@ -254,9 +263,6 @@ bool cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
 
     return true;
 }
-
-
-
 
 
 /** @} */
