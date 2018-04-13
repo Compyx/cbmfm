@@ -338,3 +338,19 @@ uint8_t *cbmfm_dxx_dir_iter_entry_ptr(cbmfm_dxx_dir_iter_t *iter)
                 iter->block_iter.curr.sector) +
         iter->entry_offset;
 }
+
+
+/** \brief  Calculate number of blocks from \a size
+ *
+ * Calculate the number of blocks a file of \a size bytes would occupy on a
+ * floppy disk.
+ *
+ * \param[in]   size    size in bytes
+ *
+ * \return  size in blocks
+ */
+uint16_t cbmfm_size_to_blocks(size_t size)
+{
+    return (uint16_t)(size / CBMFM_BLOCK_SIZE_DATA
+            + (size % CBMFM_BLOCK_SIZE_DATA == 0 ? 0 : 1));
+}

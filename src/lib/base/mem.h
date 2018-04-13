@@ -33,21 +33,27 @@
 #include <stdint.h>
 
 
-void *  cbmfm_malloc(size_t size);
-void *  cbmfm_calloc(size_t nmemb, size_t size);
-void *  cbmfm_realloc(void *ptr, size_t size);
-void *  cbmfm_realloc_smaller(void *ptr, size_t size, bool *success);
-void    cbmfm_free(void *ptr);
+void *      cbmfm_malloc(size_t size);
+void *      cbmfm_calloc(size_t nmemb, size_t size);
+void *      cbmfm_realloc(void *ptr, size_t size);
+void *      cbmfm_realloc_smaller(void *ptr, size_t size, bool *success);
+void        cbmfm_free(void *ptr);
 
-char *  cbmfm_strdup(const char *s);
-char *  cbmfm_strndup(const char *s, size_t n);
-void *  cbmfm_memdup(const void *data, size_t size);
+char *      cbmfm_strdup(const char *s);
+char *      cbmfm_strndup(const char *s, size_t n);
+void *      cbmfm_memdup(const void *data, size_t size);
 
-int     cbmfm_popcount_byte(uint8_t b);
+int         cbmfm_popcount_byte(uint8_t b);
 
-void    cbmfm_hexdump(const uint8_t *data, size_t skip, size_t size);
+void        cbmfm_hexdump(const uint8_t *data, size_t skip, size_t size);
 
-uint16_t cbmfm_word_get_le(const uint8_t *p);
-
+uint16_t    cbmfm_word_get_le(const uint8_t *p);
+void        cbmfm_word_set_le(uint8_t *p, uint16_t v);
+uint16_t    cbmfm_word_get_be(const uint8_t *p);
+void        cbmfm_word_set_be(uint8_t *p, uint16_t v);
+uint32_t    cbmfm_dword_get_le(const uint8_t *p);
+void        cbmfm_dword_set_le(uint8_t *p, uint32_t v);
+uint32_t    cbmfm_dword_get_be(const uint8_t *p);
+void        cbmfm_dword_set_be(uint8_t *p, uint32_t v);
 
 #endif

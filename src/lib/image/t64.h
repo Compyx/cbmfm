@@ -34,6 +34,10 @@
 #include "cbmfm_types.h"
 
 
+/** \brief  Header size
+ */
+#define CBMFM_T64_HDR_SIZE      0x40
+
 /** \brief  Header magic bytes (32 bytes, 0-padded)
  *
  * This field seems to vary a lot, depending on which tool was used to create
@@ -64,6 +68,43 @@
 #define CBMFM_T64_HDR_TAPE_NAME 0x28
 
 
+/** \brief  Offset in a T64 of the directory
+ */
+#define CBMFM_T64_DIR_OFFSET    CBMFM_T64_HDR_SIZE
+
+
+/** \brief  Size of a T64 directory entry
+ */
+#define CBMFM_T64_DIRENT_SIZE   0x20
+
+
+/** \brief  C64s file type
+ *
+ */
+#define CBMFM_T64_DIRENT_C64S_TYPE  0x00
+
+/** \brief  CBMDOS file type
+ *
+ * Highly unreliable, just assume PRG when the C64s isn't a FRZ file.
+ */
+#define CBMFM_T64_DIRENT_FILE_TYPE  0x01
+
+/** \brief  Load address (WORD)
+ */
+#define CBMFM_T64_DIRENT_LOAD_ADDR  0x02
+
+/** \brief  End address (WORD)
+ */
+#define CBMFM_T64_DIRENT_END_ADDR   0x04
+
+/** \brief  File data offset (DWORD)
+ */
+#define CBMFM_T64_DIRENT_DATA_OFFSET    0x08
+
+/** \brief  File name (PETSCII, padding with $20)
+ */
+#define CBMFM_T64_DIRENT_FILE_NAME  0x10
+
 
 
 cbmfm_t64_t *   cbmfm_t64_alloc(void);
@@ -74,6 +115,11 @@ void            cbmfm_t64_free(cbmfm_t64_t *image);
 bool            cbmfm_t64_open(cbmfm_t64_t *image, const char *path);
 
 
-void cbmfm_t64_dump_header(const cbmfm_t64_t *image);
+void            cbmfm_t64_dump_header(const cbmfm_t64_t *image);
+
+void            cbmfm_t64_dirent_init(cbmfm_dirent_t *dirent);
+bool            cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
+                                       cbmfm_dirent_t *dirent,
+                                       uint16_t index);
 
 #endif

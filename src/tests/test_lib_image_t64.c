@@ -49,6 +49,7 @@ static const char *t64_images[] = {
 
 
 static bool test_lib_image_t64_open(test_case_t *test);
+static bool test_lib_image_t64_dir(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
@@ -56,6 +57,8 @@ static bool test_lib_image_t64_open(test_case_t *test);
 static test_case_t tests_lib_image_t64[] = {
     { "open", "Opening T64 archives",
         test_lib_image_t64_open, 0, 0 },
+    { "dir", "Directory handling of T64 archives",
+        test_lib_image_t64_dir, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -94,6 +97,54 @@ static bool test_lib_image_t64_open(test_case_t *test)
         } else {
             printf("OK, dumping header data:\n");
             cbmfm_t64_dump_header(&image);
+
+            cbmfm_t64_cleanup(&image);
+        }
+    }
+
+    cbmfm_t64_init(&image);
+
+    return true;
+}
+
+
+/** \brief  Test directory handling of T64 archives
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_t64_dir(test_case_t *test)
+{
+    cbmfm_t64_t image;
+    int i;
+
+    test->total = 4;
+
+    for (i = 0; t64_images[i] != NULL; i++) {
+        printf("..... opening '%s' .. ", t64_images[i]);
+        cbmfm_t64_init(&image);
+        if (!cbmfm_t64_open(&image, t64_images[i])) {
+            printf("failed\n");
+            test->failed++;
+        } else {
+
+            cbmfm_dirent_t dirent;
+
+            printf("OK, dumping header data:\n");
+            cbmfm_t64_dump_header(&image);
+
+            printf("..... parsing dirent #0 .. ");
+            if (!cbmfm_t64_dirent_parse(&image, &dirent, 0)) {
+                printf("failed: ");
+                fflush(stdout);
+                cbmfm_perror(NULL);
+                test->failed++;
+            } else {
+                printf("OK, dumping dirent:\n");
+                cbmfm_dirent_dump(&dirent);
+            }
+            putchar('\n');
 
             cbmfm_t64_cleanup(&image);
         }

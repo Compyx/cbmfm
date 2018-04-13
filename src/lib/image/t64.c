@@ -166,4 +166,97 @@ void cbmfm_t64_dump_header(const cbmfm_t64_t *image)
 }
 
 
+/** \brief  Determine offset in \a image of the file data segment
+ *
+ * \param[in]   image   t64 image
+ *
+ * \return  offset to file data segment
+ */
+static size_t t64_data_offset(cbmfm_t64_t *image)
+{
+    return (size_t)(CBMFM_T64_HDR_SIZE +
+            image->entry_max * CBMFM_T64_DIRENT_SIZE);
+}
+
+
+/** \brief  Get pointer to file data segment in \a image
+ *
+ * \param[in]   image   t64 image
+ *
+ * \return  pointer to file data segment
+ */
+static uint8_t *t64_data_ptr(cbmfm_t64_t *image)
+{
+    return image->data + t64_data_offset(image);
+}
+
+
+/** \brief  Initialize \a dirent, including t64 specific data
+ *
+ * \param[out]  dirent
+ */
+void cbmfm_t64_dirent_init(cbmfm_dirent_t *dirent)
+{
+    cbmfm_dirent_t64_t *extra = &(dirent->extra.t64);
+
+    cbmfm_dirent_init(dirent);
+    extra->data_offset = 0;
+    extra->load_addr = 0;
+    extra->end_addr = 0;
+    extra->c64s_type = 0;
+    extra->dir_index = 0;
+}
+
+
+/** \brief  Parse directory entry at \a index
+ *
+ * \param[in]   image   t64 image
+ * \param[out]  dirent  directory entry
+ * \param[in]   index   index in directory
+ *
+ * \return  false on invalid index
+ */
+bool cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
+                            cbmfm_dirent_t *dirent,
+                            uint16_t index)
+{
+    uint8_t *data;
+    cbmfm_dirent_t64_t *extra = &(dirent->extra.t64);
+
+    if (index >= image->entry_used) {
+        cbmfm_errno = CBMFM_ERR_INDEX;
+        return false;
+    }
+
+    cbmfm_t64_dirent_init(dirent);
+    data = image->data + CBMFM_T64_DIR_OFFSET + index * CBMFM_T64_DIRENT_SIZE;
+
+    memcpy(dirent->filename, data + CBMFM_T64_DIRENT_FILE_NAME,
+            CBMFM_CBMDOS_FILE_NAME_LEN);
+
+    /* TODO: calculate filesize AFTER fixing the possibly broken end address */
+    dirent->filesize = 0;
+    dirent->size_blocks = 0;
+
+    /* file type: either PRG or FRZ (which gets set to USR) */
+    extra->c64s_type = data[CBMFM_T64_DIRENT_C64S_TYPE];
+    dirent->filetype = extra->c64s_type == 3 ? 0x84 : 0x82;
+
+    dirent->image = (cbmfm_image_t *)image;
+
+    extra->load_addr = cbmfm_word_get_le(data + CBMFM_T64_DIRENT_LOAD_ADDR);
+    extra->end_addr = cbmfm_word_get_le(data + CBMFM_T64_DIRENT_END_ADDR);
+    extra->data_offset = cbmfm_dword_get_le(data + CBMFM_T64_DIRENT_DATA_OFFSET);
+
+    /* TODO: first fix any corruption in the dirent */
+    dirent->size_blocks = cbmfm_size_to_blocks(
+            (size_t)(extra->end_addr - extra->load_addr + 2));
+
+    return true;
+}
+
+
+
+
+
 /** @} */

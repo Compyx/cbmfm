@@ -166,11 +166,12 @@ bool test_module_run_tests(const char *mod_name, const char *test_name)
             /* display results */
             printf("\n\n");
             if (module->failed == 0) {
-                printf(". OK: %d tests, no failures -> 100.00%%\n", module->total);
+                printf(". OK: %d tests, no failures -> 100%%\n", module->total);
             } else {
-                printf(". OK: %d tests, %d failures -> %.2f",
+                printf(". OK: %d tests, %d failures -> %.2f%%\n",
                         module->total, module->failed,
-                        (float)(module->total - module->failed) / (float)(module->total));
+                        (float)(module->total - module->failed)
+                        / (float)(module->total) * 100.0);
             }
             total += module->total;
             failed += module->failed;
@@ -180,11 +181,11 @@ bool test_module_run_tests(const char *mod_name, const char *test_name)
 
     putchar('\n');
     if (failed == 0) {
-        printf("Final result: %d tests, no failures -> 100.00%%\n", total);
+        printf("\nFinal result: %d tests, no failures -> 100%%\n", total);
     } else {
-        printf("Final result: %d tests, %d failures -> %.2f\n",
+        printf("\nFinal result: %d tests, %d failures -> %.2f%%\n",
                 total, failed,
-                (float)(total - failed) / (float)(total));
+                (float)(total - failed) / (float)(total) * 100.0);
     }
     return true;
 }

@@ -60,4 +60,7 @@ bool            cbmfm_dxx_dir_iter_init(cbmfm_dxx_dir_iter_t *iter,
 bool            cbmfm_dxx_dir_iter_next(cbmfm_dxx_dir_iter_t *iter);
 uint8_t *       cbmfm_dxx_dir_iter_entry_ptr(cbmfm_dxx_dir_iter_t *iter);
 
+
+uint16_t        cbmfm_size_to_blocks(size_t size);
+
 #endif

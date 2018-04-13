@@ -286,7 +286,101 @@ void cbmfm_hexdump(const uint8_t *data, size_t skip, size_t size)
 }
 
 
+/** \brief  Get a little endian 16-bit word from \a p
+ *
+ * \param[in]   p   source
+ *
+ * \return  word
+ */
 uint16_t cbmfm_word_get_le(const uint8_t *p)
 {
-    return p[0] + p[1] * 256;
+    return (uint16_t)(p[0] + p[1] * (1 << 8));
+}
+
+
+/** \brief  Store \a v as a little endian 16-bit word at \a p
+ *
+ * \param[out]  p   destination
+ * \param[in]   v   value
+ */
+void cbmfm_word_set_le(uint8_t *p, uint16_t v)
+{
+    p[0] = (uint8_t)(v & 0xff);
+    p[1] = (uint8_t)((v >> 8) & 0xff);
+}
+
+
+/** \brief  Get a big endian 16-bit word from \a p
+ *
+ * \param[in]   p   source
+ *
+ * \return  word
+ */
+uint16_t cbmfm_word_get_be(const uint8_t *p)
+{
+    return (uint16_t)(p[1] + p[0] * (1 << 8));
+}
+
+
+/** \brief  Store \a v as a big endian 16-bit word at \a p
+ *
+ * \param[out]  p   destination
+ * \param[in]   v   value
+ */
+void cbmfm_word_set_be(uint8_t *p, uint16_t v)
+{
+    p[1] = (uint8_t)(v & 0xff);
+    p[0] = (uint8_t)((v >> 8) & 0xff);
+}
+
+
+/** \brief  Get a little endian 32-bit dword from \a p
+ *
+ * \param[in]   p   data
+ *
+ * \return  dword
+ */
+uint32_t cbmfm_dword_get_le(const uint8_t *p)
+{
+    return (uint32_t)(p[0] + p[1] * (1 << 8) + p[2] * (1 << 16) + p[3] * (1 << 24));
+}
+
+
+/** \brief  Store \a v as a little endian 32-bit word at \a p
+ *
+ * \param[out]  p   destination
+ * \param[in]   v   value
+ */
+void cbmfm_dword_set_le(uint8_t *p, uint32_t v)
+{
+    p[0] = (uint8_t)(v & 0xff);
+    p[1] = (uint8_t)((v >> 8) & 0xff);
+    p[2] = (uint8_t)((v >> 16) & 0xff);
+    p[3] = (uint8_t)((v >> 24) & 0xff);
+}
+
+
+/** \brief  Get a big endian 32-bit dword from \a p
+ *
+ * \param[in]   p   data
+ *
+ * \return  dword
+ */
+uint32_t cbmfm_dword_get_be(const uint8_t *p)
+{
+    return (uint32_t)(p[3] + p[2] * (1 << 8) + p[1] * (1 << 16) + p[0] * (1 << 24));
+}
+
+
+/** \brief  Store \a v as a big endian 32-bit word at \a p
+ *
+ * \param[out]  p   destination
+ * \param[in]   v   value
+ */
+void cbmfm_dword_set_be(uint8_t *p, uint32_t v)
+{
+    p[3] = (uint8_t)(v & 0xff);
+    p[2] = (uint8_t)((v >> 8) & 0xff);
+    p[1] = (uint8_t)((v >> 16) & 0xff);
+    p[0] = (uint8_t)((v >> 24) & 0xff);
 }

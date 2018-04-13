@@ -134,6 +134,17 @@ typedef struct cbmfm_block_s {
 } cbmfm_block_t;
 
 
+/** \brief  T64 specific dirent fields
+ */
+typedef struct cbmfm_dirent_t64_s {
+    uint32_t    data_offset;
+    uint16_t    load_addr;
+    uint16_t    end_addr;
+    uint8_t     c64s_type;
+    uint16_t    dir_index;
+} cbmfm_dirent_t64_t;
+
+
 /** \brief  Directory entry object
  *
  * Contains information on a directory entry.
@@ -150,6 +161,11 @@ typedef struct cbmfm_dirent_s {
     struct cbmfm_dir_s *dir;        /**< parent directory reference */
     struct cbmfm_image_s *image;    /**< parent image reference */
 
+    /** \brief  Extra type-specific data
+     */
+    union {
+        cbmfm_dirent_t64_t t64;     /**< T64 specific data */
+    } extra;
 
 } cbmfm_dirent_t;
 
