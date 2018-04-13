@@ -199,6 +199,7 @@ static bool ark_parse_dirent(
 
     /* initialize dirent */
     cbmfm_dirent_init(dirent);
+    dirent->image_type = CBMFM_IMAGE_TYPE_ARK;
 
     /* get CBMDOS filename */
     memcpy(dirent->filename, data + CBMFM_ARK_DIRENT_FILENAME,
@@ -300,6 +301,7 @@ cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
                 dirent.filedata = cbmfm_memdup(data, dirent.filesize);
             }
         }
+        dirent.index = (uint16_t)index;
         cbmfm_dir_append_dirent(dir, &dirent);
         cbmfm_dirent_cleanup(&dirent);
     }

@@ -213,7 +213,7 @@ void cbmfm_t64_dirent_init(cbmfm_dirent_t *dirent)
     extra->load_addr = 0;
     extra->end_addr = 0;
     extra->c64s_type = 0;
-    extra->dir_index = 0;
+    dirent->image_type = CBMFM_IMAGE_TYPE_T64;
 }
 
 
@@ -261,6 +261,7 @@ bool cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
     dirent->size_blocks = cbmfm_size_to_blocks(
             (size_t)(extra->end_addr - extra->load_addr + 2));
 
+    dirent->index = index;
     return true;
 }
 

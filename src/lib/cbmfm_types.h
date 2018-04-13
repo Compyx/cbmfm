@@ -141,9 +141,14 @@ typedef struct cbmfm_dirent_t64_s {
     uint16_t    load_addr;      /**< load address */
     uint16_t    end_addr;       /**< end address (unreliable) */
     uint8_t     c64s_type;      /**< C64s file type byte */
-    uint16_t    dir_index;      /**< index in directory */
 } cbmfm_dirent_t64_t;
 
+
+/** \brief  Dxx specific dirent fields
+ */
+typedef struct cbmfm_dirent_dxx_s {
+    cbmfm_block_t first_block;
+} cbmfm_dirent_dxx_t;
 
 /** \brief  Directory entry object
  *
@@ -155,17 +160,21 @@ typedef struct cbmfm_dirent_s {
     size_t      filesize;   /**< raw file size (optional) */
     uint8_t     filetype;   /**< CBMDOS file type and flags */
 
-    cbmfm_block_t first_block;      /**< first block */
     uint16_t    size_blocks;        /**< file size in blocks */
 
     struct cbmfm_dir_s *dir;        /**< parent directory reference */
     struct cbmfm_image_s *image;    /**< parent image reference */
 
+    uint16_t    index;      /**< original index in directory of dirent */
+
     /** \brief  Extra type-specific data
      */
     union {
+        cbmfm_dirent_dxx_t dxx;     /**< Dxx specific data */
         cbmfm_dirent_t64_t t64;     /**< T64 specific data */
     } extra;
+
+    int image_type;
 
 } cbmfm_dirent_t;
 

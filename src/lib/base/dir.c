@@ -65,11 +65,14 @@ void cbmfm_dirent_init(cbmfm_dirent_t *dirent)
     dirent->filedata = NULL;
     dirent->filesize = 0;
     dirent->filetype = 0;
-    cbmfm_block_init(&(dirent->first_block));
     dirent->size_blocks = 0;
+
+    dirent->index = 0;
+    dirent->image_type = CBMFM_IMAGE_TYPE_INVALID;
 
     dirent->dir = NULL;
     dirent->image = NULL;
+
 }
 
 
@@ -105,11 +108,28 @@ cbmfm_dirent_t *cbmfm_dirent_dup(const cbmfm_dirent_t *dirent)
     }
     dupl->filesize = dirent->filesize;
     dupl->filetype = dirent->filetype;
-    dupl->first_block = dirent->first_block;
     dupl->size_blocks = dirent->size_blocks;
 
     dupl->dir = dirent->dir;
     dupl->image = dirent->image;
+    dupl->image_type = dirent->image_type;
+    dupl->index = dirent->index;
+
+    /* copy image-type dependent data */
+    switch (dirent->image_type) {
+        case CBMFM_IMAGE_TYPE_D64:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D71:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D80:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D81:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D82:
+            dupl->extra.dxx = dirent->extra.dxx;
+            break;
+        case CBMFM_IMAGE_TYPE_T64:
+            dupl->extra.t64 = dirent->extra.t64;
+            break;
+        default:
+            break;
+    }
 
     return dupl;
 }
@@ -152,16 +172,38 @@ void cbmfm_dirent_free(cbmfm_dirent_t *dirent)
  */
 int cbmfm_dirent_dump(const cbmfm_dirent_t *dirent)
 {
+    int x;
+
     char name[CBMFM_CBMDOS_FILE_NAME_LEN + 1];
 
     cbmfm_pet_to_asc_str(name, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
 
-    return printf("%-5u \"%s\" %c%s%c\n",
+    x = printf("%-5u \"%s\" %c%s%c  [%03" PRIx16 "]",
             dirent->size_blocks, name,
             dirent->filetype & CBMFM_CBMDOS_FILE_CLOSED_BIT ? ' ' : '*',
             cbmfm_cbmdos_filetype(dirent->filetype),
-            dirent->filetype & CBMFM_CBMDOS_FILE_LOCKED_BIT ? '<' : ' ');
+            dirent->filetype & CBMFM_CBMDOS_FILE_LOCKED_BIT ? '<' : ' ',
+            dirent->index);
+
+    switch (dirent->image_type) {
+        case CBMFM_IMAGE_TYPE_D64:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D71:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D80:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D81:  /* fall through */
+        case CBMFM_IMAGE_TYPE_D82:
+            return x + printf(" (%2d,%2d)\n",
+                    dirent->extra.dxx.first_block.track,
+                    dirent->extra.dxx.first_block.sector);
+        case CBMFM_IMAGE_TYPE_T64:
+            return x + printf(" ($%" PRIx16 "-$%" PRIx16 "), offset $%" PRIx32 "\n",
+                    dirent->extra.t64.load_addr,
+                    dirent->extra.t64.end_addr,
+                    dirent->extra.t64.data_offset);
+        default:
+            return x + printf("\n");
+    }
 }
+
 
 /*
  * cbmfm_dir_t methods

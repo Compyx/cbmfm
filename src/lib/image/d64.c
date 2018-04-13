@@ -538,15 +538,17 @@ int cbmfm_d64_blocks_free(cbmfm_d64_t *image)
  */
 void cbmfm_d64_dirent_parse(cbmfm_dirent_t *dirent, const uint8_t *data)
 {
-    cbmfm_dirent_init(dirent);
+    cbmfm_dirent_dxx_t *extra = &(dirent->extra.dxx);
+
+    cbmfm_dxx_dirent_init(dirent, CBMFM_IMAGE_TYPE_D64);
 
     memcpy(dirent->filename,
             data + CBMFM_D64_DIRENT_FILE_NAME,
             CBMFM_CBMDOS_FILE_NAME_LEN);
     dirent->filetype = data[CBMFM_D64_DIRENT_FILE_TYPE];
 
-    dirent->first_block.track = data[CBMFM_D64_DIRENT_FILE_TRACK];
-    dirent->first_block.sector = data[CBMFM_D64_DIRENT_FILE_SECTOR];
+    extra->first_block.track = data[CBMFM_D64_DIRENT_FILE_TRACK];
+    extra->first_block.sector = data[CBMFM_D64_DIRENT_FILE_SECTOR];
 
     dirent->size_blocks = (uint16_t)(data[CBMFM_D64_DIRENT_BLOCKS_LSB] +
             data[CBMFM_D64_DIRENT_BLOCKS_MSB] * 256);
@@ -563,6 +565,7 @@ cbmfm_dir_t *cbmfm_d64_dir_read(cbmfm_d64_t *image)
 {
     cbmfm_dir_t *dir;
     cbmfm_dxx_dir_iter_t iter;
+    uint16_t index = 0;
 
     dir = cbmfm_dir_new();
     if (!cbmfm_dxx_dir_iter_init(&iter, (cbmfm_dxx_image_t *)(image),
@@ -577,10 +580,12 @@ cbmfm_dir_t *cbmfm_d64_dir_read(cbmfm_d64_t *image)
 
         data = cbmfm_dxx_dir_iter_entry_ptr(&iter);
         cbmfm_d64_dirent_parse(&dirent, data);
+        dirent.index = index++;
         cbmfm_dir_append_dirent(dir, &dirent);
 
     } while (cbmfm_dxx_dir_iter_next(&iter));
 
+    dir->image = (cbmfm_image_t *)image;
     return dir;
 }
 

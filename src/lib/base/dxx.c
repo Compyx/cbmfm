@@ -36,6 +36,7 @@
 #include "base/mem.h"
 #include "base/errors.h"
 #include "base/image.h"
+#include "base/dir.h"
 
 #include "dxx.h"
 
@@ -255,4 +256,19 @@ void cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter, uint8_t *dest)
     data = iter->image->data + offset;
 
     memcpy(dest, data, CBMFM_BLOCK_SIZE_RAW);
+}
+
+
+/** \brief  Initialize Dxx dirent object
+ *
+ * \param[out]  dirent  directory entry
+ * \param[in]   type    Dxx image type enum
+ */
+void cbmfm_dxx_dirent_init(cbmfm_dirent_t *dirent, int type)
+{
+    cbmfm_dirent_dxx_t *extra= &(dirent->extra.dxx);
+
+    cbmfm_dirent_init(dirent);
+    cbmfm_block_init(&(extra->first_block));
+    dirent->image_type = type;
 }

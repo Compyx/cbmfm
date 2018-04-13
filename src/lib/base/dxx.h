@@ -251,6 +251,8 @@ bool        cbmfm_dxx_block_iter_next(cbmfm_dxx_block_iter_t *iter);
 void        cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter,
                                            uint8_t *dest);
 
+void        cbmfm_dxx_dirent_init(cbmfm_dirent_t *dirent, int type);
+
 /** @} */
 
 #endif
