@@ -122,4 +122,8 @@ bool            cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
                                        cbmfm_dirent_t *dirent,
                                        uint16_t index);
 
+cbmfm_dir_t *   cbmfm_t64_read_dir(cbmfm_t64_t *image);
+int             cbmfm_t64_fix_dir(cbmfm_dir_t *dir);
+
+
 #endif

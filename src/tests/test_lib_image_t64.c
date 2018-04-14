@@ -117,9 +117,10 @@ static bool test_lib_image_t64_open(test_case_t *test)
 static bool test_lib_image_t64_dir(test_case_t *test)
 {
     cbmfm_t64_t image;
+    cbmfm_dir_t *dir;
     int i;
 
-    test->total = 4;
+    test->total = 8;
 
     for (i = 0; t64_images[i] != NULL; i++) {
         printf("..... opening '%s' .. ", t64_images[i]);
@@ -146,11 +147,21 @@ static bool test_lib_image_t64_dir(test_case_t *test)
             }
             putchar('\n');
 
+            printf("..... calling cbmfm_t64_read_dir() .. ");
+            fflush(stdout);
+            dir = cbmfm_t64_read_dir(&image);
+            if (dir == NULL) {
+                printf("failed\n");
+                test->failed++;
+            } else {
+                printf("OK, dumping dir:\n");
+                cbmfm_dir_dump(dir);
+                cbmfm_dir_free(dir);
+            }
+
             cbmfm_t64_cleanup(&image);
         }
     }
 
-    cbmfm_t64_init(&image);
-
-    return true;
+   return true;
 }

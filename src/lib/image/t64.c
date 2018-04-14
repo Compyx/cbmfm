@@ -76,6 +76,7 @@ static void cbmfm_t64_parse_header(cbmfm_t64_t *image)
     if (image->entry_used == 0) {
         cbmfm_log_warning("%s(): found entry count 0, adjusting to 1\n",
                 __func__);
+        cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
         image->entry_used++;
     }
 
@@ -106,6 +107,9 @@ void cbmfm_t64_init(cbmfm_t64_t *image)
     image->version = 0;
     image->entry_max = 0;
     image->entry_used = 0;
+
+    /* set read-only */
+    cbmfm_image_set_readonly((cbmfm_image_t *)image, true);
 }
 
 
@@ -243,13 +247,9 @@ bool cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
     memcpy(dirent->filename, data + CBMFM_T64_DIRENT_FILE_NAME,
             CBMFM_CBMDOS_FILE_NAME_LEN);
 
-    /* TODO: calculate filesize AFTER fixing the possibly broken end address */
-    dirent->filesize = 0;
-    dirent->size_blocks = 0;
-
-    /* file type: either PRG or FRZ (which gets set to USR) */
+    /* file type */
     extra->c64s_type = data[CBMFM_T64_DIRENT_C64S_TYPE];
-    dirent->filetype = extra->c64s_type == 3 ? 0x84 : 0x82;
+    dirent->filetype = data[CBMFM_T64_DIRENT_FILE_TYPE];
 
     dirent->image = (cbmfm_image_t *)image;
 
@@ -257,13 +257,183 @@ bool cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
     extra->end_addr = cbmfm_word_get_le(data + CBMFM_T64_DIRENT_END_ADDR);
     extra->data_offset = cbmfm_dword_get_le(data + CBMFM_T64_DIRENT_DATA_OFFSET);
 
-    /* TODO: first fix any corruption in the dirent */
-    dirent->size_blocks = cbmfm_size_to_blocks(
-            (size_t)(extra->end_addr - extra->load_addr + 2));
+    /* this gets fixed later */
+    dirent->filesize = (size_t)(extra->end_addr - extra->load_addr + 2);
+    dirent->size_blocks = cbmfm_size_to_blocks(dirent->filesize);
 
     dirent->index = index;
     return true;
 }
+
+
+cbmfm_dir_t *cbmfm_t64_read_dir(cbmfm_t64_t *image)
+{
+    cbmfm_dir_t *dir;
+    uint16_t index;
+
+    dir = cbmfm_dir_new();
+    dir->image = (cbmfm_image_t *)image;
+
+    for (index = 0; index < image->entry_used; index++) {
+        cbmfm_dirent_t dirent;
+
+        cbmfm_log_debug("parsing entry %" PRIx16 "\n", index);
+        if (!cbmfm_t64_dirent_parse(image, &dirent, index)) {
+            cbmfm_dir_free(dir);
+            return NULL;
+        }
+
+        cbmfm_dir_append_dirent(dir, &dirent);
+    }
+
+    /* now fix the end addres fields */
+    cbmfm_t64_fix_dir(dir);
+    return dir;
+}
+
+
+/** \brief  Function for qsort(), sorting on data offset
+ *
+ * \param[in]   p1  pointer to first element
+ * \param[in]   p2  pointer to secend element
+ *
+ * \return  -1 when offset(p1) < offset(p2), 0 when offset(p1), == offset(p2),
+ *          +1 when offset(p1) > offset(p2)
+ */
+static int compar_offset(const void *p1, const void *p2)
+{
+    const cbmfm_dirent_t *d1 = *(const cbmfm_dirent_t * const *)p1;
+    const cbmfm_dirent_t *d2 = *(const cbmfm_dirent_t * const *)p2;
+
+    cbmfm_log_debug("d1 offset = $%" PRIx32 ", d2 offset = $%" PRIx32 "\n",
+            d1->extra.t64.data_offset, d2->extra.t64.data_offset);
+
+    if (d1->extra.t64.data_offset < d2->extra.t64.data_offset) {
+        return -1;
+    } else if (d1->extra.t64.data_offset > d2->extra.t64.data_offset) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
+/** \brief  Function for qsort(), sorting on directory index
+ *
+ * \param[in]   p1  pointer to first element
+ * \param[in]   p2  pointer to secend element
+ *
+ * \return  -1 when index(p1) < index(p2), 0 when index(p1), == index(p2),
+ *          +1 when index(p1) > index(p2)
+ */
+static int compar_index(const void *p1, const void *p2)
+{
+    const cbmfm_dirent_t *d1 = *(const cbmfm_dirent_t * const *)p1;
+    const cbmfm_dirent_t *d2 = *(const cbmfm_dirent_t * const *)p2;
+
+    cbmfm_log_debug("d1 index = $%" PRIx32 ", d2 offset = $%" PRIx32 "\n",
+            d1->index, d2->index);
+
+    if (d1->index < d2->index) {
+        return -1;
+    } else if (d1->index > d2->index) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
+
+/** \brief  Fix possible corruption in \a dir
+ *
+ * \param[in,out]   dir t64 directory
+ *
+ * \return  number of fixes applied
+ */
+int cbmfm_t64_fix_dir(cbmfm_dir_t *dir)
+{
+    cbmfm_t64_t *image = (cbmfm_t64_t *)(dir->image);
+    size_t rep_size;    /* reported size */
+    size_t act_size;    /* actual size */
+    int fixes = 0;
+    uint16_t index;
+
+    if (image->entry_max == 0) {
+        cbmfm_log_warning("adjusting dir max entry count from 0 to 1\n");
+        fixes++;
+        image->entry_max = 1;
+    }
+
+    /* sort entries based on data-offset */
+    qsort(dir->entries, (size_t)(dir->entry_used),
+            sizeof(cbmfm_dirent_t *), compar_offset);
+
+    for (index = 0; index < image->entry_used; index++) {
+        cbmfm_dirent_t *dirent = dir->entries[index];
+        cbmfm_dirent_t *next = NULL;
+        cbmfm_dirent_t64_t *t64 = &(dirent->extra.t64);
+
+        /* skip C64s FRZ files */
+        if (t64->c64s_type > 1) {
+            continue;
+        }
+
+        /* get next entry to compare against */
+        if (index < dir->entry_used - 1) {
+            next = dir->entries[index + 1];
+        } else {
+            next = NULL;
+        }
+
+        /* get size according to directory entries */
+        rep_size = (size_t)(t64->end_addr - t64->load_addr);
+
+        /* determine actual size */
+        if (next != NULL) {
+            act_size = next->extra.t64.data_offset - t64->data_offset;
+        } else {
+            act_size = image->size - t64->data_offset;
+        }
+        cbmfm_log_debug("load = $%04x, end = $%04x, reported size = $%04x, "
+                "actual size = $%04x\n",
+                t64->load_addr, t64->end_addr,
+                (unsigned int)rep_size,
+                (unsigned int)act_size);
+        if (act_size != rep_size) {
+            cbmfm_log_debug("got invalid end address, fixing\n");
+
+            if (index == dir->entry_max -1 && rep_size < act_size) {
+                /* don't fix last record when actual size is larger, some
+                 * T64's appear to have padding for the last record */
+                continue;
+            }
+            t64->end_addr = (uint16_t)(t64->load_addr + act_size);
+            fixes++;
+        }
+
+        /* set proper filesize and size_blocks */
+        dirent->filesize = (size_t)(t64->end_addr - t64->load_addr + 2);
+        dirent->size_blocks = cbmfm_size_to_blocks(dirent->filesize);
+
+    }
+
+
+
+    /* return directory to original state by sorting on index */
+    qsort(dir->entries, (size_t)(dir->entry_used),
+            sizeof(cbmfm_dirent_t *), compar_index);
+
+    if (fixes > 0) {
+        cbmfm_log_debug("fixed %d errors\n", fixes);
+        cbmfm_image_set_dirty(dir->image, true);
+    }
+
+    return fixes;
+}
+
+
+
 
 
 /** @} */
