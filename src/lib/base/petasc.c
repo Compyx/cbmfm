@@ -278,7 +278,7 @@ void cbmfm_asc_to_pet_str(uint8_t *pet, const char *asc, size_t n)
  *
  * \param[out]  asc     ASCII filename target (must be at least 21 bytes)
  * \param[in]   pet     PETSCII filename (must be 16 bytes)
- * \param[in]   ext     optional extension
+ * \param[in]   ext     optional extension (without leading '.')
  */
 void cbmfm_pet_filename_to_host(char *asc, const uint8_t *pet, const char *ext)
 {

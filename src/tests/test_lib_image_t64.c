@@ -50,6 +50,7 @@ static const char *t64_images[] = {
 
 static bool test_lib_image_t64_open(test_case_t *test);
 static bool test_lib_image_t64_dir(test_case_t *test);
+static bool test_lib_image_t64_file(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
@@ -59,6 +60,8 @@ static test_case_t tests_lib_image_t64[] = {
         test_lib_image_t64_open, 0, 0 },
     { "dir", "Directory handling of T64 archives",
         test_lib_image_t64_dir, 0, 0 },
+    { "file", "File handling of T64 archives",
+        test_lib_image_t64_file, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -165,3 +168,60 @@ static bool test_lib_image_t64_dir(test_case_t *test)
 
    return true;
 }
+
+
+/** \brief  Test file handling of T64 archives
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_t64_file(test_case_t *test)
+{
+    cbmfm_t64_t image;
+    cbmfm_dir_t *dir;
+    int i;
+
+    test->total = 8;
+
+    for (i = 0; t64_images[i] != NULL; i++) {
+        printf("..... opening '%s' .. ", t64_images[i]);
+        cbmfm_t64_init(&image);
+        if (!cbmfm_t64_open(&image, t64_images[i])) {
+            printf("failed\n");
+            test->failed++;
+        } else {
+
+            printf("..... calling cbmfm_t64_read_dir() .. ");
+            fflush(stdout);
+            dir = cbmfm_t64_read_dir(&image);
+            if (dir == NULL) {
+                printf("failed\n");
+                cbmfm_t64_cleanup(&image);
+                return false;   /* fatal error */
+            } else {
+                printf("OK, dumping dir:\n");
+                cbmfm_dir_dump(dir);
+
+                printf("....... saving file #0 using PETSCII-converted name .. ");
+                if (!cbmfm_t64_extract_file(dir, 0, NULL)) {
+                    test->failed++;
+                    printf("failed\n");
+                } else {
+                    printf("OK\n");
+                }
+
+                cbmfm_dir_free(dir);
+
+            }
+
+            cbmfm_t64_cleanup(&image);
+        }
+    }
+
+   return true;
+}
+
+
+
+

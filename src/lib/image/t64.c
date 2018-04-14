@@ -433,7 +433,62 @@ int cbmfm_t64_fix_dir(cbmfm_dir_t *dir)
 }
 
 
+/** \brief  Extract file at \a index in \a dir
+ *
+ * Save a file in \a dir at \a index to the host file system. When \a name is
+ * `NULL` the PETSCII file name will be translated to ASCII in a encoding that
+ * the host OS can handle (meaning on Windows you'll see a lot more
+ * substitutions of PETSCII chars than on Unix), and a '.prg' suffix added.
+ *
+ * This function requires first getting a directory of a T64 image, since those
+ * T64 images tend to have a lot of corruptions and reading the dir of a T64
+ * image fixes (or at least tries) those corruptions.
+ *
+ * \param[in]   dir     t64 directory
+ * \param[in]   index   index of file in directory
+ * \param[in]   name    filename (use `NULL` to use the PETSCII filename)
+ *
+ * \return  bool
+ */
+bool cbmfm_t64_extract_file(cbmfm_dir_t *dir,
+                            uint16_t index,
+                            const char *name)
+{
+    cbmfm_t64_t *image = (cbmfm_t64_t *)(dir->image);
+    cbmfm_dirent_t *dirent;
+    uint8_t *ptr;
+    uint8_t *data;
+    bool result;
 
+    /* +5 = '.ext' + '\0' */
+    char filename[CBMFM_CBMDOS_FILE_NAME_LEN + 5];
+
+    if (index >= dir->entry_used) {
+        cbmfm_errno = CBMFM_ERR_INDEX;
+        return false;
+    }
+
+    /* get dirent, data pointer */
+    dirent = dir->entries[index];
+    ptr = image->data + dirent->extra.t64.data_offset;
+    /* allocate memory for file data */
+    data = cbmfm_malloc(dirent->filesize);
+
+    /* store load address */
+    cbmfm_word_set_le(data, dirent->extra.t64.load_addr);
+    /* copy file data */
+    memcpy(data + 2, ptr, dirent->filesize - 2);
+
+    if (name == NULL) {
+        cbmfm_pet_filename_to_host(filename, dirent->filename, "prg");
+    }
+
+    result = cbmfm_write_file(data, dirent->filesize,
+            name != NULL ? name : filename);
+
+    cbmfm_free(data);
+    return result;
+}
 
 
 /** @} */
