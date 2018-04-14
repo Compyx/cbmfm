@@ -42,18 +42,6 @@
  * @{
  */
 
-/** \brief  CBMDOS file type strings
- */
-static const char *filetype_str[8] = {
-    "del",  /* deleted */
-    "seq",  /* sequential */
-    "prg",  /* program */
-    "usr",  /* user defined */
-    "rel",  /* relative */
-    "dir",  /* directory/partition (d81) */
-    "???",
-    "???"
-};
 
 /** \brief  Image type meta data object
  */
@@ -130,19 +118,6 @@ void cbmfm_block_dump(const cbmfm_block_t *block)
         putchar('\n');
     }
 }
-
-
-/** \brief  Get CBMDOS filetype string
- *
- * \param[in]   filetype    CBMDOS filetype byte
- *
- * \return  0-terminated file type in ASCII
- */
-const char *cbmfm_cbmdos_filetype(uint8_t filetype)
-{
-    return filetype_str[filetype & 0x07];
-}
-
 
 
 /** \brief  Get image file extension

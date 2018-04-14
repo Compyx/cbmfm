@@ -22,6 +22,7 @@ LIB_SRCS = src/lib/base/io.c \
 	   src/lib/base/mem.c \
 	   src/lib/base/image.c \
 	   src/lib/base/log.c \
+	   src/lib/base/file.c \
 	   src/lib/image/ark.c \
 	   src/lib/base/dir.c \
 	   src/lib/base/petasc.c \

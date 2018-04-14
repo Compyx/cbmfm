@@ -33,6 +33,7 @@
 
 #include "cbmfm_types.h"
 #include "base/dxx.h"
+#include "base/file.h"
 #include "base.h"
 
 #include "dir.h"

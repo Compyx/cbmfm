@@ -289,4 +289,14 @@ typedef struct cbmfm_t64_s {
 
 
 
+/** \brief  Object to pass files around
+ */
+typedef struct cbmfm_file_s {
+    uint8_t     name[CBMFM_CBMDOS_FILE_NAME_LEN];   /**< PESCII file name */
+    uint8_t *   data;   /**< file data */
+    size_t      size;   /**< file size */
+    uint8_t     type;   /**< CBMDOS file type and flags */
+} cbmfm_file_t;
+
+
 #endif

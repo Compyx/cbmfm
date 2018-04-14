@@ -35,6 +35,7 @@
 #include "base.h"
 #include "base/image.h"
 #include "base/dir.h"
+#include "base/file.h"
 
 #include "ark.h"
 

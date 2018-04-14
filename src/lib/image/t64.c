@@ -266,32 +266,6 @@ bool cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
 }
 
 
-cbmfm_dir_t *cbmfm_t64_read_dir(cbmfm_t64_t *image)
-{
-    cbmfm_dir_t *dir;
-    uint16_t index;
-
-    dir = cbmfm_dir_new();
-    dir->image = (cbmfm_image_t *)image;
-
-    for (index = 0; index < image->entry_used; index++) {
-        cbmfm_dirent_t dirent;
-
-        cbmfm_log_debug("parsing entry %" PRIx16 "\n", index);
-        if (!cbmfm_t64_dirent_parse(image, &dirent, index)) {
-            cbmfm_dir_free(dir);
-            return NULL;
-        }
-
-        cbmfm_dir_append_dirent(dir, &dirent);
-    }
-
-    /* now fix the end addres fields */
-    cbmfm_t64_fix_dir(dir);
-    return dir;
-}
-
-
 /** \brief  Function for qsort(), sorting on data offset
  *
  * \param[in]   p1  pointer to first element
@@ -344,14 +318,13 @@ static int compar_index(const void *p1, const void *p2)
 }
 
 
-
 /** \brief  Fix possible corruption in \a dir
  *
  * \param[in,out]   dir t64 directory
  *
  * \return  number of fixes applied
  */
-int cbmfm_t64_fix_dir(cbmfm_dir_t *dir)
+static int cbmfm_t64_fix_dir(cbmfm_dir_t *dir)
 {
     cbmfm_t64_t *image = (cbmfm_t64_t *)(dir->image);
     size_t rep_size;    /* reported size */
@@ -433,6 +406,47 @@ int cbmfm_t64_fix_dir(cbmfm_dir_t *dir)
 }
 
 
+/** \brief  Read directory of \a image
+ *
+ * This function reads the directory of \a image and tries to fix any corruption
+ * in the directory entries.
+ *
+ * \param[in]   image   t64 image
+ *
+ * \return  directory or `NULL` on failure
+ *
+ * \note    The caller is responsible for calling cbmfm_dir_free() on the
+ *          returned pointer to free memory used by the directory.
+ */
+cbmfm_dir_t *cbmfm_t64_read_dir(cbmfm_t64_t *image)
+{
+    cbmfm_dir_t *dir;
+    uint16_t index;
+
+    dir = cbmfm_dir_new();
+    dir->image = (cbmfm_image_t *)image;
+
+    for (index = 0; index < image->entry_used; index++) {
+        cbmfm_dirent_t dirent;
+
+        cbmfm_log_debug("parsing entry %" PRIx16 "\n", index);
+        if (!cbmfm_t64_dirent_parse(image, &dirent, index)) {
+            cbmfm_dir_free(dir);
+            return NULL;
+        }
+
+        cbmfm_dir_append_dirent(dir, &dirent);
+    }
+
+    /* now fix the end addres fields */
+    cbmfm_t64_fix_dir(dir);
+    return dir;
+}
+
+
+
+
+
 /** \brief  Extract file at \a index in \a dir
  *
  * Save a file in \a dir at \a index to the host file system. When \a name is
@@ -488,6 +502,28 @@ bool cbmfm_t64_extract_file(cbmfm_dir_t *dir,
 
     cbmfm_free(data);
     return result;
+}
+
+
+/** \brief  Extract all files from \a dir
+ *
+ * Extracts all files in the directory, using their PETSCII file names converted
+ * to the host encoding and suffixed with '.prg'.
+ *
+ * \param[in]   dir t64 directory
+ *
+ * \return  bool
+ */
+bool cbmfm_t64_extract_all(cbmfm_dir_t *dir)
+{
+    uint16_t index;
+
+    for (index = 0; index < dir->entry_used; index++) {
+        if (!cbmfm_t64_extract_file(dir, index, NULL)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 

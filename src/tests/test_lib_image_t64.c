@@ -211,6 +211,16 @@ static bool test_lib_image_t64_file(test_case_t *test)
                     printf("OK\n");
                 }
 
+                printf("...... saving all files using PETSCII names .. ");
+                if (!cbmfm_t64_extract_all(dir)) {
+                    test->failed++;
+                    printf("failed ");
+                    fflush(stdout);
+                    cbmfm_perror("t64-extract-all");
+                } else {
+                    printf("OK\n");
+                }
+
                 cbmfm_dir_free(dir);
 
             }

@@ -124,11 +124,12 @@ bool            cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
 
 cbmfm_dir_t *   cbmfm_t64_read_dir(cbmfm_t64_t *image);
 
-/* TODO: make static */
-int             cbmfm_t64_fix_dir(cbmfm_dir_t *dir);
 
 bool            cbmfm_t64_extract_file(cbmfm_dir_t *dir,
                                        uint16_t index,
                                        const char *name);
+
+bool            cbmfm_t64_extract_all(cbmfm_dir_t *dir);
+
 
 #endif
