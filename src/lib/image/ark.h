@@ -91,6 +91,7 @@ void cbmfm_ark_dump_stats(const cbmfm_image_t *image);
 
 cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data);
 
+bool cbmfm_ark_read_file(cbmfm_image_t *image, cbmfm_file_t *file, int index);
 bool cbmfm_ark_extract_file(cbmfm_image_t *image, const char *name, int index);
 bool cbmfm_ark_extract_all(cbmfm_image_t *image);
 

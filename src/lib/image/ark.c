@@ -356,30 +356,17 @@ bool cbmfm_ark_read_file(cbmfm_image_t *image, cbmfm_file_t *file, int index)
  */
 bool cbmfm_ark_extract_file(cbmfm_image_t *image, const char *name, int index)
 {
-    cbmfm_dirent_t dirent;
-    /* +4 for '.ext', +1 for '\0' */
-    char host_fname[CBMFM_CBMDOS_FILE_NAME_LEN + 4 + 1];
-    uint8_t *data;
+    cbmfm_file_t file;
+    bool result;
 
-    if (!ark_file_index_check(image, index)) {
+    if (!cbmfm_ark_read_file(image, &file, index)) {
         return false;
     }
 
-    /* grab the dirent */
-    cbmfm_dirent_init(&dirent);
-    ark_parse_dirent(image, &dirent, index);
+    result = cbmfm_file_write_host(&file, name);
+    cbmfm_file_cleanup(&file);
 
-    /* do we use the CBMDOS filename? */
-    if (name == NULL || *name == '\0') {
-        const char *ext = cbmfm_cbmdos_filetype(dirent.filetype);
-        cbmfm_pet_filename_to_host(host_fname, dirent.filename, ext);
-        printf("\"%s\"\n", host_fname);
-        name = host_fname;
-    }
-
-    /* write to host */
-    data = ark_file_data_ptr(image, index);
-    return cbmfm_write_file(data, dirent.filesize, name);
+    return result;
 }
 
 

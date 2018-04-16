@@ -91,10 +91,15 @@ mem.o: errors.o
 
 .PHONY: clean
 clean:
-	rm -f *.o src/*.o src/lib/*.o src/lib/base/*.o src/lib/gui/*.og
+	rm -f *.o src/*.o src/lib/*.o src/lib/base/*.o src/lib/image/*.o \
+	    src/gui/*.og
 	rm -f $(TESTER) $(STATIC_LIB) $(GUI)
 	rm -f *.sid
+	rm -f *.del
+	rm -f *.seq
 	rm -f *.prg
+	rm -f *.usr
+	rm -f *.rel
 
 .PHONY: doc
 doc:
