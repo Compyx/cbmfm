@@ -85,4 +85,12 @@ void            cbmfm_d64_dirent_parse(cbmfm_dirent_t *dirent,
 
 cbmfm_dir_t *   cbmfm_d64_dir_read(cbmfm_d64_t *image);
 
+
+bool cbmfm_d64_file_read_block(cbmfm_d64_t *image,
+                               cbmfm_file_t *file,
+                               int track, int sector);
+bool cbmfm_d64_file_read_index(cbmfm_d64_t *image,
+                               cbmfm_file_t *file,
+                               uint16_t index);
+
 #endif

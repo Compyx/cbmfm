@@ -36,6 +36,7 @@
 #include "base/image.h"
 #include "base/dxx.h"
 #include "base/dir.h"
+#include "base/file.h"
 
 #include "d64.h"
 
@@ -587,5 +588,135 @@ cbmfm_dir_t *cbmfm_d64_dir_read(cbmfm_d64_t *image)
 
     dir->image = (cbmfm_image_t *)image;
     return dir;
+}
+
+
+/** \brief  Read file from \a image starting at block (\a track,\a sector)
+ *
+ * \param[in]   image   d64 image
+ * \param[out]  file    file object
+ * \param[in]   track   track number of first block of file data
+ * \param[in]   sector  sector number of first block of file data
+ *
+ * \return  bool
+ *
+ * \note    Since the file data is read directory from the image using a
+ *          (track,sector) pointer, the 'name' and 'type' fields of \a file
+ *          won't contain useful data.
+ */
+bool cbmfm_d64_file_read_block(cbmfm_d64_t *image,
+                               cbmfm_file_t *file,
+                               int track, int sector)
+{
+    cbmfm_dxx_block_iter_t iter;
+    uint8_t *buffer;
+    size_t bufsize;
+    size_t offset;
+
+    cbmfm_file_init(file);
+
+    cbmfm_log_debug("Initializing block iterator with (%d,%d) .. ",
+            track, sector);
+    if (!cbmfm_dxx_block_iter_init(&iter, (cbmfm_dxx_image_t *)image,
+                track, sector)) {
+        cbmfm_log_debug("failed\n");
+        return false;
+    }
+    printf("OK\n");
+
+    /* allocate buffer for file data */
+    bufsize = 65536;
+    buffer = cbmfm_malloc(bufsize);     /* 64KB should usually be enough */
+    offset = 0;
+
+    do {
+        uint8_t raw_block[CBMFM_BLOCK_SIZE_RAW];
+
+        /* resize buffer ? */
+        if (offset + CBMFM_BLOCK_SIZE_DATA > bufsize) {
+            cbmfm_log_debug("resizing buffer to %zu bytes\n", bufsize * 2);
+            bufsize *= 2;
+            buffer = cbmfm_realloc(buffer, bufsize);
+        }
+
+        /* copy block data */
+        cbmfm_dxx_block_iter_read_data(&iter, raw_block);
+
+        /* check track number */
+        if (raw_block[0] == 0) {
+            uint8_t remainder = raw_block[1];
+
+            cbmfm_log_debug("reading final %d bytes from (%d,%d)\n",
+                    (int)remainder, iter.curr.track, iter.curr.sector);
+
+            /* final block, sector number contains the bytes remaining */
+            memcpy(buffer + offset, raw_block + 2, remainder);
+            offset += remainder;
+            break;  /* iterator stops too late */
+        } else {
+            /* full block of data */
+            cbmfm_log_debug("reading 254 bytes from (%d,%d)\n",
+                    iter.curr.track, iter.curr.sector);
+            memcpy(buffer + offset, raw_block+ 2, CBMFM_BLOCK_SIZE_DATA);
+            offset += CBMFM_BLOCK_SIZE_DATA;
+        }
+
+
+    } while (cbmfm_dxx_block_iter_next(&iter));
+
+    /* try to resize buffer to smallest size */
+    if (offset < bufsize) {
+        bool success;
+        buffer = cbmfm_realloc_smaller(buffer, offset, &success);
+        if (!success) {
+            cbmfm_log_debug("failed to realloc buffer to %zu bytes\n", offset);
+        }
+    }
+
+    file->data = buffer;
+    file->size = offset;
+    return true;
+}
+
+
+
+/** \brief  Read file from \a image at \a index in the directory
+ *
+ * \param[in]   image   d64 image
+ * \param[out]  file    file object
+ * \param[in]   index   index of file in directory
+ *
+ * \return  bool
+ */
+bool cbmfm_d64_file_read_index(cbmfm_d64_t *image,
+                               cbmfm_file_t *file,
+                               uint16_t index)
+{
+    cbmfm_dir_t *dir;
+    cbmfm_dirent_t *dirent;
+    bool status;
+
+    /* read directory */
+    cbmfm_log_debug("Reading directory ...\n");
+    dir = cbmfm_d64_dir_read(image);
+    if (dir == NULL) {
+        cbmfm_log_debug("failed to read directory\n");
+        return false;
+    }
+    cbmfm_log_debug("OK, got directory\n");
+
+    dirent = dir->entries[index];
+    status = cbmfm_d64_file_read_block(image, file,
+            dirent->extra.dxx.first_block.track,
+            dirent->extra.dxx.first_block.sector);
+
+    if (status) {
+        /* set file object data (`data` and `size` are already set) */
+        memcpy(file->name, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
+        file->type = dirent->filetype;
+    }
+
+    cbmfm_dir_free(dir);
+    return status;
 }
 

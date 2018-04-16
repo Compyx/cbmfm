@@ -34,6 +34,7 @@
 #include "lib.h"
 #include "image/d64.h"
 #include "base/dir.h"
+#include "base/file.h"
 #include "testcase.h"
 
 #include "test_lib_image_d64.h"
@@ -67,6 +68,7 @@
 static bool test_lib_image_d64_open(test_case_t *test);
 static bool test_lib_image_d64_bam(test_case_t *test);
 static bool test_lib_image_d64_dir(test_case_t *test);
+static bool test_lib_image_d64_file(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
@@ -78,6 +80,8 @@ static test_case_t tests_lib_image_d64[] = {
         test_lib_image_d64_bam, 0, 0 },
     { "dir", "Directory handling of D64 image",
         test_lib_image_d64_dir, 0, 0 },
+    { "file", "File handling of D64 images",
+        test_lib_image_d64_file, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -271,6 +275,53 @@ static bool test_lib_image_d64_dir(test_case_t *test)
         cbmfm_dir_free(dir);
     }
 
+    cbmfm_d64_cleanup(&image);
+    return true;
+}
+
+
+/** \brief  Test file handling of D64 images
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_d64_file(test_case_t *test)
+{
+    cbmfm_d64_t image;
+    cbmfm_file_t file;
+    bool result;
+
+    test->total = 1;
+
+    cbmfm_d64_init(&image);
+
+    printf("..... calling cbmfm_d64_open(\"%s\" ... ", D64_ARMALYTE_FILE);
+    result = cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
+    if (!result) {
+        /* fatal error*/
+        printf("failed: fatal\n");
+        return false;
+    }
+    printf("OK\n");
+
+    printf("..... calling cbmfm_d64_file_read_block(17, 0)\n");
+    if (!cbmfm_d64_file_read_block(&image, &file, 17, 0)) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK, dumping file info:\n");
+        cbmfm_file_dump(&file);
+        printf("Writing file as 'armalyte-17-0.prg: .. ");
+        if (!cbmfm_file_write_host(&file, "armalyte-17-0.prg")) {
+            printf("failed\n");
+        } else {
+            printf("OK\n");
+        }
+    }
+
+
+    cbmfm_file_cleanup(&file);
     cbmfm_d64_cleanup(&image);
     return true;
 }
