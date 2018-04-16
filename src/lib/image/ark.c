@@ -313,6 +313,39 @@ cbmfm_dir_t *cbmfm_ark_read_dir(cbmfm_image_t *image, bool read_file_data)
 }
 
 
+/** \brief  Read file from \a image into \a file object
+ *
+ * \param[in]   image   ARK archive
+ * \param[out]  file    file object
+ * \param[in]   index   index in archive
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INDEX
+ */
+bool cbmfm_ark_read_file(cbmfm_image_t *image, cbmfm_file_t *file, int index)
+{
+    cbmfm_dirent_t dirent;
+
+    if (!ark_file_index_check(image, index)) {
+        return false;
+    }
+
+    /* grab the dirent */
+    cbmfm_dirent_init(&dirent);
+    ark_parse_dirent(image, &dirent, index);
+
+    /* copy data to file object */
+    memcpy(file->name, dirent.filename, CBMFM_CBMDOS_FILE_NAME_LEN);
+    file->data = cbmfm_malloc(dirent.filesize);
+    memcpy(file->data, ark_file_data_ptr(image, index), dirent.filesize);
+    file->size = dirent.filesize;
+    file->type = dirent.filetype;
+
+    return true;
+}
+
+
 /** \brief  Extract file at \a index from \a image
  *
  * \param[in]   image   Ark image

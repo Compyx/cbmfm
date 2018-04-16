@@ -36,15 +36,16 @@
 
 
 const char *    cbmfm_cbmdos_filetype(uint8_t filetype);
+bool            cbmfm_cbmdos_is_closed(uint8_t filetype);
+bool            cbmfm_cbmdos_is_locked(uint8_t filetype);
 
-cbmfm_file_t *cbmfm_file_alloc(void);
-void cbmfm_file_init(cbmfm_file_t *file);
-cbmfm_file_t *cbmfm_file_new(void);
-void cbmfm_file_cleanup(cbmfm_file_t *file);
-void cbmfm_file_free(cbmfm_file_t *file);
-
-
-bool cbmfm_file_write_host(const cbmfm_file_t *file, const char *name);
+cbmfm_file_t *  cbmfm_file_alloc(void);
+void            cbmfm_file_init(cbmfm_file_t *file);
+cbmfm_file_t *  cbmfm_file_new(void);
+void            cbmfm_file_cleanup(cbmfm_file_t *file);
+void            cbmfm_file_free(cbmfm_file_t *file);
+bool            cbmfm_file_write_host(const cbmfm_file_t *file,
+                                      const char *name);
+void            cbmfm_file_dump(const cbmfm_file_t *file);
 
 #endif
-

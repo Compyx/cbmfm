@@ -70,6 +70,30 @@ const char *cbmfm_cbmdos_filetype(uint8_t filetype)
 }
 
 
+/** \brief  Determine if a file is marked closed
+ *
+ * \param[in]   filetype    CBMDOS file type/flags byte
+ *
+ * \return  bool
+ */
+bool cbmfm_cbmdos_is_closed(uint8_t filetype)
+{
+    return (bool)(filetype & CBMFM_CBMDOS_FILE_CLOSED_BIT);
+}
+
+
+/** \brief  Determine if a file is marked locked
+ *
+ * \param[in]   filetype    CBMDOS file type/flags byte
+ *
+ * \return  bool
+ */
+bool cbmfm_cbmdos_is_locked(uint8_t filetype)
+{
+    return (bool)(filetype & CBMFM_CBMDOS_FILE_LOCKED_BIT);
+}
+
+
 /** \brief  Allocate file object
  *
  * \return  new file object
@@ -153,4 +177,26 @@ bool cbmfm_file_write_host(const cbmfm_file_t *file, const char *name)
 
     cbmfm_log_debug("writing file as '%s'\n", name);
     return cbmfm_write_file(file->data, file->size, name);
+}
+
+
+/** \brief  Dump info on \a file on stdout like a 1541 directory entry
+ *
+ * \param[in]   file    file object
+ */
+void cbmfm_file_dump(const cbmfm_file_t *file)
+{
+    char name[CBMFM_CBMDOS_FILE_NAME_LEN + 1];
+
+    /* translate PETSCII name to ASCII for display */
+    cbmfm_pet_to_asc_str(name, file->name, CBMFM_CBMDOS_FILE_NAME_LEN);
+    name[CBMFM_CBMDOS_FILE_NAME_LEN] = '\0';
+
+    printf("%5d \"%s\" %c%s%c  (%zu bytes)\n",
+            cbmfm_size_to_blocks(file->size),
+            name,
+            cbmfm_cbmdos_is_closed(file->type) ? ' ' : '*',
+            cbmfm_cbmdos_filetype(file->type),
+            cbmfm_cbmdos_is_locked(file->type) ? '<' : ' ',
+            file->size);
 }
