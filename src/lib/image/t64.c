@@ -36,6 +36,7 @@
 #include "base.h"
 #include "base/image.h"
 #include "base/dir.h"
+#include "base/file.h"
 #include "log.h"
 
 #include "t64.h"
@@ -444,7 +445,48 @@ cbmfm_dir_t *cbmfm_t64_read_dir(cbmfm_t64_t *image)
 }
 
 
+/** \brief  Read file from \a dir into \a file
+ *
+ * \param[in]   dir     t64 directory
+ * \param[out]  file    file object
+ * \param[in]   index   index of file in \a dir
+ *
+ * \return  bool (false if \a index is too large)
+ *
+ * \throw   #CBMFM_ERR_INDEX
+ */
+bool cbmfm_t64_read_file(cbmfm_dir_t *dir, cbmfm_file_t *file, uint16_t index)
+{
+    cbmfm_t64_t *image;
+    cbmfm_dirent_t *dirent;
+    uint8_t *data;
+    uint8_t *ptr;
 
+    if (index >= dir->entry_used) {
+        cbmfm_errno = CBMFM_ERR_INDEX;
+        return false;
+    }
+
+    image = (cbmfm_t64_t *)(dir->image);
+    dirent = dir->entries[index];
+    ptr = image->data + dirent->extra.t64.data_offset;
+
+    /* allocate memory for data and copy data */
+    data = cbmfm_malloc(dirent->filesize);
+    /* the file data in the T64 has its load address stripped off, so lets
+     * restore it */
+    cbmfm_word_set_le(data, dirent->extra.t64.load_addr);
+    /* copy remaining data */
+    memcpy(data + 2, ptr, dirent->filesize - 2);
+
+    cbmfm_file_init(file);
+    file->data = data;
+    file->size = dirent->filesize;
+    file->type = dirent->filetype;
+    memcpy(file->name, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
+
+    return true;
+}
 
 
 /** \brief  Extract file at \a index in \a dir
@@ -463,44 +505,23 @@ cbmfm_dir_t *cbmfm_t64_read_dir(cbmfm_t64_t *image)
  * \param[in]   name    filename (use `NULL` to use the PETSCII filename)
  *
  * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INDEX
  */
 bool cbmfm_t64_extract_file(cbmfm_dir_t *dir,
                             uint16_t index,
                             const char *name)
 {
-    cbmfm_t64_t *image = (cbmfm_t64_t *)(dir->image);
-    cbmfm_dirent_t *dirent;
-    uint8_t *ptr;
-    uint8_t *data;
+    cbmfm_file_t file;
     bool result;
 
-    /* +5 = '.ext' + '\0' */
-    char filename[CBMFM_CBMDOS_FILE_NAME_LEN + 5];
-
-    if (index >= dir->entry_used) {
-        cbmfm_errno = CBMFM_ERR_INDEX;
+    if (!cbmfm_t64_read_file(dir, &file, index)) {
         return false;
     }
 
-    /* get dirent, data pointer */
-    dirent = dir->entries[index];
-    ptr = image->data + dirent->extra.t64.data_offset;
-    /* allocate memory for file data */
-    data = cbmfm_malloc(dirent->filesize);
+    result = cbmfm_file_write_host(&file, name);
+    cbmfm_file_cleanup(&file);
 
-    /* store load address */
-    cbmfm_word_set_le(data, dirent->extra.t64.load_addr);
-    /* copy file data */
-    memcpy(data + 2, ptr, dirent->filesize - 2);
-
-    if (name == NULL) {
-        cbmfm_pet_filename_to_host(filename, dirent->filename, "prg");
-    }
-
-    result = cbmfm_write_file(data, dirent->filesize,
-            name != NULL ? name : filename);
-
-    cbmfm_free(data);
     return result;
 }
 
@@ -513,6 +534,8 @@ bool cbmfm_t64_extract_file(cbmfm_dir_t *dir,
  * \param[in]   dir t64 directory
  *
  * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INDEX
  */
 bool cbmfm_t64_extract_all(cbmfm_dir_t *dir)
 {

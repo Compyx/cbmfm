@@ -125,6 +125,10 @@ bool            cbmfm_t64_dirent_parse(cbmfm_t64_t *image,
 cbmfm_dir_t *   cbmfm_t64_read_dir(cbmfm_t64_t *image);
 
 
+bool            cbmfm_t64_read_file(cbmfm_dir_t *dir,
+                                    cbmfm_file_t *file,
+                                    uint16_t index);
+
 bool            cbmfm_t64_extract_file(cbmfm_dir_t *dir,
                                        uint16_t index,
                                        const char *name);

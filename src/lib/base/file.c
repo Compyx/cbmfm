@@ -146,8 +146,8 @@ bool cbmfm_file_write_host(const cbmfm_file_t *file, const char *name)
     char hname[CBMFM_CBMDOS_FILE_NAME_LEN + 1];
 
     if (name == NULL) {
-        const char *prefix = cbmfm_cbmdos_filetype(file->type);
-        cbmfm_pet_filename_to_host(hname, file->name, prefix);
+        const char *suffix = cbmfm_cbmdos_filetype(file->type);
+        cbmfm_pet_filename_to_host(hname, file->name, suffix);
         name = hname;
     }
 
