@@ -305,8 +305,8 @@ static bool test_lib_image_d64_file(test_case_t *test)
     }
     printf("OK\n");
 
-    printf("..... calling cbmfm_d64_file_read_block(17, 0)\n");
-    if (!cbmfm_d64_file_read_block(&image, &file, 17, 0)) {
+    printf("..... calling cbmfm_d64_file_read_from_block(17, 0)\n");
+    if (!cbmfm_d64_file_read_from_block(&image, &file, 17, 0)) {
         printf("failed\n");
         test->failed++;
     } else {

@@ -39,9 +39,11 @@ typedef enum cbmfm_err_e {
     CBMFM_ERR_IO,               /**< I/O error */
     CBMFM_ERR_FILE_TOO_LARGE,   /**< file too large (> 2GB) */
     CBMFM_ERR_NOT_FOUND,        /**< entry/tune not found */
-    CBMFM_ERR_INVALID,          /**< invalid data or operation detected */
+    CBMFM_ERR_INVALID_DATA,     /**< invalid data detected */
+    CBMFM_ERR_INVALID_NULL,     /**< NULL found when not expected */
     CBMFM_ERR_INDEX,            /**< index error */
     CBMFM_ERR_SIZE_MISMATCH,    /**< size mismatch */
+    CBMFM_ERR_TYPE_MISMATCH,    /**< type mismatch */
     CBMFM_ERR_ILLEGAL_TRACK,    /**< illegal track number */
     CBMFM_ERR_ILLEGAL_SECTOR,   /**< illegal sector number */
 

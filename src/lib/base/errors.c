@@ -48,9 +48,13 @@ static const char *cbmfm_err_messages[CBMFM_ERR_CODE_COUNT] = {
     "I/O error",
     "file too large error",
     "object not found",
-    "invalid data or operation",
+    "invalid data",
+    "unexpected NULL found",
     "index error",
-    "size mismatch"
+    "size mismatch",
+    "type mismatch",
+    "illegal track",
+    "illegal sector"
 };
 
 

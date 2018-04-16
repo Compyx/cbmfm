@@ -604,9 +604,9 @@ cbmfm_dir_t *cbmfm_d64_dir_read(cbmfm_d64_t *image)
  *          (track,sector) pointer, the 'name' and 'type' fields of \a file
  *          won't contain useful data.
  */
-bool cbmfm_d64_file_read_block(cbmfm_d64_t *image,
-                               cbmfm_file_t *file,
-                               int track, int sector)
+bool cbmfm_d64_file_read_from_block(cbmfm_d64_t *image,
+                                    cbmfm_file_t *file,
+                                    int track, int sector)
 {
     cbmfm_dxx_block_iter_t iter;
     uint8_t *buffer;
@@ -679,6 +679,48 @@ bool cbmfm_d64_file_read_block(cbmfm_d64_t *image,
 }
 
 
+/** \brief  Read file using \a dirent
+ *
+ * The \a dirent is expected to contain a reference to the image it was
+ * parsed from, otherwise this function fails.
+ *
+ * \param[in]   dirent  directory entry
+ * \param[out]  file    file object
+ *
+ * \return  bool
+ *
+ * \throw
+ */
+bool cbmfm_d64_file_read_from_dirent(cbmfm_dirent_t *dirent,
+                                     cbmfm_file_t *file)
+{
+    bool status;
+
+
+    if (dirent->image == NULL) {
+        /* TODO: come up with better error code */
+        cbmfm_errno = CBMFM_ERR_INVALID_NULL;
+        return false;
+    }
+    if (dirent->image_type != CBMFM_IMAGE_TYPE_D64) {
+        cbmfm_errno = CBMFM_ERR_TYPE_MISMATCH;
+        return false;
+    }
+
+    status = cbmfm_d64_file_read_from_block(
+            (cbmfm_d64_t *)(dirent->image),
+            file,
+            dirent->extra.dxx.first_block.track,
+            dirent->extra.dxx.first_block.sector);
+    if (status) {
+        /* set name and file type */
+        memcpy(file->name, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
+        file->type = dirent->filetype;
+    }
+    return status;
+}
+
+
 
 /** \brief  Read file from \a image at \a index in the directory
  *
@@ -687,10 +729,15 @@ bool cbmfm_d64_file_read_block(cbmfm_d64_t *image,
  * \param[in]   index   index of file in directory
  *
  * \return  bool
+ *
+ * \note    This function reads and frees the directory of the \a image each
+ *          time it is called, so when processing multiple files from the same
+ *          image, cbmfm_d64_file_read_from_dirent() might be a better function
+ *          to use.
  */
-bool cbmfm_d64_file_read_index(cbmfm_d64_t *image,
-                               cbmfm_file_t *file,
-                               uint16_t index)
+bool cbmfm_d64_file_read_from_index(cbmfm_d64_t *image,
+                                    cbmfm_file_t *file,
+                                    uint16_t index)
 {
     cbmfm_dir_t *dir;
     cbmfm_dirent_t *dirent;
@@ -706,10 +753,12 @@ bool cbmfm_d64_file_read_index(cbmfm_d64_t *image,
     cbmfm_log_debug("OK, got directory\n");
 
     dirent = dir->entries[index];
+#if 0
     status = cbmfm_d64_file_read_block(image, file,
             dirent->extra.dxx.first_block.track,
             dirent->extra.dxx.first_block.sector);
-
+#endif
+    status = cbmfm_d64_file_read_from_dirent(dirent, file);
     if (status) {
         /* set file object data (`data` and `size` are already set) */
         memcpy(file->name, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
