@@ -76,6 +76,15 @@
 #define CBMFM_CBMDOS_FILE_LOCKED_BIT    0x40U
 
 
+enum {
+    CBMFM_CBMDOS_DEL,
+    CBMFM_CBMDOS_SEQ,
+    CBMFM_CBMDOS_PRG,
+    CBMFM_CBMDOS_USR,
+    CBMFM_CBMDOS_REL
+};
+
+
 /** \brief  Image flag: read-only bit
  *
  * When set, the image is assumed to be read only and cannot be written back
@@ -150,6 +159,14 @@ typedef struct cbmfm_dirent_dxx_s {
     cbmfm_block_t first_block;
 } cbmfm_dirent_dxx_t;
 
+
+/** \brief  Lynx specific dirent fields
+ */
+typedef struct cbmfm_dirent_lnx_s {
+    uint8_t remainder;
+} cbmfm_dirent_lnx_t;
+
+
 /** \brief  Directory entry object
  *
  * Contains information on a directory entry.
@@ -172,6 +189,7 @@ typedef struct cbmfm_dirent_s {
     union {
         cbmfm_dirent_dxx_t dxx;     /**< Dxx specific data */
         cbmfm_dirent_t64_t t64;     /**< T64 specific data */
+        cbmfm_dirent_lnx_t lnx;
     } extra;
 
     int image_type;

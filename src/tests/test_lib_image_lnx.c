@@ -50,8 +50,8 @@ static const char *lnx_images[] = {
 
 
 static bool test_lib_image_lnx_open(test_case_t *test);
+static bool test_lib_image_lnx_dir(test_case_t *test);
 #if 0
-static bool test_lib_image_t64_dir(test_case_t *test);
 static bool test_lib_image_t64_file(test_case_t *test);
 #endif
 
@@ -61,9 +61,9 @@ static bool test_lib_image_t64_file(test_case_t *test);
 static test_case_t tests_lib_image_lnx[] = {
     { "open", "Opening Lynx archives",
         test_lib_image_lnx_open, 0, 0 },
+    { "dir", "Directory handling of :ynx archives",
+        test_lib_image_lnx_dir, 0, 0 },
 #if 0
-    { "dir", "Directory handling of T64 archives",
-        test_lib_image_t64_dir, 0, 0 },
     { "file", "File handling of T64 archives",
         test_lib_image_t64_file, 0, 0 },
 #endif
@@ -106,6 +106,49 @@ static bool test_lib_image_lnx_open(test_case_t *test)
         } else {
             printf("OK, dumping header data:\n");
             cbmfm_lnx_dump(&image);
+
+            cbmfm_lnx_cleanup(&image);
+        }
+    }
+
+    cbmfm_lnx_init(&image);
+
+    return true;
+}
+
+
+/** \brief  Test reading directories of Lynx archives
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_lnx_dir(test_case_t *test)
+{
+    cbmfm_lnx_t image;
+    cbmfm_dir_t *dir;
+    int i;
+
+    test->total = 5;
+
+    for (i = 0; lnx_images[i] != NULL; i++) {
+        printf("\n..... opening '%s' .. ", lnx_images[i]);
+        cbmfm_lnx_init(&image);
+        if (!cbmfm_lnx_open(&image, lnx_images[i])) {
+            printf("failed\n");
+            cbmfm_perror("test_lib_image_lnx_open");
+            return false;
+        } else {
+            printf("OK, reading directory ... ");
+            dir = cbmfm_lnx_dir_read(&image);
+            if (dir == NULL) {
+                printf("failed\n");
+                test->failed++;
+            } else {
+                printf("OK, dumping dir:\n");
+                cbmfm_dir_dump(dir);
+                cbmfm_dir_free(dir);
+            }
 
             cbmfm_lnx_cleanup(&image);
         }

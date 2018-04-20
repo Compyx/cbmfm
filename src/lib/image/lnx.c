@@ -47,7 +47,15 @@
  */
 
 
-
+/** \brief  Parse a base-10 integer value
+ *
+ * \param[in]   s       string to parse
+ * \param[out]  endptr  object to store pointer to first non-valid char
+ *
+ * \return  value or -1 on error
+ *
+ * \throw   #CBMFM_ERR_INVALID_DATA
+ */
 static intmax_t cbmfm_parse_int(char *s, char **endptr)
 {
     intmax_t result = 0;
@@ -75,6 +83,14 @@ static intmax_t cbmfm_parse_int(char *s, char **endptr)
 }
 
 
+/** \brief  Parse header of \a image
+ *
+ * \param[in,out]   image   Lynx image
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INVALID_DATA
+ */
 static bool lnx_parse_header(cbmfm_lnx_t *image)
 {
     uint8_t *data = image->data;
@@ -119,6 +135,101 @@ static bool lnx_parse_header(cbmfm_lnx_t *image)
     }
     image->dir_start = (uint8_t *)s;
     return true;
+}
+
+
+/** \brief  Initialize Lynx dirent
+ *
+ * \param[out]  dirent  dirent
+ *
+ */
+static void cbmfm_lnx_dirent_init(cbmfm_dirent_t *dirent)
+{
+    cbmfm_dirent_init(dirent);
+    dirent->extra.lnx.remainder = 0;
+    dirent->image_type = CBMFM_IMAGE_TYPE_LNX;
+}
+
+
+/** \brief  Parse Lynx dirent
+ *
+ * \param[out]  dirent  directory entry
+ * \param[in]   data    dirent data
+ *
+ * \return  number of bytes parsed, or -1 on failure
+ *
+ * \throw   #CBMFM_ERR_INVALID_DATA
+ */
+static int cbmfm_lnx_dirent_parse(cbmfm_dirent_t *dirent, uint8_t *data)
+{
+    intmax_t blocks;
+    intmax_t remainder;
+    char *endptr;
+    char *s;
+
+    cbmfm_lnx_dirent_init(dirent);
+
+    /* PETSCII file name */
+    memcpy(dirent->filename, data, CBMFM_CBMDOS_FILE_NAME_LEN);
+
+    /* file size in blocks */
+    s = (char *)(data + CBMFM_CBMDOS_FILE_NAME_LEN);
+    blocks = cbmfm_parse_int(s, &endptr);
+    if (blocks < 0) {
+        cbmfm_errno = CBMFM_ERR_INVALID_DATA;
+        return -1;
+    }
+    dirent->size_blocks = (uint16_t)blocks;
+
+    /* file type */
+    s = endptr;
+    while (isspace(*s)) {
+        s++;
+    }
+    switch (*s) {
+        case 0x50:
+            /* PRG */
+            dirent->filetype = CBMFM_CBMDOS_PRG;
+            break;
+        case 0x52:
+            /* REL */
+            dirent->filetype = CBMFM_CBMDOS_REL;
+            break;
+        case 0x53:
+            /* SEQ */
+            dirent->filetype = CBMFM_CBMDOS_SEQ;
+            break;
+        case 0x55:
+            /* USR */
+            dirent->filetype = CBMFM_CBMDOS_USR;
+            break;
+        default:
+            /* invalid file type */
+            cbmfm_errno = CBMFM_ERR_INVALID_DATA;
+            return -1;
+    }
+    dirent->filetype |= CBMFM_CBMDOS_FILE_CLOSED_BIT;
+
+    s++;
+
+    /* get remainder in final block */
+    remainder = cbmfm_parse_int(s, &endptr);
+    if (remainder < 0) {
+        cbmfm_errno = CBMFM_ERR_INVALID_DATA;
+        return -1;
+    }
+    dirent->extra.lnx.remainder = (uint8_t)remainder;
+
+    /* determine file size */
+    dirent->filesize = (size_t)(CBMFM_BLOCK_SIZE_DATA * (blocks - 1) + remainder);
+
+    /* skip trailing whitespace */
+    s = endptr;
+    while (isspace(*s)) {
+        s++;
+    }
+
+    return (int)((uint8_t *)s - data);
 }
 
 
@@ -240,4 +351,37 @@ void cbmfm_lnx_dump(const cbmfm_lnx_t *image)
     printf("directory entries: %u\n", (unsigned int)image->dir_used);
     printf("directory offset : %zu\n",
             (size_t)(image->dir_start - image->data));
+}
+
+
+/** \brief  Read directory of \a image
+ *
+ * \param[in]   image   Lynx image
+ *
+ * \return  heap-allocated directory or `NULL` on failure
+ *
+ * \throw   #CBMFM_ERR_INVALID_DATA
+ */
+cbmfm_dir_t *cbmfm_lnx_dir_read(const cbmfm_lnx_t *image)
+{
+    cbmfm_dir_t *dir;
+    cbmfm_dirent_t dirent;
+    uint8_t *data;
+    uint16_t index;
+
+    dir = cbmfm_dir_new();
+    data = image->dir_start;
+
+    for (index = 0; index < image->dir_used; index++) {
+        int len = cbmfm_lnx_dirent_parse(&dirent, data);
+        if (len < 0) {
+            cbmfm_dir_free(dir);
+            return NULL;
+        }
+        dirent.index = index;
+        cbmfm_dir_append_dirent(dir, &dirent);
+        data += len;
+    }
+
+    return dir;
 }

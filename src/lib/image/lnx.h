@@ -62,6 +62,9 @@
 #define CBMFM_LNX_VERSION_LEN   0x18
 
 
+#define CBBMFM_LNX_DIRENT_FILENAME  0x00
+
+
 
 cbmfm_lnx_t *   cbmfm_lnx_alloc(void);
 void            cbmfm_lnx_init(cbmfm_lnx_t *image);
@@ -71,6 +74,7 @@ void            cbmfm_lnx_free(cbmfm_lnx_t *image);
 
 
 bool            cbmfm_lnx_open(cbmfm_lnx_t *image, const char *path);
-void cbmfm_lnx_dump(const cbmfm_lnx_t *image);
+void            cbmfm_lnx_dump(const cbmfm_lnx_t *image);
+cbmfm_dir_t *   cbmfm_lnx_dir_read(const cbmfm_lnx_t *image);
 
 #endif
