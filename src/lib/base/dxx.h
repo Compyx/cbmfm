@@ -253,6 +253,10 @@ void        cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter,
 
 void        cbmfm_dxx_dirent_init(cbmfm_dirent_t *dirent, int type);
 
+void        cbmfm_dxx_block_iter_write_data(cbmfm_dxx_block_iter_t *iter,
+                                            const uint8_t *data,
+                                            size_t size);
+
 /** @} */
 
 #endif

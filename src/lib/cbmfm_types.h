@@ -299,4 +299,16 @@ typedef struct cbmfm_file_s {
 } cbmfm_file_t;
 
 
+/** \brief  Lynx container handle
+ */
+typedef struct cbmfm_lnx_s {
+    CBMFM_IMAGE_SHARED_MEMBERS
+
+    char        version_str[32];
+    uint8_t *   dir_start;
+    uint16_t    dir_blocks;
+    uint16_t    dir_used;
+} cbmfm_lnx_t;
+
+
 #endif

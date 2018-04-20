@@ -95,4 +95,11 @@ bool cbmfm_d64_file_read_from_index(cbmfm_d64_t *image,
                                     cbmfm_file_t *file,
                                     uint16_t index);
 
+
+bool cbmfm_d64_block_write_iter_init(cbmfm_dxx_block_iter_t *iter,
+                                     cbmfm_d64_t *image);
+void cbmfm_d64_block_write_iter_write_data(cbmfm_dxx_block_iter_t *iter,
+                                           const uint8_t *data,
+                                           size_t size);
+
 #endif

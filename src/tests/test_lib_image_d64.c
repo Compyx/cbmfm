@@ -68,7 +68,8 @@
 static bool test_lib_image_d64_open(test_case_t *test);
 static bool test_lib_image_d64_bam(test_case_t *test);
 static bool test_lib_image_d64_dir(test_case_t *test);
-static bool test_lib_image_d64_file(test_case_t *test);
+static bool test_lib_image_d64_read(test_case_t *test);
+static bool test_lib_image_d64_write(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
@@ -80,8 +81,10 @@ static test_case_t tests_lib_image_d64[] = {
         test_lib_image_d64_bam, 0, 0 },
     { "dir", "Directory handling of D64 image",
         test_lib_image_d64_dir, 0, 0 },
-    { "file", "File handling of D64 images",
-        test_lib_image_d64_file, 0, 0 },
+    { "read", "File reading of D64 images",
+        test_lib_image_d64_read, 0, 0 },
+    { "write", "File writing of D64 images",
+        test_lib_image_d64_write, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -280,13 +283,13 @@ static bool test_lib_image_d64_dir(test_case_t *test)
 }
 
 
-/** \brief  Test file handling of D64 images
+/** \brief  Test file reading of D64 images
  *
  * \param[in,out]   test    test object
  *
  * \return  bool
  */
-static bool test_lib_image_d64_file(test_case_t *test)
+static bool test_lib_image_d64_read(test_case_t *test)
 {
     cbmfm_d64_t image;
     cbmfm_file_t file;
@@ -322,6 +325,46 @@ static bool test_lib_image_d64_file(test_case_t *test)
 
 
     cbmfm_file_cleanup(&file);
+    cbmfm_d64_cleanup(&image);
+    return true;
+}
+
+
+/** \brief  Test file writing of D64 images
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_d64_write(test_case_t *test)
+{
+    cbmfm_d64_t image;
+    cbmfm_dxx_block_iter_t iter;
+    bool result;
+
+    test->total = 1;
+
+    cbmfm_d64_init(&image);
+
+    printf("..... calling cbmfm_d64_open(\"%s\" ... ", D64_ARMALYTE_FILE);
+    result = cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
+    if (!result) {
+        /* fatal error*/
+        printf("failed: fatal\n");
+        return false;
+    }
+    printf("OK, dumping BAM:\n");
+    cbmfm_d64_bam_dump(&image);
+
+    printf("..... calling cbmfm_d64_block_write_iter_init():\n");
+    if (!cbmfm_d64_block_write_iter_init(&iter, &image)) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK\n");
+    }
+
+
     cbmfm_d64_cleanup(&image);
     return true;
 }

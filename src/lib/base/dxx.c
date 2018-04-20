@@ -258,6 +258,17 @@ void cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter, uint8_t *dest)
     memcpy(dest, data, CBMFM_BLOCK_SIZE_RAW);
 }
 
+void cbmfm_dxx_block_iter_write_data(cbmfm_dxx_block_iter_t *iter,
+                                     const uint8_t *data,
+                                     size_t size)
+{
+    intmax_t offset;
+
+    offset = cbmfm_dxx_block_offset(iter->image->zones,
+            iter->curr.track, iter->curr.sector);
+    memcpy(iter->image->data + offset, data, size);
+}
+
 
 /** \brief  Initialize Dxx dirent object
  *

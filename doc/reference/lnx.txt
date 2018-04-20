@@ -1,4 +1,3 @@
-
 *** LNX (LyNX containers)
 *** Document revision: 1.3
 *** Last updated: March 11, 2004

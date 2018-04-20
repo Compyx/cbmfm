@@ -47,6 +47,7 @@
 #include "test_lib_base_dxx.h"
 #include "test_lib_base_dir.h"
 #include "test_lib_image_t64.h"
+#include "test_lib_image_lnx.h"
 
 
 /** \brief  Print usage/help message on stdout
@@ -72,6 +73,7 @@ static void register_modules(void)
     test_module_register(&module_lib_image_d64);
     test_module_register(&module_lib_base_dir);
     test_module_register(&module_lib_image_t64);
+    test_module_register(&module_lib_image_lnx);
 }
 
 
@@ -85,6 +87,7 @@ static void register_modules(void)
 int main(int argc, char **argv)
 {
     cbmfm_log_set_level(CBMFM_LOG_DEBUG);
+    cbmfm_errno = 0;
 
     register_modules();
 
@@ -110,5 +113,7 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
+
+
 
 /** @} */

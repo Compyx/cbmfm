@@ -769,3 +769,95 @@ bool cbmfm_d64_file_read_from_index(cbmfm_d64_t *image,
     return status;
 }
 
+
+
+/*
+ * File writing functions
+ */
+
+
+/** \brief  Find first empty block in \a image
+ *
+ * \param[out]  iter    block iterator
+ * \param[in]   image   d64 image
+ *
+ * \return  true when an empty block was found, false when disk full
+ */
+bool cbmfm_d64_block_write_iter_init(cbmfm_dxx_block_iter_t *iter,
+                                     cbmfm_d64_t *image)
+{
+
+    int track;
+    int sector;
+
+    cbmfm_dxx_block_iter_init(iter, (cbmfm_dxx_image_t *)image, 0, 0);
+
+    /* start one track below the directory track */
+    track = CBMFM_D64_DIR_TRACK - 1;
+
+    while (track >= 1 && track <= image->track_max) {
+        cbmfm_log_debug("%s(): checking track %d\n", __func__, track);
+        int trk_blocks = cbmfm_d64_bam_track_get_blocks_free(image, track);
+        if (trk_blocks > 0) {
+            int sec_max;
+
+            sec_max = cbmfm_dxx_track_block_count((cbmfm_dxx_image_t *)image,
+                    track);
+            /* got track, determine sector */
+            cbmfm_log_error("%s(): track %d has %d free blocks\n",
+                    __func__, track, trk_blocks);
+
+            iter->curr.track = track;
+
+            /* find first block free in track */
+            sector = 0;
+            while (sector < sec_max) {
+                bool state;
+
+                cbmfm_log_debug("%s(): checking (%d,%d) .. ",
+                        __func__, track, sector);
+                if (!cbmfm_d64_bam_sector_get_free(image, track, sector, &state)) {
+                    cbmfm_log_error("%s(): bam_sector_get_free(%d,%d) failed, "
+                            "this shouldn't happen\n", __func__, track, sector);
+                    return false;
+                }
+                if (state) {
+                    /* got free block */
+                    cbmfm_log_debug("%s(): got free block at (%d,%d)\n",
+                            __func__, track, sector);
+                    return true;
+                } else {
+                    cbmfm_log_debug("Nope\n");
+                }
+                sector++;
+            }
+            return false;
+        }
+
+        /* update track */
+        if (track < CBMFM_D64_DIR_TRACK) {
+            track = CBMFM_D64_DIR_TRACK + (CBMFM_D64_DIR_TRACK - track);
+        } else {
+            track = CBMFM_D64_DIR_TRACK - (track - CBMFM_D64_DIR_TRACK + 1);
+        }
+    }
+    return true;
+}
+
+
+/** \brief  Write data to current block and mark used
+ *
+ * \param[in]   iter    Dxx block iterator
+ * \param[in]   data    data to write to current block
+ * \param[in]   size    number of bytes to write to block
+ *
+ */
+void cbmfm_d64_block_write_iter_write_data(cbmfm_dxx_block_iter_t *iter,
+                                           const uint8_t *data,
+                                           size_t size)
+{
+    /* write data */
+    cbmfm_dxx_block_iter_write_data(iter, data, size);
+    /* TODO mark block used */
+}
+

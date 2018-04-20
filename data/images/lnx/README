@@ -1,0 +1,23 @@
+Various Lynx files:
+
+
+filename            Lynx version
+--------            ------------
+GC97.LNX            Lynx IX - Will Corley
+Too Wicked.lnx      Lynx XVI - Will Corley
+Phobos.lnx          Star Lynx 0.80 - Joe Forster/STA
+Handjob Lotion.lnx  Ultra Lynx 2001 - S.B.
+party-demo.lnx      Ultimate Lynx II - Willy
+
+
+GC97.LNX is corrupt: last directory entry is missing the 'remainder' value for
+the last block. Could perhaps be fixed by examining file size of the Lynx
+container.
+
+Seems like Lynx 17 can dissolve Lynx files larger than 202 blocks, but cannot
+create them. It also contains a bug where it ignores target settings, it will
+always read AND write from/to source.
+
+
+party-demo.lnx I created myself using Ultimate Lynx II on 'Party Demo' by GP+FE
+
