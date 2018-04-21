@@ -388,6 +388,18 @@ cbmfm_dir_t *cbmfm_lnx_dir_read(cbmfm_lnx_t *image)
 
 
 /** \brief  Read file from Lynx dir
+ *
+ * Reads file data from a Lynx image via \a dir and stores it in \a file. The
+ * reason for using a directory rather than directly accessing the Lynx image
+ * has to do with the incredibly crappy directory structure of Lynx images.
+ *
+ * \param[in]   dir     Lynx directory
+ * \param[out]  file    file object
+ * \param[in]   index   index in \a dir
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INDEX
  */
 bool cbmfm_lnx_file_read(cbmfm_dir_t *dir, cbmfm_file_t *file, uint16_t index)
 {
@@ -439,4 +451,33 @@ bool cbmfm_lnx_file_read(cbmfm_dir_t *dir, cbmfm_file_t *file, uint16_t index)
     file->type = dirent->filetype;
 
     return true;
+}
+
+
+/** \brief  Extract file from Lynx archive and write to host file system
+ *
+ * \param[in]   dir         Lynx directory
+ * \param[in]   index       index in directory of file
+ * \param[in]   filename    filename (use `NULL` to use PETSCII filename)
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INDEX
+ */
+bool cbmfm_lnx_file_extract(cbmfm_dir_t *dir,
+                            uint16_t index,
+                            const char *filename)
+{
+    cbmfm_file_t file;
+    bool result;
+
+    /* read fiile data */
+    if (!cbmfm_lnx_file_read(dir, &file, index)) {
+        return false;
+    }
+
+    /* write to host file system */
+    result = cbmfm_file_write_host(&file, filename);
+    cbmfm_file_cleanup(&file);
+    return result;
 }

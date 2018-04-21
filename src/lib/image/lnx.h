@@ -80,4 +80,8 @@ cbmfm_dir_t *   cbmfm_lnx_dir_read(cbmfm_lnx_t *image);
 bool            cbmfm_lnx_file_read(cbmfm_dir_t *dir,
                                     cbmfm_file_t *file,
                                     uint16_t index);
+bool            cbmfm_lnx_file_extract(cbmfm_dir_t *dir,
+                                       uint16_t index,
+                                       const char *filename);
+
 #endif
