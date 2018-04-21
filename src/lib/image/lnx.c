@@ -362,7 +362,7 @@ void cbmfm_lnx_dump(const cbmfm_lnx_t *image)
  *
  * \throw   #CBMFM_ERR_INVALID_DATA
  */
-cbmfm_dir_t *cbmfm_lnx_dir_read(const cbmfm_lnx_t *image)
+cbmfm_dir_t *cbmfm_lnx_dir_read(cbmfm_lnx_t *image)
 {
     cbmfm_dir_t *dir;
     cbmfm_dirent_t dirent;
@@ -382,6 +382,61 @@ cbmfm_dir_t *cbmfm_lnx_dir_read(const cbmfm_lnx_t *image)
         cbmfm_dir_append_dirent(dir, &dirent);
         data += len;
     }
-
+    dir->image = (cbmfm_image_t *)image;
     return dir;
+}
+
+
+/** \brief  Read file from Lynx dir
+ */
+bool cbmfm_lnx_file_read(cbmfm_dir_t *dir, cbmfm_file_t *file, uint16_t index)
+{
+    cbmfm_lnx_t *image;
+    cbmfm_dirent_t *dirent;
+    uint16_t idx;
+    uint8_t *data;
+    size_t filesize;
+
+    if (index >= dir->entry_used) {
+        cbmfm_errno = CBMFM_ERR_INDEX;
+        return false;
+    }
+
+    image = (cbmfm_lnx_t *)(dir->image);
+
+    /* get pointer to file data section */
+    data = image->data + CBMFM_BLOCK_SIZE_DATA * image->dir_blocks;
+
+    cbmfm_file_init(file);
+
+    idx = 0;
+    while (idx < index) {
+        dirent = dir->entries[idx];
+
+        data += dirent->size_blocks * CBMFM_BLOCK_SIZE_DATA;
+        idx++;
+    }
+    dirent = dir->entries[idx];
+
+    cbmfm_log_debug("offset in image = %zu\n", (size_t)(data - image->data));
+
+    /*
+     * Fix bugged entries: seems some Lynx containers have a 'remainder' value
+     * that is one byte to large, making reading data from a final entry
+     * read past valid memory.
+     */
+    filesize = dirent->filesize;
+    if ((size_t)(data - image->data) + filesize > image->size) {
+        cbmfm_log_warning("adjusting file size from %zu to %zu\n",
+                filesize, image->size - (size_t)(data - image->data));
+        filesize = image->size - (size_t)(data - image->data);
+    }
+
+    /* store data in file object */
+    file->size = filesize;
+    file->data = cbmfm_memdup(data, filesize);
+    memcpy(file->name, dirent->filename, CBMFM_CBMDOS_FILE_NAME_LEN);
+    file->type = dirent->filetype;
+
+    return true;
 }

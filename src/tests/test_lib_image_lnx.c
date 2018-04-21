@@ -32,6 +32,7 @@
 #include "lib.h"
 #include "image/lnx.h"
 #include "base/dir.h"
+#include "base/file.h"
 #include "testcase.h"
 
 #include "test_lib_image_lnx.h"
@@ -51,9 +52,7 @@ static const char *lnx_images[] = {
 
 static bool test_lib_image_lnx_open(test_case_t *test);
 static bool test_lib_image_lnx_dir(test_case_t *test);
-#if 0
-static bool test_lib_image_t64_file(test_case_t *test);
-#endif
+static bool test_lib_image_lnx_file(test_case_t *test);
 
 
 /** \brief  List of tests for the base library functions
@@ -63,10 +62,8 @@ static test_case_t tests_lib_image_lnx[] = {
         test_lib_image_lnx_open, 0, 0 },
     { "dir", "Directory handling of :ynx archives",
         test_lib_image_lnx_dir, 0, 0 },
-#if 0
-    { "file", "File handling of T64 archives",
-        test_lib_image_t64_file, 0, 0 },
-#endif
+    { "file", "File handling of Lynx archives",
+        test_lib_image_lnx_file, 0, 0 },
     { NULL, NULL, NULL, 0, 0 }
 };
 
@@ -160,126 +157,89 @@ static bool test_lib_image_lnx_dir(test_case_t *test)
 }
 
 
-#if 0
-/** \brief  Test directory handling of T64 archives
+
+/** \brief  Test file handling of Lynx archives
  *
  * \param[in,out]   test    test object
  *
  * \return  bool
  */
-static bool test_lib_image_t64_dir(test_case_t *test)
+static bool test_lib_image_lnx_file(test_case_t *test)
 {
-    cbmfm_t64_t image;
+    cbmfm_lnx_t image;
     cbmfm_dir_t *dir;
-    int i;
+    cbmfm_file_t file;
 
-    test->total = 8;
+    test->total = 2;
 
-    for (i = 0; t64_images[i] != NULL; i++) {
-        printf("..... opening '%s' .. ", t64_images[i]);
-        cbmfm_t64_init(&image);
-        if (!cbmfm_t64_open(&image, t64_images[i])) {
-            printf("failed\n");
-            test->failed++;
-        } else {
+    printf("\n..... opening '%s' .. ", lnx_images[0]);
+    cbmfm_lnx_init(&image);
+    if (!cbmfm_lnx_open(&image, lnx_images[0])) {
+        printf("failed\n");
+        cbmfm_perror("test_lib_image_lnx_open");
+        return false;
+    }
+    printf("OK, reading directory ... ");
+    dir = cbmfm_lnx_dir_read(&image);
+    if (dir == NULL) {
+        printf("failed\n");
+        return false;
+    }
+    printf("OK, dumping dir:\n");
+    cbmfm_dir_dump(dir);
 
-            cbmfm_dirent_t dirent;
-
-            printf("OK, dumping header data:\n");
-            cbmfm_t64_dump_header(&image);
-
-            printf("..... parsing dirent #0 .. ");
-            if (!cbmfm_t64_dirent_parse(&image, &dirent, 0)) {
-                printf("failed: ");
-                fflush(stdout);
-                cbmfm_perror(NULL);
-                test->failed++;
-            } else {
-                printf("OK, dumping dirent:\n");
-                cbmfm_dirent_dump(&dirent);
-            }
-            putchar('\n');
-
-            printf("..... calling cbmfm_t64_read_dir() .. ");
-            fflush(stdout);
-            dir = cbmfm_t64_read_dir(&image);
-            if (dir == NULL) {
-                printf("failed\n");
-                test->failed++;
-            } else {
-                printf("OK, dumping dir:\n");
-                cbmfm_dir_dump(dir);
-                cbmfm_dir_free(dir);
-            }
-
-            cbmfm_t64_cleanup(&image);
+    printf("..... reading file at index 0\n");
+    if (!cbmfm_lnx_file_read(dir, &file, 0)) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK, writing to host.\n");
+        cbmfm_file_dump(&file);
+        if (!cbmfm_file_write_host(&file, NULL)) {
+            cbmfm_file_cleanup(&file);
+            cbmfm_dir_free(dir);
+            return false;
         }
+        cbmfm_file_cleanup(&file);
     }
 
-   return true;
-}
+    cbmfm_lnx_cleanup(&image);
+    cbmfm_dir_free(dir);
 
+    printf("\n..... opening '%s' .. ", lnx_images[2]);
+    cbmfm_lnx_init(&image);
+    if (!cbmfm_lnx_open(&image, lnx_images[2])) {
+        printf("failed\n");
+        cbmfm_perror("test_lib_image_lnx_open");
+        return false;
+    }
+    printf("OK, reading directory ... ");
+    dir = cbmfm_lnx_dir_read(&image);
+    if (dir == NULL) {
+        printf("failed\n");
+        return false;
+    }
+    printf("OK, dumping dir:\n");
+    cbmfm_dir_dump(dir);
 
-/** \brief  Test file handling of T64 archives
- *
- * \param[in,out]   test    test object
- *
- * \return  bool
- */
-static bool test_lib_image_t64_file(test_case_t *test)
-{
-    cbmfm_t64_t image;
-    cbmfm_dir_t *dir;
-    int i;
-
-    test->total = 8;
-
-    for (i = 0; t64_images[i] != NULL; i++) {
-        printf("..... opening '%s' .. ", t64_images[i]);
-        cbmfm_t64_init(&image);
-        if (!cbmfm_t64_open(&image, t64_images[i])) {
-            printf("failed\n");
-            test->failed++;
-        } else {
-
-            printf("..... calling cbmfm_t64_read_dir() .. ");
-            fflush(stdout);
-            dir = cbmfm_t64_read_dir(&image);
-            if (dir == NULL) {
-                printf("failed\n");
-                cbmfm_t64_cleanup(&image);
-                return false;   /* fatal error */
-            } else {
-                printf("OK, dumping dir:\n");
-                cbmfm_dir_dump(dir);
-
-                printf("....... saving file #0 using PETSCII-converted name .. ");
-                if (!cbmfm_t64_extract_file(dir, 0, NULL)) {
-                    test->failed++;
-                    printf("failed\n");
-                } else {
-                    printf("OK\n");
-                }
-
-                printf("...... saving all files using PETSCII names .. ");
-                if (!cbmfm_t64_extract_all(dir)) {
-                    test->failed++;
-                    printf("failed ");
-                    fflush(stdout);
-                    cbmfm_perror("t64-extract-all");
-                } else {
-                    printf("OK\n");
-                }
-
-                cbmfm_dir_free(dir);
-
-            }
-
-            cbmfm_t64_cleanup(&image);
+    printf("..... reading file at index 4\n");
+    if (!cbmfm_lnx_file_read(dir, &file, 4)) {
+        printf("failed\n");
+        test->failed++;
+    } else {
+        printf("OK, writing to host.\n");
+        cbmfm_file_dump(&file);
+        if (!cbmfm_file_write_host(&file, NULL)) {
+            cbmfm_file_cleanup(&file);
+            cbmfm_dir_free(dir);
+            return false;
         }
+        cbmfm_file_cleanup(&file);
     }
 
-   return true;
-}
 
-#endif
+    cbmfm_dir_free(dir);
+    cbmfm_lnx_cleanup(&image);
+
+    return true;
+}

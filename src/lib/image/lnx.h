@@ -75,6 +75,9 @@ void            cbmfm_lnx_free(cbmfm_lnx_t *image);
 
 bool            cbmfm_lnx_open(cbmfm_lnx_t *image, const char *path);
 void            cbmfm_lnx_dump(const cbmfm_lnx_t *image);
-cbmfm_dir_t *   cbmfm_lnx_dir_read(const cbmfm_lnx_t *image);
+cbmfm_dir_t *   cbmfm_lnx_dir_read(cbmfm_lnx_t *image);
 
+bool            cbmfm_lnx_file_read(cbmfm_dir_t *dir,
+                                    cbmfm_file_t *file,
+                                    uint16_t index);
 #endif
