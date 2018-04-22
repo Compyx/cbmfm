@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen : */
 
-/** \file   src/lib/base/dir.h
- * \brief   Directory handling - header
+/** \file   src/lib/base/dirent.h
+ * \brief   Directory entry handling - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,31 +25,22 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_DIR_H
-#define CBMFM_LIB_BASE_DIR_H
+#ifndef CBMFM_LIB_BASE_DIRENT_H
+#define CBMFM_LIB_BASE_DIRENT_H
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "cbmfm_types.h"
 
-
-cbmfm_dir_t *   cbmfm_dir_alloc(void);
-void            cbmfm_dir_init(cbmfm_dir_t *dir);
-cbmfm_dir_t *   cbmfm_dir_new(void);
-void            cbmfm_dir_cleanup(cbmfm_dir_t *dir);
-void            cbmfm_dir_free(cbmfm_dir_t *dir);
-void            cbmfm_dir_append_dirent(cbmfm_dir_t *dir,
-                                        const cbmfm_dirent_t *dirent);
-
-void            cbmfm_dir_dump(const cbmfm_dir_t *dir);
-
-bool            cbmfm_dxx_dir_iter_init(cbmfm_dxx_dir_iter_t *iter,
-                                        cbmfm_dxx_image_t *image,
-                                        int track, int sector);
-bool            cbmfm_dxx_dir_iter_next(cbmfm_dxx_dir_iter_t *iter);
-uint8_t *       cbmfm_dxx_dir_iter_entry_ptr(cbmfm_dxx_dir_iter_t *iter);
-
+cbmfm_dirent_t *cbmfm_dirent_alloc(void);
+void            cbmfm_dirent_init(cbmfm_dirent_t *dirent);
+cbmfm_dirent_t *cbmfm_dirent_new(void);
+cbmfm_dirent_t *cbmfm_dirent_dup(const cbmfm_dirent_t *dirent);
+void            cbmfm_dirent_cleanup(cbmfm_dirent_t *dirent);
+void            cbmfm_dirent_free(cbmfm_dirent_t *dirent);
+int             cbmfm_dirent_dump(const cbmfm_dirent_t *dirent);
 
 
 #endif

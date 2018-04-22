@@ -1,4 +1,4 @@
-# vim: set noet ts=8 :
+# vim: set noet ts=8 sw=8 sts=8:
 #
 # Makefile
 #
@@ -29,7 +29,8 @@ LIB_SRCS = src/lib/base/io.c \
 	   src/lib/base/dxx.c \
 	   src/lib/image/d64.c \
 	   src/lib/image/t64.c \
-	   src/lib/image/lnx.c
+	   src/lib/image/lnx.c \
+	   src/lib/base/dirent.c
 
 GUI_SRCS = src/gui/main.c
 
@@ -87,10 +88,38 @@ $(GUI): $(GUI_OBJS) $(STATIC_LIB)
 
 all: $(TESTER) $(STATIC_LIB)
 
-# dependencies of the various objects, according to headers included
-errors.o:
-io.o: errors.o
-mem.o: errors.o
+
+# Dependencies of the various objects, according to headers included
+
+# Dependencies of objects in src/lib/base
+
+src/lib/base/dir.o: \
+	src/lib/base/dirent.o \
+	src/lib/base/errors.o \
+	src/lib/base/file.o \
+	src/lib/base/mem.o \
+	src/lib/base/petasc.o
+src/lib/base/dxx.o: \
+	src/lib/base/dirent.o \
+	src/lib/base/errors.o \
+	src/lib/base/mem.o \
+	src/lib/base/image.o
+src/lib/base/errors.o:
+src/lib/base/file.o: \
+	src/lib/base/image.o \
+	src/lib/base/io.o \
+	src/lib/base/log.o \
+	src/lib/base/mem.o \
+	src/lib/base/petasc.o
+src/lib/base/image.o: \
+	src/lib/base/mem.o \
+	src/lib/base/io.o
+src/lib/base/io.o: \
+	src/lib/base/errors.o \
+	src/lib/base/mem.o
+src/lib/base/log.o:
+src/lib/base/mem.o:
+src/lib/base/petasc.o:
 
 
 .PHONY: clean

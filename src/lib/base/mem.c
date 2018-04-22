@@ -41,7 +41,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "errors.h"
+#include "cbmfm_types.h"
 
 #include "mem.h"
 
@@ -242,6 +242,22 @@ void *cbmfm_memdup(const void *data, size_t size)
 int cbmfm_popcount_byte(uint8_t b)
 {
     return popcount_table[b & 0x0f] + popcount_table[(b >> 4) & 0x0f];
+}
+
+
+/** \brief  Calculate number of blocks from \a size
+ *
+ * Calculate the number of blocks a file of \a size bytes would occupy on a
+ * floppy disk.
+ *
+ * \param[in]   size    size in bytes
+ *
+ * \return  size in blocks
+ */
+uint16_t cbmfm_size_to_blocks(size_t size)
+{
+    return (uint16_t)(size / CBMFM_BLOCK_SIZE_DATA
+            + (size % CBMFM_BLOCK_SIZE_DATA == 0 ? 0 : 1));
 }
 
 

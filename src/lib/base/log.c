@@ -32,7 +32,6 @@
 #include <stdarg.h>
 
 #include "cbmfm_types.h"
-#include "base.h"
 
 #include "log.h"
 

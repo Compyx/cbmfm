@@ -35,11 +35,11 @@
 #include <string.h>
 
 #include "cbmfm_types.h"
-#include "base.h"
 #include "base/image.h"
-#include "base/dir.h"
 #include "base/io.h"
-#include "log.h"
+#include "base/log.h"
+#include "base/mem.h"
+#include "base/petasc.h"
 
 #include "file.h"
 

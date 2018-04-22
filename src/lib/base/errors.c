@@ -35,6 +35,7 @@
 
 #include "errors.h"
 
+
 /** \brief  Global error code for the library
  */
 int cbmfm_errno;

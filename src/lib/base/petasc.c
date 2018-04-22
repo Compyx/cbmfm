@@ -382,5 +382,4 @@ char *cbmfm_basename(char *path)
     } else {
         return p + 1;
     }
-
 }

@@ -32,6 +32,7 @@
 #include "lib.h"
 #include "image/t64.h"
 #include "base/dir.h"
+#include "base/dirent.h"
 #include "testcase.h"
 
 #include "test_lib_image_t64.h"

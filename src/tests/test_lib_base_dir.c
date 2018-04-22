@@ -33,6 +33,7 @@
 #include "base/image.h"
 #include "base/dxx.h"
 #include "base/dir.h"
+#include "base/dirent.h"
 #include "image/d64.h"
 #include "testcase.h"
 

@@ -36,6 +36,7 @@
 #include "base.h"
 #include "base/image.h"
 #include "base/dir.h"
+#include "base/dirent.h"
 #include "base/file.h"
 #include "log.h"
 
