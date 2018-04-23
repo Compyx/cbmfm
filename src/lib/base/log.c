@@ -30,8 +30,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <time.h>
 
-#include "cbmfm_types.h"
+#include "lib/base/errors.h"
 
 #include "log.h"
 
@@ -76,9 +77,27 @@ void cbmfm_log_set_level(cbmfm_log_level_t level)
  */
 bool cbmfm_log_set_file(const char *path)
 {
-    log_file = fopen(path, "rb");
+    time_t curr_time;
+
+    log_file = fopen(path, "wb");
     if (log_file == NULL) {
+        cbmfm_errno = CBMFM_ERR_IO;
         return false;
+    }
+
+    /* write current date/time to the log file */
+    curr_time = time(NULL);
+    if (curr_time == (time_t)-1) {
+        fprintf(stderr, "%s:%d:%s(): failed to get current time\n",
+               __FILE__, __LINE__, __func__);
+    } else {
+        char *s = ctime(&curr_time);
+        if (s == NULL) {
+            fprintf(stderr, "%s:%d:%s(): failed to convert current time\n",
+                    __FILE__, __LINE__, __func__);
+        } else {
+            fprintf(log_file, "Created log file on %s\n", s);
+        }
     }
     return true;
 }

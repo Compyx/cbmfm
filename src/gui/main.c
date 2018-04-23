@@ -46,12 +46,23 @@ static void on_activate(GApplication *app, gpointer data)
 }
 
 
+/** \brief  Handler for the 'shutdown' event of the GtkApplication
+ *
+ * \param[in]   app     application
+ * \param[in]   data    (unused)
+ */
+static void on_shutdown(GApplication *app, gpointer data)
+{
+    cbmfm_log_close();
+}
+
+
 /** \brief  Application driver
  *
  * \param[in]   argc    argument count
  * \param[in]   argv    argument vector
  *
- * \return  0 on success
+ * \return  EXIT_SUCCESS on success, EXIT_FAILURE otherwise
  */
 int main(int argc, char **argv)
 {
@@ -60,11 +71,13 @@ int main(int argc, char **argv)
 
     /* clear library error code */
     cbmfm_errno = 0;
-    /* set logging to DEBUG */
+    /* set logging to DEBUG and open log file */
     cbmfm_log_set_level(CBMFM_LOG_DEBUG);
+    cbmfm_log_set_file("gui.log");
 
     app = gtk_application_new("nl.compyx.cbmfm", G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
+    g_signal_connect(app, "shutdown", G_CALLBACK(on_shutdown), NULL);
     status = g_application_run(G_APPLICATION(app), argc, argv);
     g_object_unref(app);
 

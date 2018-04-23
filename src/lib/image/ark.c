@@ -32,11 +32,11 @@
 #include <string.h>
 
 #include "cbmfm_types.h"
-#include "lib/base/errors.h"
-#include "lib/base/image.h"
 #include "lib/base/dir.h"
 #include "lib/base/dirent.h"
+#include "lib/base/errors.h"
 #include "lib/base/file.h"
+#include "lib/base/image.h"
 #include "lib/base/mem.h"
 
 #include "ark.h"

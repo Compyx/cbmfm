@@ -117,9 +117,46 @@ src/lib/base/image.o: \
 src/lib/base/io.o: \
 	src/lib/base/errors.o \
 	src/lib/base/mem.o
-src/lib/base/log.o:
+src/lib/base/log.o: \
+	src/lib/base/errors.o
 src/lib/base/mem.o:
 src/lib/base/petasc.o:
+
+# Dependencies of objects in src/lib/image
+
+src/lib/image/ark.o: \
+	src/lib/base/dir.o \
+	src/lib/base/dirent.o \
+	src/lib/base/errors.o \
+	src/lib/base/file.o \
+	src/lib/base/image.o \
+	src/lib/base/mem.o
+src/lib/image/d64.o: \
+	src/lib/base/dir.o \
+	src/lib/base/dxx.o \
+	src/lib/base/errors.o \
+	src/lib/base/file.o \
+	src/lib/base/image.o \
+	src/lib/base/log.o \
+	src/lib/base/mem.o \
+	src/lib/base/petasc.o
+src/lib/image/lnx.o: \
+	src/lib/base/dir.o \
+	src/lib/base/dirent.o \
+	src/lib/base/errors.o \
+	src/lib/base/file.o \
+	src/lib/base/image.o \
+	src/lib/base/io.o \
+	src/lib/base/log.o \
+	src/lib/base/mem.o
+src/lib/image/t64.o: \
+	src/lib/base/dir.o \
+	src/lib/base/dirent.o \
+	src/lib/base/errors.o \
+	src/lib/base/file.o \
+	src/lib/base/image.o \
+	src/lib/base/log.o \
+	src/lib/base/mem.o
 
 
 .PHONY: clean

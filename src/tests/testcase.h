@@ -48,7 +48,15 @@ typedef struct test_case_s {
 } test_case_t;
 
 
+/*
+ * Note: For some reason the @{ @} stuff doesn't work to declare the following
+ *       struct part of the Doxygen group 'tests', so a manual \ingroup is
+ *       required. Most likely a Doxygen bug.
+ */
+
 /** \brief  Test module object
+ *
+ * \ingroup tests
  *
  * A module contains a list of tests to run, these can be run consecutive, or
  * a single test can be selected on the command line.
