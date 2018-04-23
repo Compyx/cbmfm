@@ -30,6 +30,7 @@
 #include <inttypes.h>
 
 #include "lib/cbmfm_types.h"
+#include "lib/base/io.h"
 #include "lib/base/image.h"
 
 #include "testcase.h"
@@ -77,8 +78,31 @@ test_module_t module_lib_base = {
  */
 static bool test_lib_base_io(struct test_case_s *test)
 {
-    test->total = 1;
-    printf("..... TODO: actually implement tests here\n");
+    long size;
+    bool result;
+
+    test->total = 2;
+
+    /* test existing file */
+    printf("..... calling cbmfm_file_size(\"%s\") ... ", ARK_TPZTOOLS_FILE);
+    fflush(stdout);
+    size = cbmfm_file_size(ARK_TPZTOOLS_FILE);
+    result = size == ARK_TPZTOOLS_SIZE;
+    printf("%ld -> %s\n", size, result ? "OK" : "failed");
+    if (!result) {
+        test->failed++;
+    }
+
+    /* test non-existing file */
+    printf("..... calling cbmfm_file_size(\"%s\") ... ", "non-exisiting-file");
+    fflush(stdout);
+    size = cbmfm_file_size("non-existing-file");
+    result = size < 0;
+    printf("%ld -> %s\n", size, result ? "OK" : "failed");
+    if (!result) {
+        test->failed++;
+    }
+
     return true;
 }
 

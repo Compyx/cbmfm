@@ -211,3 +211,40 @@ bool cbmfm_write_file(const uint8_t *data, size_t size, const char *path)
     fclose(fp);
     return true;
 }
+
+
+/** \brief  Determine file size of \a path
+ *
+ * Determine size of \a path using fseek(3)/ftell(3). This keeps the library
+ * code portable, incuring only a small performance penalty.
+ *
+ * \param[in]   path    path to file
+ *
+ * \return  size of file in bytes, or -1 on error
+ */
+long cbmfm_file_size(const char *path)
+{
+    FILE *fp;
+    long result;
+
+    /* open file */
+    fp = fopen(path, "rb");
+    if (fp == NULL) {
+        cbmfm_errno = CBMFM_ERR_IO;
+        return -1;
+    }
+
+    /* move pointer to end of file */
+    if (fseek(fp, 0L, SEEK_END) != 0) {
+        fclose(fp);
+        return -1;
+    }
+
+    /* get position */
+    result = ftell(fp);
+    if (result < 0) {
+        cbmfm_errno = CBMFM_ERR_IO;
+    }
+    fclose(fp);
+    return result;
+}
