@@ -57,12 +57,14 @@
 #define CBMFM_LNX_BASIC_SIZE     0x5c
 
 
+/** \brief  Offset of the Lynx header data
+ */
 #define CBMFM_LNX_HDR           0x5e
 
+
+/** \brief  Length of the 'version string'
+ */
 #define CBMFM_LNX_VERSION_LEN   0x18
-
-
-#define CBBMFM_LNX_DIRENT_FILENAME  0x00
 
 
 

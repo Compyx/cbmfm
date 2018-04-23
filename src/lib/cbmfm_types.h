@@ -76,12 +76,17 @@
 #define CBMFM_CBMDOS_FILE_LOCKED_BIT    0x40U
 
 
+/** \brief  CBMDOS file types
+ *
+ * Valid CBMDOS file type values (%000-%101)
+ */
 enum {
-    CBMFM_CBMDOS_DEL,
-    CBMFM_CBMDOS_SEQ,
-    CBMFM_CBMDOS_PRG,
-    CBMFM_CBMDOS_USR,
-    CBMFM_CBMDOS_REL
+    CBMFM_CBMDOS_DEL,   /**< DELeted file */
+    CBMFM_CBMDOS_SEQ,   /**< SEQuential file */
+    CBMFM_CBMDOS_PRG,   /**< PRoGram file */
+    CBMFM_CBMDOS_USR,   /**< USeR file */
+    CBMFM_CBMDOS_REL,   /**< RELative file */
+    CBMFM_CBMDOS_DIR    /**< DIRectory */
 };
 
 
@@ -156,14 +161,15 @@ typedef struct cbmfm_dirent_t64_s {
 /** \brief  Dxx specific dirent fields
  */
 typedef struct cbmfm_dirent_dxx_s {
-    cbmfm_block_t first_block;
+    cbmfm_block_t first_block;  /**< first block of file */
 } cbmfm_dirent_dxx_t;
 
 
 /** \brief  Lynx specific dirent fields
  */
 typedef struct cbmfm_dirent_lnx_s {
-    uint8_t remainder;
+    uint8_t remainder;  /**< number of bytes in the final block of a file
+                             (not always reliable) */
 } cbmfm_dirent_lnx_t;
 
 
@@ -189,10 +195,10 @@ typedef struct cbmfm_dirent_s {
     union {
         cbmfm_dirent_dxx_t dxx;     /**< Dxx specific data */
         cbmfm_dirent_t64_t t64;     /**< T64 specific data */
-        cbmfm_dirent_lnx_t lnx;
+        cbmfm_dirent_lnx_t lnx;     /**< Lynx specific data */
     } extra;
 
-    int image_type;
+    int image_type; /**< image type (\see #cbmfm_image_type_t) */
 
 } cbmfm_dirent_t;
 
@@ -317,15 +323,16 @@ typedef struct cbmfm_file_s {
 } cbmfm_file_t;
 
 
-/** \brief  Lynx container handle
+/** \brief  Lynx archive handle
  */
 typedef struct cbmfm_lnx_s {
     CBMFM_IMAGE_SHARED_MEMBERS
 
-    char        version_str[32];
-    uint8_t *   dir_start;
-    uint16_t    dir_blocks;
-    uint16_t    dir_used;
+    char        version_str[32];    /**< version string */
+    uint8_t *   dir_start;          /**< pointer to directory of archive */
+    uint16_t    dir_blocks;         /**< number of blocks used for the header
+                                         and directory listing */
+    uint16_t    dir_used;           /**< number of entries in the directory */
 } cbmfm_lnx_t;
 
 

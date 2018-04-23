@@ -689,7 +689,8 @@ bool cbmfm_d64_file_read_from_block(cbmfm_d64_t *image,
  *
  * \return  bool
  *
- * \throw
+ * \throw   #CBMFM_ERR_INVALID_NULL
+ * \throw   #CBMFM_ERR_TYPE_MISMATCH
  */
 bool cbmfm_d64_file_read_from_dirent(cbmfm_dirent_t *dirent,
                                      cbmfm_file_t *file)
@@ -698,7 +699,6 @@ bool cbmfm_d64_file_read_from_dirent(cbmfm_dirent_t *dirent,
 
 
     if (dirent->image == NULL) {
-        /* TODO: come up with better error code */
         cbmfm_errno = CBMFM_ERR_INVALID_NULL;
         return false;
     }

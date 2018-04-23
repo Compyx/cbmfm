@@ -258,6 +258,13 @@ void cbmfm_dxx_block_iter_read_data(cbmfm_dxx_block_iter_t *iter, uint8_t *dest)
     memcpy(dest, data, CBMFM_BLOCK_SIZE_RAW);
 }
 
+
+/** \brief  Write data to current block
+ *
+ * \param[in,out]   iter    Dxx block iterator
+ * \param[in]       data    data to write to block
+ * \param[in]       size    number of bytes to write
+ */
 void cbmfm_dxx_block_iter_write_data(cbmfm_dxx_block_iter_t *iter,
                                      const uint8_t *data,
                                      size_t size)
