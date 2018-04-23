@@ -29,10 +29,10 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "lib.h"
-#include "image/lnx.h"
-#include "base/dir.h"
-#include "base/file.h"
+#include "lib/base/dir.h"
+#include "lib/base/errors.h"
+#include "lib/base/file.h"
+#include "lib/image/lnx.h"
 #include "testcase.h"
 
 #include "test_lib_image_lnx.h"

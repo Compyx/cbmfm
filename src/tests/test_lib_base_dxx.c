@@ -29,10 +29,10 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "lib.h"
-#include "base/image.h"
-#include "base/dir.h"
-#include "image/d64.h"
+#include "lib/base/image.h"
+#include "lib/base/dir.h"
+#include "lib/base/errors.h"
+#include "lib/image/d64.h"
 #include "testcase.h"
 
 #include "test_lib_base_dxx.h"

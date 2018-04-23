@@ -35,7 +35,9 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include "log.h"
+#include "lib/base/errors.h"
+#include "lib/base/log.h"
+
 #include "testcase.h"
 
 /*

@@ -32,6 +32,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "cbmfm_types.h"
+
 
 /** \brief  Offset in Ark image data of the directory entry count
  */

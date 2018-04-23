@@ -43,7 +43,7 @@ TEST_SRCS = src/tests/testcase.c \
 	    src/tests/test_lib_image_t64.c \
 	    src/tests/test_lob_image_lnx.c
 
-HEADERS = src/lib.h src/lib/base.h src/lib/cbmfm_types.h
+HEADERS = 
 
 STATIC_LIB = libcbmfm.a
 

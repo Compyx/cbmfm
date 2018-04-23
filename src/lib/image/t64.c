@@ -28,17 +28,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <string.h>
 
 #include "cbmfm_types.h"
-#include "base.h"
-#include "base/image.h"
-#include "base/dir.h"
-#include "base/dirent.h"
-#include "base/file.h"
-#include "log.h"
+#include "lib/base/dir.h"
+#include "lib/base/dirent.h"
+#include "lib/base/errors.h"
+#include "lib/base/file.h"
+#include "lib/base/image.h"
+#include "lib/base/log.h"
+#include "lib/base/mem.h"
 
 #include "t64.h"
 

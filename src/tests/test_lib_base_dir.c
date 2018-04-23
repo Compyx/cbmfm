@@ -29,12 +29,13 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "lib.h"
-#include "base/image.h"
-#include "base/dxx.h"
-#include "base/dir.h"
-#include "base/dirent.h"
-#include "image/d64.h"
+#include "cbmfm_types.h"
+#include "lib/base/dxx.h"
+#include "lib/base/dir.h"
+#include "lib/base/dirent.h"
+#include "lib/base/image.h"
+#include "lib/base/mem.h"
+#include "lib/image/d64.h"
 #include "testcase.h"
 
 #include "test_lib_base_dir.h"

@@ -27,7 +27,8 @@
 
 #include <gtk/gtk.h>
 
-#include "lib.h"
+#include "lib/base/errors.h"
+#include "lib/base/log.h"
 
 
 /** \brief  Handler for the 'activate' event of the GtkApplication
@@ -59,6 +60,8 @@ int main(int argc, char **argv)
 
     /* clear library error code */
     cbmfm_errno = 0;
+    /* set logging to DEBUG */
+    cbmfm_log_set_level(CBMFM_LOG_DEBUG);
 
     app = gtk_application_new("nl.compyx.cbmfm", G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);

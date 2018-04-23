@@ -29,9 +29,9 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "lib.h"
-#include "image/ark.h"
-#include "base/dir.h"
+#include "lib/image/ark.h"
+#include "lib/base/image.h"
+#include "lib/base/dir.h"
 #include "testcase.h"
 
 #include "test_lib_image_ark.h"

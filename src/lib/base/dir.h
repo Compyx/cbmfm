@@ -32,6 +32,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "cbmfm_types.h"
 
 
 cbmfm_dir_t *   cbmfm_dir_alloc(void);

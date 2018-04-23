@@ -31,6 +31,5 @@
 #define CBMFM_LIB__H
 
 #include "lib/cbmfm_types.h"
-#include "lib/base.h"
 
 #endif

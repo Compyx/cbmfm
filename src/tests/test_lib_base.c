@@ -29,7 +29,8 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "lib.h"
+#include "lib/cbmfm_types.h"
+#include "lib/base/image.h"
 
 #include "testcase.h"
 

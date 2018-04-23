@@ -33,10 +33,10 @@
 #include <ctype.h>
 
 #include "cbmfm_types.h"
-#include "base/dirent.h"
-#include "base/errors.h"
-#include "base/mem.h"
-#include "base/image.h"
+#include "lib/base/dirent.h"
+#include "lib/base/errors.h"
+#include "lib/base/mem.h"
+#include "lib/base/image.h"
 
 #include "dxx.h"
 

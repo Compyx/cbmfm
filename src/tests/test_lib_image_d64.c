@@ -31,10 +31,10 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include "lib.h"
-#include "image/d64.h"
-#include "base/dir.h"
-#include "base/file.h"
+#include "lib/image/d64.h"
+#include "lib/base/dir.h"
+#include "lib/base/file.h"
+#include "lib/base/image.h"
 #include "testcase.h"
 
 #include "test_lib_image_d64.h"
