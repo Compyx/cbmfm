@@ -1,4 +1,3 @@
-
 *** FilePacked ZipCode (A!xxxxxx, B!xxxxxx, etc)
 *** Document revision: 1.4
 *** Last updated: March 11, 2004
@@ -162,4 +161,3 @@ file in compressed.
 it over LNX as a  native  C64  file.  The  only  plus  is  it  uses  simple
 compression, whereas LNX does not. However, LNX only uses one file for  the
 entire file set stored.
-

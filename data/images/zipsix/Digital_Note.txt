@@ -1,0 +1,15 @@
+
+Digital World by SAMAR ! 
+
+A great 80 track demo in Sixpacked zipfile-format.
+Sixpack is a special form of c64 filezip.
+Use the included Tool Zip/UnZip and choose "6"
+
+I checked it on 2 1541 drives,old and new,so this is the 100% version,i hope :)
+Don`t forget that you need 2 empty disksides for ONE demo-side,cause of the 
+special way Sixpack handle the files.
+
+Signed : Mr.Alpha/Fantastic Four Cracking Group/NOSTALGIA    
+(Atleast one dude have to care to get working versions of kewl Warez via the Internet :))
+
+

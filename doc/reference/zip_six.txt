@@ -1,4 +1,3 @@
-
 *** SixPack Zipcode (6-file version, 1!!xxxxx, 2!!xxxxx, etc)
 *** Document revision: 1.4
 *** Last updated: March 11, 2004
@@ -369,4 +368,3 @@ almost *any* other format will use much less space.
 creation utility on the C64. The one I used would generate a bad sector  if
 it encountered a sector that was only slightly bad, but would normally read
 back fine on the 1541 (due to the drive's error-correcting nature).
-
