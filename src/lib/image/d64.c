@@ -37,6 +37,7 @@
 #include "lib/base/errors.h"
 #include "lib/base/file.h"
 #include "lib/base/image.h"
+#include "lib/base/io.h"
 #include "lib/base/log.h"
 #include "lib/base/mem.h"
 #include "lib/base/petasc.h"
@@ -864,3 +865,27 @@ void cbmfm_d64_block_write_iter_write_data(cbmfm_dxx_block_iter_t *iter,
     /* TODO mark block used */
 }
 
+
+
+/** \brief  Determine if \a filename is a D64 image
+ *
+ * Only checks the size of the data in \a filename, so this function is not
+ * very reliable.
+ *
+ * \param[in]   filename    file to test
+ *
+ * \return  bool
+ */
+bool cbmfm_is_d64(const char *filename)
+{
+
+    switch (cbmfm_file_size(filename)) {
+        case CBMFM_D64_SIZE_STD:        /* fall through */
+        case CBMFM_D64_SIZE_STD_ERR:    /* fall through */
+        case CBMFM_D64_SIZE_EXT:        /* fall through */
+        case CBMFM_D64_SIZE_EXT_ERR:
+            return true;
+        default:
+            return false;
+    }
+}

@@ -36,6 +36,8 @@
 #include "base/dxx.h"
 
 
+bool cbmfm_is_d64(const char *filename);
+
 cbmfm_d64_t *   cbmfm_d64_alloc(void);
 void            cbmfm_d64_init(cbmfm_d64_t *image);
 cbmfm_d64_t *   cbmfm_d64_new(void);

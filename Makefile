@@ -30,6 +30,7 @@ LIB_SRCS = src/lib/base/io.c \
 	   src/lib/image/d64.c \
 	   src/lib/image/t64.c \
 	   src/lib/image/lnx.c \
+	   src/lib/image/detect.c \
 	   src/lib/base/dirent.c
 
 GUI_SRCS = src/gui/main.c
@@ -119,7 +120,8 @@ src/lib/base/io.o: \
 	src/lib/base/mem.o
 src/lib/base/log.o: \
 	src/lib/base/errors.o
-src/lib/base/mem.o:
+src/lib/base/mem.o: \
+	src/lib/base/errors.o
 src/lib/base/petasc.o:
 
 # Dependencies of objects in src/lib/image
@@ -130,6 +132,7 @@ src/lib/image/ark.o: \
 	src/lib/base/errors.o \
 	src/lib/base/file.o \
 	src/lib/base/image.o \
+	src/lib/base/io.o \
 	src/lib/base/mem.o
 src/lib/image/d64.o: \
 	src/lib/base/dir.o \
@@ -137,9 +140,16 @@ src/lib/image/d64.o: \
 	src/lib/base/errors.o \
 	src/lib/base/file.o \
 	src/lib/base/image.o \
+	src/lib/base/io.o \
 	src/lib/base/log.o \
 	src/lib/base/mem.o \
 	src/lib/base/petasc.o
+src/lib/image/detect.o: \
+	src/lib/base/log.o \
+	src/lib/image/ark.o \
+	src/lib/image/d64.o \
+	src/lib/image/lnx.o \
+	src/lib/image/t64.o
 src/lib/image/lnx.o: \
 	src/lib/base/dir.o \
 	src/lib/base/dirent.o \
@@ -155,6 +165,7 @@ src/lib/image/t64.o: \
 	src/lib/base/errors.o \
 	src/lib/base/file.o \
 	src/lib/base/image.o \
+	src/lib/base/io.o \
 	src/lib/base/log.o \
 	src/lib/base/mem.o
 

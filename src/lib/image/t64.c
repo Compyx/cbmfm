@@ -38,6 +38,7 @@
 #include "lib/base/errors.h"
 #include "lib/base/file.h"
 #include "lib/base/image.h"
+#include "lib/base/io.h"
 #include "lib/base/log.h"
 #include "lib/base/mem.h"
 
@@ -48,6 +49,43 @@
  */
 
 
+/** \brief  Various 'magic' strings found in T64 archives
+ *
+ * Seems like every tool writing T64 archives has its own magic. These are the
+ * ones I found so far.
+ */
+static const char *t64_magics[] = {
+    "C64S tape image file",
+    "C64 tape image file",
+    "C64S tape file",
+    NULL
+};
+
+
+/** \brief  Check T64 header data against known magic
+ *
+ * \param[in]   s   magic
+ *
+ * \return  bool
+ */
+static bool t64_check_magic(const char *s)
+{
+    int i = 0;
+    for (i = 0; t64_magics[i] != NULL; i++) {
+        if (strncmp(s, t64_magics[i], 0x20) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+
+/** \brief  Parse T64 header of \a image
+ *
+ * \param[in,out]   image   T64 image
+ */
 static void cbmfm_t64_parse_header(cbmfm_t64_t *image)
 {
     uint8_t *data = image->data;
@@ -549,6 +587,41 @@ bool cbmfm_t64_extract_all(cbmfm_dir_t *dir)
         }
     }
     return true;
+}
+
+
+/** \brief  Determine if \a path could be a T64 archive
+ *
+ * Check both minimum size of a T64 archive and its magic.
+ *
+ * \param[in]   path    path to possible T64 archive
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_IO
+ * \throw   #CBMFM_ERR_SIZE_MISMATCH
+ */
+bool cbmfm_is_t64(const char *filename)
+{
+    uint8_t *header;
+    intmax_t size;
+    bool result;
+
+    /* TODO: make define for 0x60 */
+    size = cbmfm_read_file_fixed(&header, 0x60, filename);
+    if (size < 0) {
+        return false;
+    }
+    if (size < 0x60) {
+        cbmfm_errno = CBMFM_ERR_SIZE_MISMATCH;
+        cbmfm_free(&header);
+        return false;
+    }
+
+    result = t64_check_magic((const char *)header);
+    cbmfm_free(header);
+
+    return result;
 }
 
 

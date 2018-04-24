@@ -91,9 +91,10 @@ static bool test_lib_image_lnx_open(test_case_t *test)
     cbmfm_lnx_t image;
     int i;
 
-    test->total = 5;
+    test->total = 0;
 
     for (i = 0; lnx_images[i] != NULL; i++) {
+        test->total++;
         printf("\n..... opening '%s' .. ", lnx_images[i]);
         cbmfm_lnx_init(&image);
         if (!cbmfm_lnx_open(&image, lnx_images[i])) {
@@ -107,6 +108,23 @@ static bool test_lib_image_lnx_open(test_case_t *test)
             cbmfm_lnx_cleanup(&image);
         }
     }
+
+    /* TODO: also add some non-Lynx images to the list of images to test */
+    printf("..... testing Lynx image detection:\n");
+    for (i = 0; lnx_images[i] != NULL; i++) {
+        bool result;
+
+        test->total++;
+
+        result = cbmfm_is_lnx(lnx_images[i]);
+        printf("\n....... calling cbmfm_is_lnx('%s') = %s -> %s",
+                lnx_images[i], result ? "true" : "false",
+                result ? "OK" : "false");
+        if (!result) {
+            test->failed++;
+        }
+    }
+
 
     cbmfm_lnx_init(&image);
 

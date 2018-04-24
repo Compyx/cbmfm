@@ -35,6 +35,7 @@
 #include <ctype.h>
 
 #include "errors.h"
+#include "log.h"
 #include "mem.h"
 
 #include "io.h"
@@ -221,6 +222,8 @@ bool cbmfm_write_file(const uint8_t *data, size_t size, const char *path)
  * \param[in]   path    path to file
  *
  * \return  size of file in bytes, or -1 on error
+ *
+ * \throw   #CBMFM_ERR_IO
  */
 long cbmfm_file_size(const char *path)
 {
@@ -247,4 +250,88 @@ long cbmfm_file_size(const char *path)
     }
     fclose(fp);
     return result;
+}
+
+
+/** \brief  Read \a size bytes from \a path into \a dest
+ *
+ * Read a fixed amount of data from file \a path. The data read is allocated on
+ * the heap. The actual amount of data read can be less than \a size in case
+ * the file is shorter than \a size. On error this function returns -1 and
+ * `NULL` is stored in \a *dest.
+ *
+ * This function is meant to be used to read header data from files; to read
+ * entire files, please use cbmfm_read_file().
+ *
+ * \param[out]  dest    object to store pointer to allocated data
+ * \param[in]   size    number of bytes to read from \a path
+ * \param[in]   path    path to file
+ *
+ * \return  number of bytes actually read from \a path, or -1 on error
+ *
+ * \throw   #CBMFM_ERR_IO
+ */
+intmax_t cbmfm_read_file_fixed(uint8_t **dest, size_t size, const char *path)
+{
+    FILE *fp;
+    uint8_t *data = NULL;
+    size_t result;
+
+    fp = fopen(path, "rb");
+    if (fp == NULL) {
+        cbmfm_log_debug("failed to open '%s'\n", path);
+        cbmfm_errno = CBMFM_ERR_IO;
+        return -1;
+    }
+
+    /* allocate memory for data */
+    data = cbmfm_calloc(size, 1U);
+    result = fread(data, 1U, size, fp);
+    if (result != size && ferror(fp)) {
+        cbmfm_errno = CBMFM_ERR_IO;
+        cbmfm_free(data);
+        *dest = NULL;
+        fclose(fp);
+        return -1;
+    }
+
+    fclose(fp);
+    *dest = data;
+    return (intmax_t)result;
+}
+
+
+/** \brief  Get file extension from \a path
+ *
+ * \param[in]   path    path to file
+ *
+ * \return  heap-allocated lower case extension or `NULL` when not found
+ */
+char *cbmfm_get_ext_lcase(const char *path)
+{
+    size_t plen = strlen(path);
+    size_t elen;
+    const char *s = path + plen - 1;
+    char *ext;
+    int i;
+
+    while (s > path && *path != '.') {
+        s--;
+    }
+    if (s == path) {
+        return NULL;
+    }
+
+    elen = plen - (size_t)(s - path) + 1;
+    ext = cbmfm_malloc(elen + 1);
+    s++;
+    i = 0;
+    while (*s != '\0') {
+        ext[i] = (char)tolower((int)*s);
+        i++;
+        s++;
+    }
+    ext[1] = '\0';
+
+    return ext;
 }

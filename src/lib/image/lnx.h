@@ -67,6 +67,8 @@
 #define CBMFM_LNX_VERSION_LEN   0x18
 
 
+bool cbmfm_is_lnx(const char *filename);
+
 
 cbmfm_lnx_t *   cbmfm_lnx_alloc(void);
 void            cbmfm_lnx_init(cbmfm_lnx_t *image);

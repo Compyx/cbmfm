@@ -484,3 +484,54 @@ bool cbmfm_lnx_file_extract(cbmfm_dir_t *dir,
     cbmfm_file_cleanup(&file);
     return result;
 }
+
+
+
+/** \brief  Determine if \a filename is a Lynx archive
+ *
+ * First checks the file is the minimum required size for a Lynx archive, the
+ * check is the load address is $0801 and finally searches for the string
+ * 'LYNX' in the header.
+ *
+ * \param[in]   filename    file to inspect
+ *
+ * \return bool
+ *
+ * \throw   #CBMFM_ERR_IO
+ * \throw   #CBMFM_ERR_SIZE_MISMATCH
+ * \throw   #CBMFM_ERR_INVALID_DATA
+ */
+bool cbmfm_is_lnx(const char *filename)
+{
+    uint8_t *header;
+    intmax_t size;
+    char *s;
+
+    size = cbmfm_read_file_fixed(&header, CBMFM_LNX_MIN_SIZE, filename);
+    if (size < 0) {
+        return false;
+    }
+    if (size < CBMFM_LNX_MIN_SIZE) {
+        cbmfm_errno = CBMFM_ERR_SIZE_MISMATCH;
+        cbmfm_free(header);
+        return false;
+    }
+
+    /* check load address */
+    if (header[0] != 0x01 || header[1] != 0x08) {
+        cbmfm_errno = CBMFM_ERR_INVALID_DATA;
+        cbmfm_free(header);
+        return false;
+    }
+
+    /* try to locate the string 'LYNX' */
+    s = strstr((const char *)(header + 0x30), "LYNX");
+    if (s == NULL) {
+        cbmfm_errno = CBMFM_ERR_INVALID_DATA;
+        cbmfm_free(header);
+        return false;
+    }
+
+    cbmfm_free(header);
+    return true;
+}

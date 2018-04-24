@@ -37,6 +37,7 @@
 #include "lib/base/errors.h"
 #include "lib/base/file.h"
 #include "lib/base/image.h"
+#include "lib/base/io.h"
 #include "lib/base/mem.h"
 
 #include "ark.h"
@@ -391,4 +392,26 @@ bool cbmfm_ark_extract_all(cbmfm_image_t *image)
         }
     }
     return true;
+}
+
+
+/** \brief  Determine if \a path *could* be an ARK archive
+ *
+ * Since ARK doesn't have any signature, the only way to determine if \a path
+ * is an ARK archive is to test the file extension (the worst way)
+ *
+ * \param[in]   filename    path to possible ARK container
+ *
+ * \return  true if possibly ARK
+ */
+bool cbmfm_is_ark(const char *filename)
+{
+    char *ext = cbmfm_get_ext_lcase(filename);
+    bool result = false;
+
+    if (ext != NULL) {
+        result = (bool)(strcmp(ext, "ark") == 0);
+        cbmfm_free(ext);
+    }
+    return result;
 }

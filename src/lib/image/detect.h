@@ -1,7 +1,7 @@
 /* vim: set et ts=4 sw=4 sts=4 fdm=marker syntax=c.doxygen: */
 
-/** \file   src/lib//base/io.h
- * \brief   Base library I/O handling - header
+/** \file   src/lib/image/detect.h
+ * \brief   Image auto-detect functions - header
  *
  * \author  Bas Wassink <b.wassink@ziggo.nl>
  */
@@ -25,26 +25,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.*
  */
 
-#ifndef CBMFM_LIB_BASE_IO_H
-#define CBMFM_LIB_BASE_IO_H
+#ifndef CBMFM_LIB_IMAGE_DETECT_H
+#define CBMFM_LIB_IMAGE_DETECT_H
 
-#include <inttypes.h>
-#include <stdlib.h>
-#include <stdbool.h>
 
-intmax_t    cbmfm_read_file(uint8_t **dest, const char *path);
-intmax_t    cbmfm_read_file_sizereq(uint8_t **dest,
-                                    const char *path,
-                                    size_t sizereq);
-intmax_t    cbmfm_read_file_fixed(uint8_t **dest,
-                                  size_t size,
-                                  const char *path);
-bool        cbmfm_write_file(const uint8_t *data,
-                             size_t size,
-                             const char *path);
-
-long        cbmfm_file_size(const char *path);
-
-char *      cbmfm_get_ext_lcase(const char *path);
+int cbmfm_image_detect_type(const char *filename);
 
 #endif
+

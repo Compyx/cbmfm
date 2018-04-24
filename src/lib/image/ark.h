@@ -84,6 +84,7 @@
 #define CBMFM_ARK_DIRENT_LAST_SS_USED   0x1a
 
 
+bool cbmfm_is_ark(const char *filename);
 
 bool cbmfm_ark_open(cbmfm_image_t *image, const char *path);
 void cbmfm_ark_cleanup(cbmfm_image_t *image);

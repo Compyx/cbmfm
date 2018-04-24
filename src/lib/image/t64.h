@@ -106,6 +106,7 @@
 #define CBMFM_T64_DIRENT_FILE_NAME  0x10
 
 
+bool            cbmfm_is_t64(const char *filename);
 
 cbmfm_t64_t *   cbmfm_t64_alloc(void);
 void            cbmfm_t64_init(cbmfm_t64_t *image);
