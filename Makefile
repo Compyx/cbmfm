@@ -114,6 +114,7 @@ src/lib/base/file.o: \
 	src/lib/base/mem.o \
 	src/lib/base/petasc.o
 src/lib/base/image.o: \
+	src/lib/base/errors.o \
 	src/lib/base/mem.o \
 	src/lib/base/io.o
 src/lib/base/io.o: \

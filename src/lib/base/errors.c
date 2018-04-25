@@ -57,7 +57,9 @@ static const char *cbmfm_err_messages[CBMFM_ERR_CODE_COUNT] = {
     "illegal track",
     "illegal sector",
     "buffer underflow",
-    "buffer overflow"
+    "buffer overflow",
+    "file is readonly",
+    "missing filename"
 };
 
 

@@ -1076,3 +1076,22 @@ void cbmfm_d64_format(cbmfm_d64_t *image,
     }
 }
 
+
+/** \brief  Write d64 image to host file system
+ *
+ * When \a filename is `NULL`, the filename in \a image will be used.
+ *
+ * \param[in]   image       d64 image
+ * \param[in]   filename    filename (use `NULL` to use filename in image)
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_IO
+ * \throw   #CBMFM_ERR_MISSING_FILENAME
+ * \throw   #CBMFM_ERR_INVALID_NULL
+ * \throw   #CBMFM_ERR_READONLY
+ */
+bool cbmfm_d64_image_write(cbmfm_d64_t *image, const char *filename)
+{
+    return cbmfm_image_write_data((cbmfm_image_t *)image, filename);
+}

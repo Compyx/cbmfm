@@ -29,13 +29,15 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include <ctype.h>
 
 #include "cbmfm_types.h"
-#include "base/mem.h"
-#include "base/io.h"
+#include "lib/base/errors.h"
+#include "lib/base/mem.h"
+#include "lib/base/io.h"
 
-#include "base/image.h"
+#include "image.h"
 
 /**
  * \ingroup lib_base
@@ -233,6 +235,56 @@ bool cbmfm_image_read_data(cbmfm_image_t *image, const char *path)
     }
     image->size = (size_t)size;
     image->path = cbmfm_strdup(path);
+    cbmfm_image_set_dirty(image, false);
+    return true;
+}
+
+
+/** \brief  Write data of \a image to \a filename in the host file system
+ *
+ * On succesful write, the image's "dirty" flag will be cleared.
+ *
+ * \param[in,out]   image       image
+ * \param[in]       filename    filename (use `NULL` to use the image's
+ *                              filename when it was opened)
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_IO
+ * \throw   #CBMFM_ERR_MISSING_FILENAME
+ * \throw   #CBMFM_ERR_INVALID_NULL
+ * \throw   #CBMFM_ERR_READONLY
+ */
+bool cbmfm_image_write_data(cbmfm_image_t *image, const char *filename)
+{
+    /* we need data */
+    if (image->data == NULL) {
+        cbmfm_errno = CBMFM_ERR_INVALID_NULL;
+        return false;
+    }
+
+    /* make sure if the filename arg is NULL we have a filename in the image */
+    if ((filename == NULL || *filename == '\0') && image->path == NULL) {
+        cbmfm_errno = CBMFM_ERR_MISSING_FILENAME;
+        return false;
+    }
+
+    /* don't write image back using the same filename/path when it's write-
+     * protected */
+    if ((filename == NULL || *filename == '\0'
+                || strcmp(filename, image->path) == 0)
+            && cbmfm_image_get_readonly(image)) {
+        /* write protected */
+        cbmfm_errno = CBMFM_ERR_READONLY;
+        return false;
+    }
+
+    if (!cbmfm_write_file(image->data, image->size,
+                filename != NULL ? filename : image->path)) {
+        return false;
+    }
+
+    /* clear dirty flag */
     cbmfm_image_set_dirty(image, false);
     return true;
 }

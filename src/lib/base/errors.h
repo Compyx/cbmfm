@@ -48,6 +48,8 @@ typedef enum cbmfm_err_e {
     CBMFM_ERR_ILLEGAL_SECTOR,   /**< illegal sector number */
     CBMFM_ERR_BUFFER_UNDERFLOW, /**< buffer underflow */
     CBMFM_ERR_BUFFER_OVERFLOW,  /**< buffer overflow */
+    CBMFM_ERR_READONLY,         /**< file is read-only */
+    CBMFM_ERR_MISSING_FILENAME, /**< missing filename */
 
     CBMFM_ERR_CODE_COUNT        /**< number of error messages */
 
