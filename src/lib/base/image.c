@@ -271,13 +271,19 @@ bool cbmfm_image_write_data(cbmfm_image_t *image, const char *filename)
 
     /* don't write image back using the same filename/path when it's write-
      * protected */
-    if ((filename == NULL || *filename == '\0'
-                || strcmp(filename, image->path) == 0)
-            && cbmfm_image_get_readonly(image)) {
-        /* write protected */
+
+    /* TODO: refactor */
+    if (filename != NULL && image->path != NULL) {
+        if (strcmp(filename, image->path) == 0 && cbmfm_image_get_readonly(image)) {
+            /* same path, reject */
+            cbmfm_errno = CBMFM_ERR_READONLY;
+            return false;
+        }
+    } else if (image->path != NULL && cbmfm_image_get_readonly(image)) {
         cbmfm_errno = CBMFM_ERR_READONLY;
         return false;
     }
+
 
     if (!cbmfm_write_file(image->data, image->size,
                 filename != NULL ? filename : image->path)) {

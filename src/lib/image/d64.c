@@ -1091,7 +1091,7 @@ void cbmfm_d64_format(cbmfm_d64_t *image,
  * \throw   #CBMFM_ERR_INVALID_NULL
  * \throw   #CBMFM_ERR_READONLY
  */
-bool cbmfm_d64_image_write(cbmfm_d64_t *image, const char *filename)
+bool cbmfm_d64_write(cbmfm_d64_t *image, const char *filename)
 {
     return cbmfm_image_write_data((cbmfm_image_t *)image, filename);
 }

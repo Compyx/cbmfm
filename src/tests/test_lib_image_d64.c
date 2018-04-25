@@ -35,6 +35,7 @@
 #include "lib/base/dir.h"
 #include "lib/base/file.h"
 #include "lib/base/image.h"
+#include "lib/base/io.h"
 #include "lib/base/mem.h"
 #include "testcase.h"
 
@@ -63,6 +64,14 @@
  */
 #define D64_ARMALYTE_BLOCKS_FREE        92
 
+
+/**\brief   Newly formatted 35-track image
+ */
+#define D64_FORMATTED_35T   "formatted-image-35t.d64"
+
+/** \brief  Newly formatted 40-track image
+ */
+#define D64_FORMATTED_40T   "formatted-image-40t.d64"
 
 
 
@@ -383,8 +392,10 @@ static bool test_lib_image_d64_write(test_case_t *test)
 static bool test_lib_image_d64_format(test_case_t *test)
 {
     cbmfm_d64_t image;
+    intmax_t size;
+    bool result;
 
-    test->total = 1;
+    test->total = 2;
 
     cbmfm_d64_init(&image);
 
@@ -395,12 +406,50 @@ static bool test_lib_image_d64_format(test_case_t *test)
     cbmfm_hexdump(image.data + 0x16500, 0, 256);
     printf("....... dumping BAM bitmap:\n");
     cbmfm_d64_bam_dump(&image);
+    printf("....... writing image as '%s' .. ", D64_FORMATTED_35T);
+    fflush(stdout);
+    if (!cbmfm_d64_write(&image, D64_FORMATTED_35T)) {
+        printf("failed, cannot continue.\n");
+        cbmfm_d64_cleanup(&image);
+        return false;
+    }
+    printf("OK\n");
 
+    size = cbmfm_file_size(D64_FORMATTED_35T);
+    result = size == CBMFM_D64_SIZE_STD;
+    printf("....... checking size: %zu -> %s\n",
+            size, result ? "OK" : "failed");
+    if (!result) {
+        test->failed++;
+    }
+    cbmfm_d64_cleanup(&image);
+
+
+    cbmfm_d64_init(&image);
+    printf("\n..... calling cbmfm_d64_format(\"test image\", \"40\", true):\n");
+    cbmfm_d64_format(&image, "test-image", "40", true);
+
+    printf("....... hexdump of BAM:\n");
+    cbmfm_hexdump(image.data + 0x16500, 0, 256);
+    printf("....... dumping BAM bitmap:\n");
+    cbmfm_d64_bam_dump(&image);
+    printf("....... writing image as '%s' .. ", D64_FORMATTED_40T);
+    fflush(stdout);
+    if (!cbmfm_d64_write(&image, D64_FORMATTED_40T)) {
+        printf("failed, cannot continue.\n");
+        cbmfm_d64_cleanup(&image);
+        return false;
+    }
+    printf("OK\n");
+
+    size = cbmfm_file_size(D64_FORMATTED_40T);
+    result = size == CBMFM_D64_SIZE_EXT;
+    printf("....... checking size: %zu -> %s\n",
+            size, result ? "OK" : "failed");
+    if (!result) {
+        test->failed++;
+    }
 
     cbmfm_d64_cleanup(&image);
     return true;
 }
-
-
-
-

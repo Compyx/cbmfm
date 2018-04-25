@@ -116,6 +116,5 @@ void            cbmfm_d64_format(cbmfm_d64_t *image,
                                  const char *name, const char *id,
                                  bool extended);
 
-bool            cbmfm_d64_image_write(cbmfm_d64_t *image,
-                                      const char *filename);
+bool            cbmfm_d64_write(cbmfm_d64_t *image, const char *filename);
 #endif
