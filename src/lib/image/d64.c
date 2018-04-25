@@ -1009,3 +1009,53 @@ void cbmfm_d64_bam_init(cbmfm_d64_t *image)
     bam[CBMFM_D64_BAM_DOS_TYPE + 1] = 0x41; /* 'A' */
 }
 
+
+/** \brief  Format D64 image
+ *
+ * Formats \a image by setting all data to 0 and then initializing the BAM,
+ * and setting disk \a name, and disk \a id. If the image doesn't contain data
+ * (as for example after a call to cbmfm_d64_new()), memory will be allocated
+ * for an image of \a tracks number of tracks, without errors bytes.
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       name    disk name (`NULL` to leave empty)
+ * \param[in]       id      disk ID (`NULL` to leave empty)
+ * \param[in]       tracks  number of tracks (anything not 40 is considered 35)
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_INVALID_NULL No data allocated for image data
+ */
+void cbmfm_d64_format(cbmfm_d64_t *image, const char *name, const char *id,
+        bool extended)
+{
+    if (image->data == NULL) {
+        /* no data allocated: allocate data */
+        int tracks = extended ? 40 : 35;
+
+        if (tracks == 35) {
+            image->data = cbmfm_malloc(CBMFM_D64_SIZE_STD);
+            image->size = CBMFM_D64_SIZE_STD;
+        } else {
+            image->data = cbmfm_malloc(CBMFM_D64_SIZE_EXT);
+            image->size = CBMFM_D64_SIZE_EXT;
+        }
+        image->track_max = tracks;
+    }
+
+    /* clear all data */
+    memset(image->data, 0x00, image->size);
+
+    /* initialize BAM */
+    cbmfm_d64_bam_init(image);
+
+    /* set disk name if provided */
+    if (name != NULL && *name != '\0') {
+        cbmfm_d64_set_disk_name_asc(image, name);
+    }
+    /* set disk ID if provided */
+    if (id != NULL && *id != '\0') {
+        cbmfm_d64_set_disk_id_asc_ext(image, id);
+    }
+}
+
