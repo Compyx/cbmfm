@@ -31,7 +31,8 @@ LIB_SRCS = src/lib/base/io.c \
 	   src/lib/image/t64.c \
 	   src/lib/image/lnx.c \
 	   src/lib/image/detect.c \
-	   src/lib/base/dirent.c
+	   src/lib/base/dirent.c \
+	   src/lib/base/zipcode.c
 
 GUI_SRCS = src/gui/main.c
 
@@ -123,6 +124,9 @@ src/lib/base/log.o: \
 src/lib/base/mem.o: \
 	src/lib/base/errors.o
 src/lib/base/petasc.o:
+src/lib/base/zipcode.o: \
+	src/lib/base/errors.o \
+	src/lib/base/log.o
 
 # Dependencies of objects in src/lib/image
 

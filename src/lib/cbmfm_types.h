@@ -336,4 +336,19 @@ typedef struct cbmfm_lnx_s {
 } cbmfm_lnx_t;
 
 
+
+/** \brief  Zipcode file object
+ *
+ * Holds a single file/segment of a zipcode archive
+ *
+ */
+typedef struct cbmfm_zipcode_file_s {
+    char *      name;   /**< path to file */
+    uint8_t *   data;   /**< data of file */
+    size_t      size;   /**< size of file */
+} cbmfm_zipcode_file_t;
+
+
+
+
 #endif

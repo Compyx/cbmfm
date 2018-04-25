@@ -594,7 +594,7 @@ bool cbmfm_t64_extract_all(cbmfm_dir_t *dir)
  *
  * Check both minimum size of a T64 archive and its magic.
  *
- * \param[in]   path    path to possible T64 archive
+ * \param[in]   filename    path to possible T64 archive
  *
  * \return  bool
  *

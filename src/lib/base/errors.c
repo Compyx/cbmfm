@@ -55,7 +55,9 @@ static const char *cbmfm_err_messages[CBMFM_ERR_CODE_COUNT] = {
     "size mismatch",
     "type mismatch",
     "illegal track",
-    "illegal sector"
+    "illegal sector",
+    "buffer underflow",
+    "buffer overflow"
 };
 
 

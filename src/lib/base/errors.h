@@ -46,6 +46,8 @@ typedef enum cbmfm_err_e {
     CBMFM_ERR_TYPE_MISMATCH,    /**< type mismatch */
     CBMFM_ERR_ILLEGAL_TRACK,    /**< illegal track number */
     CBMFM_ERR_ILLEGAL_SECTOR,   /**< illegal sector number */
+    CBMFM_ERR_BUFFER_UNDERFLOW, /**< buffer underflow */
+    CBMFM_ERR_BUFFER_OVERFLOW,  /**< buffer overflow */
 
     CBMFM_ERR_CODE_COUNT        /**< number of error messages */
 
