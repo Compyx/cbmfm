@@ -336,7 +336,7 @@ void cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image, const uint8_t *name)
 /** \brief  Set disk name using ASCII
  *
  * Sets disk name using at most 16 bytes of ASCII string \a name, the remaining
- * bytes (if any) are padded with 0.
+ * bytes (if any) are padded with 0A0.
  *
  * \param[in,out]   image   d64 image
  * \param[in]       name    ASSCII disk name
@@ -344,9 +344,20 @@ void cbmfm_d64_set_disk_name_pet(cbmfm_d64_t *image, const uint8_t *name)
 void cbmfm_d64_set_disk_name_asc(cbmfm_d64_t *image, const char *name)
 {
     uint8_t pet[CBMFM_CBMDOS_DISK_NAME_LEN];
+    int index;
 
+    /* convert to PETSCII */
     cbmfm_asc_to_pet_str(pet, name, CBMFM_CBMDOS_DISK_NAME_LEN);
+
+    /* replace 0x00-padding with 0xA0 */
+    index = CBMFM_CBMDOS_DISK_NAME_LEN - 1;
+    while (index >= 0 && pet[index] == 0x00) {
+        pet[index--] = 0xA0;
+    }
+
+    /* set disk name in PETSCII */
     cbmfm_d64_set_disk_name_pet(image, pet);
+
     cbmfm_image_set_dirty((cbmfm_image_t *)image, true);
 }
 
@@ -430,7 +441,12 @@ void cbmfm_d64_set_disk_id_asc(cbmfm_d64_t *image, const char *id)
  */
 void cbmfm_d64_set_disk_id_asc_ext(cbmfm_d64_t *image, const char *id)
 {
-    set_disk_id_asc(image, id, CBMFM_CBMDOS_DISK_ID_LEN_EXT);
+    size_t len = strlen(id);
+
+    if (len > CBMFM_CBMDOS_DISK_ID_LEN_EXT) {
+        len = CBMFM_CBMDOS_DISK_ID_LEN_EXT;
+    }
+    set_disk_id_asc(image, id, len);
 }
 
 
@@ -1017,17 +1033,18 @@ void cbmfm_d64_bam_init(cbmfm_d64_t *image)
  * (as for example after a call to cbmfm_d64_new()), memory will be allocated
  * for an image of \a tracks number of tracks, without errors bytes.
  *
- * \param[in,out]   image   d64 image
- * \param[in]       name    disk name (`NULL` to leave empty)
- * \param[in]       id      disk ID (`NULL` to leave empty)
- * \param[in]       tracks  number of tracks (anything not 40 is considered 35)
+ * No BAM entries will be initialized for tracks 36-40, the 'extended' flag is
+ * just meant to be able to create an empty d64 image to write Joe/STA's
+ * five-file zipdisk images to.
  *
- * \return  bool
- *
- * \throw   #CBMFM_ERR_INVALID_NULL No data allocated for image data
+ * \param[in,out]   image       d64 image
+ * \param[in]       name        disk name (`NULL` to leave empty)
+ * \param[in]       id          disk ID (`NULL` to leave empty)
+ * \param[in]       extended    create a 40-track image instead of 35-track
  */
-void cbmfm_d64_format(cbmfm_d64_t *image, const char *name, const char *id,
-        bool extended)
+void cbmfm_d64_format(cbmfm_d64_t *image,
+                      const char *name, const char *id,
+                      bool extended)
 {
     if (image->data == NULL) {
         /* no data allocated: allocate data */

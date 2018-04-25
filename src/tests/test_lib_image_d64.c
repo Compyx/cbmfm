@@ -35,6 +35,7 @@
 #include "lib/base/dir.h"
 #include "lib/base/file.h"
 #include "lib/base/image.h"
+#include "lib/base/mem.h"
 #include "testcase.h"
 
 #include "test_lib_image_d64.h"
@@ -67,6 +68,7 @@
 
 static bool test_lib_image_d64_open(test_case_t *test);
 static bool test_lib_image_d64_bam(test_case_t *test);
+static bool test_lib_image_d64_format(test_case_t *test);
 static bool test_lib_image_d64_dir(test_case_t *test);
 static bool test_lib_image_d64_read(test_case_t *test);
 static bool test_lib_image_d64_write(test_case_t *test);
@@ -79,7 +81,9 @@ static test_case_t tests_lib_image_d64[] = {
         test_lib_image_d64_open, 0, 0 },
     { "bam", "BAM handling of D64 images",
         test_lib_image_d64_bam, 0, 0 },
-    { "dir", "Directory handling of D64 image",
+    { "format", "Formatting of D64 images",
+        test_lib_image_d64_format, 0, 0 },
+    { "dir", "Directory handling of D64 images",
         test_lib_image_d64_dir, 0, 0 },
     { "read", "File reading of D64 images",
         test_lib_image_d64_read, 0, 0 },
@@ -368,3 +372,35 @@ static bool test_lib_image_d64_write(test_case_t *test)
     cbmfm_d64_cleanup(&image);
     return true;
 }
+
+
+/** \brief  Test formatting of D64 images
+ *
+ * \param[in,out]   test    test object
+ *
+ * \return  bool
+ */
+static bool test_lib_image_d64_format(test_case_t *test)
+{
+    cbmfm_d64_t image;
+
+    test->total = 1;
+
+    cbmfm_d64_init(&image);
+
+    printf("..... calling cbmfm_d64_format(\"test image\", \"35\", false):\n");
+    cbmfm_d64_format(&image, "test-image", "35", false);
+
+    printf("....... hexdump of BAM:\n");
+    cbmfm_hexdump(image.data + 0x16500, 0, 256);
+    printf("....... dumping BAM bitmap:\n");
+    cbmfm_d64_bam_dump(&image);
+
+
+    cbmfm_d64_cleanup(&image);
+    return true;
+}
+
+
+
+
