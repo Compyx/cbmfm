@@ -167,7 +167,11 @@
 
 /** \brief  Offset in BAM of disk ID (2 bytes, or 5 bytes)
  */
-#define CBMFM_D64_BAM_DISK_ID   0xa2
+#define CBMFM_D64_BAM_DISK_ID   0xA2
+
+/** \brief  Offset in BAM of DOS type (2 bytes, usually "2A")
+ */
+#define CBMFM_D64_BAM_DOS_TYPE  0xA5
 
 
 /*

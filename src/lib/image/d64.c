@@ -218,6 +218,36 @@ bool cbmfm_d64_bam_get_bament(cbmfm_d64_t *image, int track, uint8_t *dest)
 }
 
 
+/** \brief  Initialize BAM entry for \a track in \a image
+ *
+ * \param[in,out]   image   D64 image
+ * \param[in]       track   track number
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_ILLEGAL_TRACK
+ */
+bool cbmfm_d64_bam_init_bament(cbmfm_d64_t *image, int track)
+{
+    uint8_t *bam = cbmfm_d64_bam_ptr_trk(image, track);
+    int blocks;
+
+    if (bam == NULL) {
+        return false;
+    }
+
+    /* set up free block count and bitmap */
+    blocks = cbmfm_dxx_track_block_count((cbmfm_dxx_image_t *)image, track);
+    bam[0] = (uint8_t)(blocks);     /* free block count */
+    bam[1] = 0xFF;  /* sector 0-7 are always valid */
+    bam[2] = 0xFF;  /* sector 8-15 are always valid */
+    bam[3] = (uint8_t)((1 << (blocks - 16)) - 1);
+
+    return true;
+}
+
+
+
 
 /** \brief  Get disk name in PETSCII of \a image
  *
@@ -444,6 +474,53 @@ bool cbmfm_d64_bam_sector_get_free(
 
     *state = bament[offset] & mask ? true : false;
 
+    return true;
+}
+
+
+/** \brief  Set free state of (\a track,\a sector) in \a image to \a state
+ *
+ * \param[in,out]   image   d64 image
+ * \param[in]       track   track number of block to mark
+ * \param[in]       sector  sector number of block to mark
+ * \param[in]       state   state to set block to (true == free, false == used)
+ *
+ * \return  bool
+ *
+ * \throw   #CBMFM_ERR_ILLEGAL_TRACK
+ * \throw   #CBMFM_ERR_ILLEGAL_SECTOR
+ */
+bool cbmfm_d64_bam_sector_set_free(
+        cbmfm_d64_t *image,
+        int track,
+        int sector,
+        bool state)
+{
+    int blk_count;
+    uint8_t *bament;
+    uint8_t mask;
+    int offset;
+
+    blk_count = cbmfm_dxx_track_block_count((cbmfm_dxx_image_t *)image, track);
+    if (blk_count < 0) {
+        return false;
+    }
+    if (sector >= blk_count) {
+        cbmfm_errno = CBMFM_ERR_ILLEGAL_SECTOR;
+        return false;
+    }
+
+    bament = cbmfm_d64_bam_ptr_trk(image, track);
+
+    offset = 1 + sector / 8;
+    mask = (uint8_t)(1U << (sector % 8));
+
+    if (state) {
+        /* mark free */
+        bament[offset] |= mask;
+    } else {
+        bament[offset] &= (uint8_t)(~mask);
+    }
     return true;
 }
 
@@ -889,3 +966,46 @@ bool cbmfm_is_d64(const char *filename)
             return false;
     }
 }
+
+
+/** \brief  Initialize BAM of a D64 image
+ *
+ * Sets dir (track,sector) pointer, disk DOS version, DOS type, initializes
+ * all BAM entries for track 1-35 (marking (18,0) (BAM) and (18,1) (first
+ * dir block) used), and writes inverted spaces to disk name and ID.
+ *
+ * \param[in,out]   image   d64 image
+ */
+void cbmfm_d64_bam_init(cbmfm_d64_t *image)
+{
+    uint8_t *bam = cbmfm_d64_bam_ptr(image);
+    int track;
+
+    /* clear BAM */
+    memset(bam, 0, CBMFM_BLOCK_SIZE_RAW);
+
+    /* set directory (track,sector) pointer */
+    bam[CBMFM_D64_BAM_DIR_TRACK] = CBMFM_D64_DIR_TRACK;
+    bam[CBMFM_D64_BAM_DIR_SECTOR] = CBMFM_D64_DIR_SECTOR;
+
+    /* disk DOS version */
+    bam[CBMFM_D64_BAM_DISK_DOS_VER] = 0x41;
+
+    /* $04-$8F: entries for tracks 1-35 */
+    for (track = 1; track <= 35; track++) {
+        cbmfm_d64_bam_init_bament(image, track);
+    }
+    /* mark (18,0) and (18,1) used */
+    cbmfm_d64_bam_sector_set_free(image, 18, 0, false);
+    cbmfm_d64_bam_sector_set_free(image, 18, 1, false);
+
+
+    /* fill disk name, id, dos type and unused bytes up to $AB with $A0 */
+    memset(bam + CBMFM_D64_BAM_DISK_NAME, 0xA0,
+            (size_t)(0xAB - CBMFM_D64_BAM_DISK_NAME));
+
+    /* DOS type */
+    bam[CBMFM_D64_BAM_DOS_TYPE + 0] = 0x32; /* '2' */
+    bam[CBMFM_D64_BAM_DOS_TYPE + 1] = 0x41; /* 'A' */
+}
+

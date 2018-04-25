@@ -51,6 +51,8 @@ uint8_t *       cbmfm_d64_bam_ptr_trk(cbmfm_d64_t *image, int track);
 bool            cbmfm_d64_bam_get_bament(cbmfm_d64_t *image,
                                          int track,
                                          uint8_t *dest);
+
+bool            cbmfm_d64_bam_init_bament(cbmfm_d64_t *image, int track);
 void            cbmfm_d64_bam_dump(cbmfm_d64_t *image);
 
 int             cbmfm_d64_bam_track_get_blocks_free(cbmfm_d64_t *image,
@@ -78,6 +80,10 @@ void            cbmfm_d64_set_disk_id_asc_ext(cbmfm_d64_t *image,
 bool            cbmfm_d64_bam_sector_get_free(cbmfm_d64_t *image,
                                               int track, int sector,
                                               bool *state);
+bool            cbmfm_d64_bam_sector_set_free(cbmfm_d64_t *image,
+                                              int track,
+                                              int sector,
+                                              bool state);
 
 int             cbmfm_d64_blocks_free(cbmfm_d64_t *image);
 
@@ -103,5 +109,6 @@ bool cbmfm_d64_block_write_iter_init(cbmfm_dxx_block_iter_t *iter,
 void cbmfm_d64_block_write_iter_write_data(cbmfm_dxx_block_iter_t *iter,
                                            const uint8_t *data,
                                            size_t size);
+void cbmfm_d64_bam_init(cbmfm_d64_t *image);
 
 #endif
