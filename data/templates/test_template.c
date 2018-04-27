@@ -29,11 +29,16 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+#include "lib/base/errors.h"
+
 #include "testcase.h"
 
+#include "MODULE_HEADER"
 
+
+static bool setup(void);
+static void teardown(void);
 static bool test_dummy(struct test_case_s *test);
-
 
 /** \brief  List of tests for the base library functions
  */
@@ -49,10 +54,34 @@ test_module_t module_TEST_NAME = {
     "dummy",
     "just a dummy test",
     tests_TEST_NAME,
-    NULL,
-    NULL,
+    setup,
+    teardown,
     0, 0
 };
+
+
+/** \brief  Setup function
+ *
+ * This runs before starting the tests, allowing to set up some resources.
+ *
+ * \return  bool
+ */
+static bool setup(void)
+{
+    return false;
+}
+
+
+/** \brief  Teardown function
+ *
+ * This runs after running the tests, allowing to clean up resource set up
+ * by setup().
+ */
+void teardown(void)
+{
+    return;
+}
+
 
 
 /** \brief  Dummy test
