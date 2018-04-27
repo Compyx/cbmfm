@@ -61,11 +61,12 @@ static bool test_lib_base_dir_iter(test_case_t *test);
  *
  * Opens the Armalyte test image
  */
-static void test_lib_base_dir_setup(void)
+static bool test_lib_base_dir_setup(void)
 {
     cbmfm_d64_init(&image);
-    cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
+    return cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
 }
+
 
 /** \brief  Teardown function for the test module
  *

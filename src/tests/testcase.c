@@ -34,7 +34,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "lib.h"
+#include "lib/base/errors.h"
 
 #include "testcase.h"
 
@@ -71,14 +71,15 @@ static void test_case_init(test_case_t *test)
  *
  * \param[in,out]   module  test module
  */
-void test_module_init(test_module_t *module)
+bool test_module_init(test_module_t *module)
 {
     module->total = 0;
     module->failed = 0;
 
     if (module->setup != NULL) {
-        module->setup();
+        return module->setup();
     }
+    return true;
 }
 
 
@@ -146,7 +147,12 @@ bool test_module_run_tests(const char *mod_name, const char *test_name)
             module = mod_list[m];
             printf("\n\n. Running module '%s' (%s)\n",
                     module->name, module->desc);
-            test_module_init(module);
+            if (!test_module_init(module)) {
+                fprintf(stderr, "%s(): module's setup() function failed: ",
+                        __func__);
+                cbmfm_perror(NULL);
+                return false;
+            }
 
             for (test = module->tests; test->name != NULL; test++) {
                 if (test_name == NULL || strcmp(test_name, test->name) == 0) {

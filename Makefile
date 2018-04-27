@@ -43,7 +43,7 @@ TEST_SRCS = src/tests/testcase.c \
 	    src/tests/test_lib_image_ark.c \
 	    src/tests/test_lib_image_d64.c \
 	    src/tests/test_lib_image_t64.c \
-	    src/tests/test_lob_image_lnx.c
+	    src/tests/test_lib_image_lnx.c
 
 HEADERS = 
 

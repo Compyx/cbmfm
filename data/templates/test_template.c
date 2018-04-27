@@ -62,7 +62,7 @@ test_module_t module_TEST_NAME = {
 
 /** \brief  Setup function
  *
- * This runs before starting the tests, allowing to set up some resources.
+ * This runs before starting each tests, allowing to set up some resources.
  *
  * \return  bool
  */
@@ -74,7 +74,7 @@ static bool setup(void)
 
 /** \brief  Teardown function
  *
- * This runs after running the tests, allowing to clean up resource set up
+ * This runs after running each test, allowing to clean up resource set up
  * by setup().
  */
 void teardown(void)

@@ -69,7 +69,7 @@ typedef struct test_module_s {
     const char *name;           /**< module name */
     const char *desc;           /**< module description */
     test_case_t *tests;         /**< list of tests */
-    void (*setup)(void);        /**< optional setup function */
+    bool (*setup)(void);        /**< optional setup function */
     void (*teardown)(void);     /**< optional teardown function */
     int total;                  /**< total number of tests performed */
     int failed;                 /**< number of failures */
@@ -77,7 +77,7 @@ typedef struct test_module_s {
 
 
 void test_module_register(test_module_t *module);
-void test_module_init(test_module_t *module);
+bool test_module_init(test_module_t *module);
 void test_module_exit(test_module_t *module);
 void test_module_list_tests(const char *name);
 void test_module_list_modules(void);

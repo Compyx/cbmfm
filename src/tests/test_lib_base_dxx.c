@@ -58,12 +58,15 @@ static bool test_lib_base_dxx_block(test_case_t *test);
 /** \brief  Setup function for the test module
  *
  * Opens the Armalyte test image
+ *
+ * \return  bool
  */
-static void test_lib_base_dxx_setup(void)
+static bool test_lib_base_dxx_setup(void)
 {
     cbmfm_d64_init(&image);
-    cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
+    return cbmfm_d64_open(&image, D64_ARMALYTE_FILE);
 }
+
 
 /** \brief  Teardown function for the test module
  *
