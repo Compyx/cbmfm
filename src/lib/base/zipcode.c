@@ -77,6 +77,8 @@ static int zipcode_rle_decode(uint8_t *dst, const uint8_t *src)
             int len = rle_data[++rle_idx];      /* run length */
             uint8_t b = rle_data[++rle_idx];    /* run value */
 
+            cbmfm_log_debug("got run of %d bytes of %d\n", len, (int)b);
+
             rle_idx++;  /* idx now 'points at' the first byte of RLE data */
 
             while (len-- > 0 && dst_idx < CBMFM_BLOCK_SIZE_RAW) {
@@ -95,7 +97,8 @@ static int zipcode_rle_decode(uint8_t *dst, const uint8_t *src)
         return -1;
     }
 
-    return (int)rle_idx;
+    return (int)rle_idx + 4;    /* +4 for the track number,sector number,
+                                   RLE data length and RLE pack byte */
 }
 
 
@@ -124,7 +127,7 @@ int cbmfm_zipcode_unpack(uint8_t *dst, const uint8_t *src)
             /* fill 256 bytes with the same value */
             memset(dst, src[CBMFM_ZIPCODE_BLOCK_FILL_BYTE],
                     CBMFM_BLOCK_SIZE_RAW);
-            return CBMFM_BLOCK_SIZE_RAW + 2;
+            return 3;
         case CBMFM_ZIPCODE_FLAG_RLE:
             /* TODO: decode RLE sequence */
             return zipcode_rle_decode(dst, src);

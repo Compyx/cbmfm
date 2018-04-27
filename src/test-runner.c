@@ -50,6 +50,7 @@
 #include "test_lib_base_dir.h"
 #include "test_lib_image_t64.h"
 #include "test_lib_image_lnx.h"
+#include "test_lib_base_zipcode.h"
 
 
 /** \brief  Print usage/help message on stdout
@@ -76,6 +77,7 @@ static void register_modules(void)
     test_module_register(&module_lib_base_dir);
     test_module_register(&module_lib_image_t64);
     test_module_register(&module_lib_image_lnx);
+    test_module_register(&module_lib_base_zipcode);
 }
 
 

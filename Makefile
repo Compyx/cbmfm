@@ -43,7 +43,8 @@ TEST_SRCS = src/tests/testcase.c \
 	    src/tests/test_lib_image_ark.c \
 	    src/tests/test_lib_image_d64.c \
 	    src/tests/test_lib_image_t64.c \
-	    src/tests/test_lib_image_lnx.c
+	    src/tests/test_lib_image_lnx.c \
+	    src/tests/test_lib_base_zipcode.c
 
 HEADERS = 
 
@@ -58,7 +59,8 @@ TESTER_OBJS = test-runner.o \
 	      test_lib_image_d64.o \
 	      test_lib_base_dir.o \
 	      test_lib_image_t64.o \
-	      test_lib_image_lnx.o
+	      test_lib_image_lnx.o \
+	      test_lib_base_zipcode.o
 
 GUI = cbmfm
 
